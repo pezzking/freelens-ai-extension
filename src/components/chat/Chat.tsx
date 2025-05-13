@@ -1,16 +1,20 @@
-import React from 'react'
+import React, {useEffect, useRef} from 'react'
 import './Chat.scss'
 import TextInput from "../textInput/TextInput";
-import Message from "../message/MessageType";
+import Message, {MessageType} from "../message/MessageType";
 import useChatHook from "./ChatHook";
+import {observer} from "mobx-react";
+import {PreferencesStore} from "../../store/PreferencesStore";
 
-const Chat: React.FC = () => {
-  const chatHook = useChatHook();
+const Chat = observer(() => {
+  // @ts-ignore
+  const preferencesStore = PreferencesStore.getInstance();
+  const chatHook = useChatHook(preferencesStore);
 
   return (
     <div className="chat-container">
-      <div className="messagesContainer">
-        {chatHook.messages.map((msg, index) => (
+      <div className="messagesContainer" ref={chatHook.containerRef}>
+        {preferencesStore.chatMessages.map((msg: MessageType, index: number) => (
           <Message key={index} message={msg}/>
         ))}
       </div>
@@ -18,6 +22,6 @@ const Chat: React.FC = () => {
       <TextInput onSend={chatHook.sendMessage}/>
     </div>
   )
-}
+})
 
 export default Chat

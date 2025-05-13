@@ -1,6 +1,6 @@
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import {MainPage} from "./pages/mainPage/mainPage";
+import MainPage from "./pages/mainPage/MainPage";
 import "./index.css";
 import "./dark-theme.css";
 

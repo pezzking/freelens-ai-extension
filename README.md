@@ -4,14 +4,23 @@ freelens-ai is a plugin for freelens that brings AI capabilities directly into y
 ## :rocket: How to test it locally
 If you want to contribute to it all you have to do is follow these steps
 
-1) Install dependencies
+1) Install pnpm
+```bash
+corepack install
+# or
+curl -fsSL https://get.pnpm.io/install.sh | sh -
+# or
+winget install pnpm.pnpm
+```
+
+2) Install dependencies
 ```bash
 pnpm i
 ```
 
-2) start project
+3) start project
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ## :gear: Create the .tar.gz bundle
