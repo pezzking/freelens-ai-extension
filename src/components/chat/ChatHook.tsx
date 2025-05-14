@@ -1,5 +1,7 @@
-import {PreferencesStore} from "../../store/PreferencesStore";
-import {useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
+import useAiAnalysisService from "../../business/AiAnalysisService";
+import { PreferencesStore } from "../../store/PreferencesStore";
+import { MessageType } from "../message/MessageType";
 
 const useChatHook = (preferencesStore: PreferencesStore) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -9,15 +11,34 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     scrollToBottom(false);
   }, []);
 
-  const processResponse = () => {
+  const processResponse = async () => {
     const messagesNumber = preferencesStore.chatMessages.length;
     if (messagesNumber > 0) {
       const lastMessage = preferencesStore.chatMessages.at(messagesNumber - 1);
       if (lastMessage.sent) {
-        // TODO: Handle model response here
-        // const response = modelHook.ask();
-        sendMessage("", false);
+        try {
+          analyzeEvent(lastMessage);
+        } catch (error) {
+          console.error("Error in AI analysis: ", error);
+          sendMessage("Error in AI analysis: " + error.message, false);
+        }
       }
+    }
+  }
+
+  async function analyzeEvent(lastMessage: MessageType) {
+    try {
+      const analisysSvc = useAiAnalysisService();
+      const analysisResultStream = analisysSvc.analyze(lastMessage.text, preferencesStore.modelApiKey);
+      let aiResult = "";
+      sendMessage(aiResult, false);
+      for await (const chunk of analysisResultStream) {
+        console.log("Streaming to UI chunk: ", chunk);
+        preferencesStore.updateLastMessage(chunk);
+      }
+    } catch (error) {
+      console.error("Error in AI analysis: ", error);
+      sendMessage("Error in AI analysis: " + error.message, false);
     }
   }
 
@@ -37,7 +58,7 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     }
   }
 
-  return {containerRef, sendMessage}
+  return { containerRef, sendMessage }
 
 }
 

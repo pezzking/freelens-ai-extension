@@ -17,8 +17,8 @@ const PreferencesPage = observer(() => {
       <Input
         disabled={!preferencesStore.isChatGptApiKeySelected}
         placeholder="ChatGpt key"
-        value={preferencesStore.chatGptApiKey}
-        onChange={(value: string) => preferencesStore.chatGptApiKey = value}
+        value={preferencesStore.modelApiKey}
+        onChange={(value: string) => preferencesStore.modelApiKey = value}
       />
     </>
   )
