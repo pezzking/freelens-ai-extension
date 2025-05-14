@@ -27,13 +27,13 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     }
   }
 
-  async function analyzeEvent(lastMessage: MessageType) {
+  const analyzeEvent = async (lastMessage: MessageType) => {
     try {
       const analysisResultStream = aiAnalisysService.analyze(lastMessage.text);
       let aiResult = "";
       sendMessage(aiResult, false);
       for await (const chunk of analysisResultStream) {
-        console.log("Streaming to UI chunk: ", chunk);
+        // console.log("Streaming to UI chunk: ", chunk);
         preferencesStore.updateLastMessage(chunk);
       }
     } catch (error) {
