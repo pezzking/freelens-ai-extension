@@ -2,7 +2,6 @@
  * Copyright (c) Freelens Authors. All rights reserved.
  * Licensed under MIT License. See LICENSE in root directory for more information.
  */
-
 import { Renderer } from "@freelensapp/extensions";
 import React from "react";
 import svgIcon from "./src/icons/extension-icon.svg";
