@@ -11,7 +11,7 @@
   "renderer": "dist/renderer.js",
   "engines": {
     "node": ">= 22.14.0",
-    "freelens": "^1.2.2"
+    "freelens": "^1.2.1"
   },
   "copyright": "© 2025 Freelens Authors",
   "license": "MIT",
@@ -49,6 +49,8 @@
     "@langchain/openai": "^0.5.10",
     "langchain": "^0.3.24",
     "lucide-react": "^0.509.0",
+    "mobx": "^6.13.7",
+    "mobx-react": "^9.2.0",
     "react": "^19.1.0"
   },
   "devDependencies": {

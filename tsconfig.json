@@ -15,9 +15,8 @@
     "experimentalDecorators": true,
     "jsx": "react"
   },
-  "include": [
-    "./*.ts",
-    "./*.tsx"
+  "include": ["./*.ts", "./*.tsx",
+    "src/pages/mainPage/MainPage.tsx"
   ],
   "exclude": [
     "node_modules",

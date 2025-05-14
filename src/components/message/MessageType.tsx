@@ -2,8 +2,8 @@ import React from "react";
 import "./Message.scss";
 
 export type MessageType = {
-  sent: boolean;
   text: string;
+  sent: boolean;
 };
 
 export type MessageProps = {
