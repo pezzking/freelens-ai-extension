@@ -4,6 +4,7 @@ import { PreferencesStore } from "../../store/PreferencesStore";
 import { MessageType } from "../message/MessageType";
 
 const useChatHook = (preferencesStore: PreferencesStore) => {
+  const aiAnalisysService = useAiAnalysisService(preferencesStore);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -28,8 +29,7 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
 
   async function analyzeEvent(lastMessage: MessageType) {
     try {
-      const analisysSvc = useAiAnalysisService();
-      const analysisResultStream = analisysSvc.analyze(lastMessage.text, preferencesStore.modelApiKey);
+      const analysisResultStream = aiAnalisysService.analyze(lastMessage.text);
       let aiResult = "";
       sendMessage(aiResult, false);
       for await (const chunk of analysisResultStream) {

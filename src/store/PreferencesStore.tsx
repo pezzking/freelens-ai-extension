@@ -4,7 +4,7 @@ import { MessageType } from "../components/message/MessageType";
 
 export type PreferencesModel = {
   isChatGptApiKeySelected: boolean;
-  chatGptApiKey: string;
+  modelApiKey: string;
 };
 
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
@@ -17,7 +17,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
       configName: "freelens-ai-preferences-store",
       defaults: {
         isChatGptApiKeySelected: true,
-        chatGptApiKey: ""
+        modelApiKey: ""
       }
     });
     makeObservable(this);
@@ -40,13 +40,13 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
 
   protected fromStore = (preferencesModel: PreferencesModel): void => {
     this.isChatGptApiKeySelected = preferencesModel.isChatGptApiKeySelected;
-    this.modelApiKey = preferencesModel.chatGptApiKey;
+    this.modelApiKey = preferencesModel.modelApiKey;
   }
 
   toJSON = (): PreferencesModel => {
     const value: PreferencesModel = {
       isChatGptApiKeySelected: this.isChatGptApiKeySelected,
-      chatGptApiKey: this.modelApiKey,
+      modelApiKey: this.modelApiKey,
     };
 
     return toJS(value);
