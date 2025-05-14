@@ -1,4 +1,4 @@
-export const KUBERNETES_OPERATOR_PROMPT_TEMPLATE = `
+export const ANALYSIS_PROMPT_TEMPLATE = `
 You are an AI assistant acting as a Kubernetes operator.
 Your role is to assist users in understanding, diagnosing, and resolving issues within a Kubernetes cluster.
 
