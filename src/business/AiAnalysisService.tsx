@@ -5,12 +5,13 @@ import { PreferencesStore } from "../store/PreferencesStore";
 import { Renderer } from "@freelensapp/extensions";
 
 
-interface AiAnalysisService {
+export interface AiAnalysisService {
     analyze: (message: string) => AsyncGenerator<string, void, unknown>;
 }
 
 const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisService => {
     const analyze = async function* (message: string) {
+        console.log("Starting AI analysis for message: ", message);
 
         // const podsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi) as Renderer.K8sApi.PodsStore;
         // console.log("Load pods: ", podsStore);
