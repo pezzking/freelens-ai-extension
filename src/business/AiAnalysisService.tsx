@@ -1,8 +1,9 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
-import { ANALYSIS_PROMPT_TEMPLATE } from "./PromptTemplateProvider";
+import { ANALYSIS_PROMPT_TEMPLATE } from "./provider/PromptTemplateProvider";
 import { PreferencesStore } from "../store/PreferencesStore";
 import { Renderer } from "@freelensapp/extensions";
+import { useModelProvider } from "./provider/ModelProvider";
 
 
 export interface AiAnalysisService {
@@ -25,7 +26,7 @@ const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisSer
             throw new Error("API key is required. Use the settings to register it.");
         }
 
-        const model = new ChatOpenAI({ model: "gpt-3.5-turbo", apiKey: preferencesStore.modelApiKey });
+        const model = useModelProvider().getModel("gpt-3.5-turbo", preferencesStore.modelApiKey);
         const chain = ChatPromptTemplate.fromTemplate(ANALYSIS_PROMPT_TEMPLATE).pipe(model);
         const streamResponse = await chain.stream({ context: message });
 

@@ -1,7 +1,7 @@
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { ChatOpenAI } from "@langchain/openai";
-import { AGENT_PROMPT_TEMPLATE } from "./PromptTemplateProvider";
+import { AGENT_PROMPT_TEMPLATE } from "./provider/PromptTemplateProvider";
 import { isAIMessageChunk } from "@langchain/core/messages";
+import { useModelProvider } from "./provider/ModelProvider";
 
 export interface AgentService {
     run (humanMessage: string): AsyncGenerator<string, void, unknown>;
@@ -9,7 +9,7 @@ export interface AgentService {
 
 
 export const useAgentService = (modelName: string, modelApiKey: string): AgentService => {
-    const model = new ChatOpenAI({ model: modelName, apiKey: modelApiKey });
+    const model = useModelProvider().getModel(modelName, modelApiKey);
     const agent = createReactAgent({
         llm: model,
         tools: [],
