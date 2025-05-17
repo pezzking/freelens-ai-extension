@@ -1,8 +1,6 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { ChatOpenAI } from "@langchain/openai";
 import { ANALYSIS_PROMPT_TEMPLATE } from "./provider/PromptTemplateProvider";
 import { PreferencesStore } from "../store/PreferencesStore";
-import { Renderer } from "@freelensapp/extensions";
 import { useModelProvider } from "./provider/ModelProvider";
 
 
@@ -13,10 +11,6 @@ export interface AiAnalysisService {
 const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisService => {
     const analyze = async function* (message: string) {
         console.log("Starting AI analysis for message: ", message);
-
-        // const podsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi) as Renderer.K8sApi.PodsStore;
-        // console.log("Load pods: ", podsStore);
-        // console.log(JSON.stringify(podsStore));
 
         if (!message) {
             throw new Error("No message provided for analysis.");

@@ -3,11 +3,11 @@ import useAiAnalysisService from "../../business/AiAnalysisService";
 import { AiAnalysisService } from "../../business/AiAnalysisService";
 import { PreferencesStore } from "../../store/PreferencesStore";
 import { MessageType } from "../message/MessageType";
-import { useAgentService, AgentService } from "../../business/AgentService";
+import { useAgentService, AgentService } from "../../business/agent/AgentService";
 
 const useChatHook = (preferencesStore: PreferencesStore) => {
   const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
-  const agentService: AgentService = useAgentService("gpt-3.5-turbo", preferencesStore.modelApiKey);
+  const agentService: AgentService = useAgentService("gpt-4o", preferencesStore.modelApiKey);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

@@ -17,11 +17,11 @@ If the input is ambiguous or incomplete, clearly state what additional informati
 
 RESPONSE FORMAT:
 use the markdown format for the response and use the following structure:
-### Summary :page_facing_up:
-### Diagnosis :mag:
-### Impact Assessment :warning:
-### Recommended Actions :rocket:
-### Reference Material :books:
+### Summary 📃
+### Diagnosis 🔎
+### Impact Assessment ⚠️
+### Recommended Actions 🚀
+### Reference Material 📚
 - [Kubernetes Documentation](https://kubernetes.io/docs/home/)
 `;
 
