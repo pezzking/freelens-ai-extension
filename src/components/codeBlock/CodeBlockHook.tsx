@@ -16,7 +16,7 @@ const useCodeBlockHook = ({children}: useCodeBlockHookProps) => {
   const [copied, setCopied] = useState(false)
   const text = String(children).replace(/\n$/, '')
   const hasMultipleLines = text.split('\n').length > 1
-  const [shellId, setShellId] = useState();
+  const shellId = "FreeLensAI-tabid";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(text).then(() => {
@@ -30,19 +30,21 @@ const useCodeBlockHook = ({children}: useCodeBlockHookProps) => {
   }
 
   const executeCommand = () => {
-    let terminalId = null;
     let terminal = terminalStore.getTerminal(shellId);
     if (terminal === undefined) {
-      const shell = createTerminalTab({title: 'FreeLens AI'});
-      setShellId(shell.id);
-      terminalId = shell.id;
+      createTerminalTab({title: 'FreeLens AI', id: shellId});
     } else {
-      terminalId = terminal.tabId;
     }
 
-    terminalStore.sendCommand(text, {
+    // Multiline commands are executed in reverse order by the terminal.
+    // I reverse them to ensure they are executed in the correct order.
+    const parts = text.split("\n");
+    parts.reverse();
+    const reversedCommand = parts.join("\n");
+
+    terminalStore.sendCommand(reversedCommand, {
       enter: true,
-      tabId: terminalId,
+      tabId: shellId,
     });
   }
 
