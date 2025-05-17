@@ -15,9 +15,13 @@ const CodeBlock = ({children, language}: CodeBlockProps) => {
   return (
     <div className="code-block-container">
       <div className={"code-block-toolbar"}>
-        <button onClick={codeBlockHook.handleRun} className={"code-block-button code-block-runButton"}>
-          <Play size={16}/>
+        <button onClick={codeBlockHook.executeCommand} className={"code-block-button code-block-run-button"}>
+          {codeBlockHook.isExecutable(language) && <Play size={16}/>}
         </button>
+
+        <div className={"code-block-toolbar-language"}>
+          {language}
+        </div>
 
         <button onClick={codeBlockHook.handleCopy} className={"code-block-button code-block-copy-button"}>
           {codeBlockHook.copied && <span className="code-block-copied-text">Copied!</span>}
@@ -36,7 +40,7 @@ const CodeBlock = ({children, language}: CodeBlockProps) => {
         showLineNumbers={codeBlockHook.hasMultipleLines}
         showInlineLineNumbers={codeBlockHook.hasMultipleLines}
       >
-        {codeBlockHook.code}
+        {codeBlockHook.text}
       </SyntaxHighlighter>
     </div>
   )

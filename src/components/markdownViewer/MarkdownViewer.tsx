@@ -1,27 +1,25 @@
 import Markdown from "react-markdown";
 import React from "react";
-import CodeBlock from "../codeBlock/CodeBlock";
+import useMarkDownViewerHook from "./MarkDownViewerHook";
+import "./MarkdownViewer.scss";
 
 type MarkdownViewerProps = {
   content: string;
 }
 
 const MarkdownViewer = ({content}: MarkdownViewerProps) => {
+  const markDownHook = useMarkDownViewerHook();
+
   return (
-    <Markdown
-      children={content}
-      components={{
-        code(props) {
-          const {children, className} = props
-          const match = /language-(\w+)/.exec(className || '')
-          return match ? (
-            <CodeBlock language={match[1]}>{children}</CodeBlock>
-          ) : (
-            <code className={className}>{children}</code>
-          )
-        }
-      }}
-    />
+    <div className="markdown-viewer-container-theme">
+      <Markdown
+        children={content}
+        components={{
+          code: (props) => markDownHook.renderCode(props.children, props.className),
+          a: (props) => markDownHook.renderLinks(props.href, props.children, props)
+        }}
+      />
+    </div>
   )
 }
 
