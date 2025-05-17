@@ -1,0 +1,39 @@
+.code-block-container {
+  position: relative;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.code-block-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2d2d2d;
+  padding: 0.5rem;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.code-block-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.code-block-run-button {
+  color: green;
+}
+
+.code-block-toolbar-language {
+  color: white;
+}
+
+.code-block-copy-button {
+  color: white;
+}
+
+.code-block-copied-text {
+  margin-left: 8px;
+}

@@ -1,5 +1,6 @@
 import React from "react";
 import "./Message.scss";
+import MarkdownViewer from "../markdownViewer/MarkdownViewer";
 
 export type MessageType = {
   text: string;
@@ -13,12 +14,17 @@ export type MessageProps = {
 const Message = ({message}: MessageProps) => {
   const className = message.sent ? "message-bubble sent" : "message-bubble";
 
-  return (
-    <div className={className}>
-      {message.text}
-    </div>
-  )
-
+  if (message.sent) {
+    return (
+      <div className={className}>
+        {message.text}
+      </div>
+    )
+  } else {
+    return (
+      <MarkdownViewer content={message.text}/>
+    )
+  }
 }
 
 export default Message;
