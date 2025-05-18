@@ -1,7 +1,7 @@
 import { Common } from "@freelensapp/extensions";
 import { makeObservable, observable, toJS } from "mobx";
 import { MessageType } from "../components/message/Message";
-import AIModels from "../business/AIModels";
+import { AIModels } from "../business/AIModels";
 
 export type PreferencesModel = {
   isChatGptApiKeySelected: boolean;
@@ -32,13 +32,13 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   }
 
   addMessage = (message: string, sent: boolean = true) => {
-    this._chatMessages.push({ text: message, sent: sent });
+    this._chatMessages.push({text: message, sent: sent});
   }
 
   updateLastMessage = (newText: string) => {
     if (this._chatMessages.length > 0) {
       const lastMessage = this._chatMessages.pop();
-      this._chatMessages.push({ text: lastMessage.text + newText, sent: lastMessage.sent });
+      this._chatMessages.push({text: lastMessage.text + newText, sent: lastMessage.sent});
     }
   }
 

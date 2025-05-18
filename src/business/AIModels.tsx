@@ -3,6 +3,11 @@ export type AIModel = {
   label: string;
 };
 
+export type AIModelInfo = {
+  description: string;
+  provider: string;
+};
+
 export enum AIModels {
   GPT_3_5_TURBO = "gpt-3.5-turbo",
   O3_MINI = "o3-mini",
@@ -15,18 +20,11 @@ export enum AIProviders {
   DEEP_SEEK = "deep-seek"
 }
 
-export const AIModelProviders: Record<string, AIProviders> = {
-  [AIModels.GPT_3_5_TURBO]: AIProviders.OPEN_AI,
-  [AIModels.O3_MINI]: AIProviders.OPEN_AI,
-  [AIModels.GPT_4_1]: AIProviders.OPEN_AI,
-  [AIModels.DEEP_SEEK_R1]: AIProviders.DEEP_SEEK,
+const AIModelInfos: Record<string, AIModelInfo> = {
+  [AIModels.GPT_3_5_TURBO]: {description: "gpt 3.5 turbo", provider: AIProviders.OPEN_AI},
+  [AIModels.O3_MINI]: {description: "o3 mini", provider: AIProviders.OPEN_AI},
+  [AIModels.GPT_4_1]: {description: "gpt 4.1", provider: AIProviders.OPEN_AI},
+  [AIModels.DEEP_SEEK_R1]: {description: "deep seek r1", provider: AIProviders.DEEP_SEEK},
 }
 
-const AIModelDescriptions: Record<string, string> = {
-  [AIModels.GPT_3_5_TURBO]: "gpt 3.5 turbo",
-  [AIModels.O3_MINI]: "o3 mini",
-  [AIModels.GPT_4_1]: "gpt 4.1",
-  [AIModels.DEEP_SEEK_R1]: "deep seek r1",
-}
-
-export default AIModelDescriptions;
+export default AIModelInfos;

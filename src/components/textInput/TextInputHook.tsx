@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import AIModelDescriptions, {AIModel} from "../../business/AIModels";
+import AIModelInfos, {AIModel} from "../../business/AIModels";
 import {PreferencesStore} from "../../store/PreferencesStore";
 
 type TextInputHookProps = {
@@ -12,7 +12,9 @@ const MAX_ROWS = 5;
 const useTextInput = ({onSend, preferencesStore}: TextInputHookProps) => {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const modelSelections = Object.entries(AIModelDescriptions).map(([value, label]) => ({value, label}));
+  const modelSelections = Object.entries(AIModelInfos).map(([value, aiModelInfo]) => {
+    return {value, label: aiModelInfo.description}
+  });
 
   const adaptTextareaHeight = () => {
     const textarea = textareaRef.current;
