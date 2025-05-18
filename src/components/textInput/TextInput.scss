@@ -4,17 +4,17 @@
 
 .text-input-inner-wrapper {
   max-width: 768px;
-  margin: 0 auto;
+  margin: 10px auto;
   position: relative;
-}
-
-.text-input-box {
-  display: flex;
   border: 1px solid var(--inputControlHoverBorder);
   background-color: var(--inputControlBackground);
   border-radius: 1rem;
   padding: 0.5rem 0.75rem;
-  align-items: flex-end;
+}
+
+.text-input-buttons-container {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .text-input-textarea {
@@ -44,4 +44,12 @@
 .text-input-send-button:disabled {
   opacity: 0.3;
   cursor: default;
+}
+
+.text-input-select-box {
+  min-width: 90px !important;
+}
+
+.text-input-select-box .Select__single-value {
+  font-size: 13px;
 }

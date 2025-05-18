@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
+import {useEffect, useRef} from "react";
 import useAiAnalysisService from "../../business/AiAnalysisService";
-import { PreferencesStore } from "../../store/PreferencesStore";
-import { MessageType } from "../message/MessageType";
+import {PreferencesStore} from "../../store/PreferencesStore";
+import {MessageType} from "../message/Message";
 
 const useChatHook = (preferencesStore: PreferencesStore) => {
   const aiAnalisysService = useAiAnalysisService(preferencesStore);
@@ -58,7 +58,7 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     }
   }
 
-  return { containerRef, sendMessage }
+  return {containerRef, sendMessage}
 
 }
 
