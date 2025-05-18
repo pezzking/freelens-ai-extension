@@ -26,7 +26,7 @@ const useCodeBlockHook = ({children}: useCodeBlockHookProps) => {
   }
 
   const isExecutable = (language: string) => {
-    return ['bash', 'sh', 'shell', 'zsh', 'cmd', 'powershell', 'ps1', 'pwsh', 'dos', 'fish'].includes(language);
+    return ['', 'bash', 'sh', 'shell', 'zsh', 'cmd', 'powershell', 'ps1', 'pwsh', 'dos', 'fish'].includes(language);
   }
 
   const executeCommand = () => {

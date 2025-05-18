@@ -5,7 +5,7 @@ const useMarkDownViewerHook = () => {
 
   const getLanguage = (className: string) => {
     const match = /language-(\w+)/.exec(className || '')
-    return match[1]
+    return match?.[1] || "";
   }
 
   const renderCode = (text: string, className: string) => {
