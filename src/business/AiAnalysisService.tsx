@@ -2,7 +2,6 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 import { ANALYSIS_PROMPT_TEMPLATE } from "./PromptTemplateProvider";
 import { PreferencesStore } from "../store/PreferencesStore";
-import { Renderer } from "@freelensapp/extensions";
 
 
 interface AiAnalysisService {
