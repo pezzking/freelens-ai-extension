@@ -5,45 +5,55 @@ import './CodeBlock.scss';
 import useCodeBlockHook from "./CodeBlockHook";
 
 type CodeBlockProps = {
-  children: string
-  language: string
+  inline: boolean,
+  children: string,
+  language: string,
+  props: any,
 }
 
-const CodeBlock = ({children, language}: CodeBlockProps) => {
+const CodeBlock = ({inline, children, language, props}: CodeBlockProps) => {
   const codeBlockHook = useCodeBlockHook({children});
 
-  return (
-    <div className="code-block-container">
-      <div className={"code-block-toolbar"}>
-        <button onClick={codeBlockHook.executeCommand} className={"code-block-button code-block-run-button"}>
-          {codeBlockHook.isExecutable(language) && <Play size={16}/>}
-        </button>
+  if (!inline) {
+    return (
+      <div className="code-block-container">
+        <div className={"code-block-toolbar"}>
+          <button onClick={codeBlockHook.executeCommand} className={"code-block-button code-block-run-button"}>
+            {codeBlockHook.isExecutable(language) && <Play size={16}/>}
+          </button>
 
-        <div className={"code-block-toolbar-language"}>
-          {language}
+          <div className={"code-block-toolbar-language"}>
+            {language}
+          </div>
+
+          <button onClick={codeBlockHook.handleCopy} className={"code-block-button code-block-copy-button"}>
+            {codeBlockHook.copied && <span className="code-block-copied-text">Copied!</span>}
+            <Copy size={16}/>
+          </button>
         </div>
-
-        <button onClick={codeBlockHook.handleCopy} className={"code-block-button code-block-copy-button"}>
-          {codeBlockHook.copied && <span className="code-block-copied-text">Copied!</span>}
-          <Copy size={16}/>
-        </button>
+        <SyntaxHighlighter
+          PreTag="div"
+          language={language}
+          customStyle={{
+            margin: 0,
+            borderBottomLeftRadius: '0.5rem',
+            borderBottomRightRadius: '0.5rem',
+            backgroundColor: "var(--layoutTabsLineColor)"
+          }}
+          showLineNumbers={codeBlockHook.hasMultipleLines}
+          showInlineLineNumbers={codeBlockHook.hasMultipleLines}
+        >
+          {codeBlockHook.text}
+        </SyntaxHighlighter>
       </div>
-      <SyntaxHighlighter
-        PreTag="div"
-        language={language}
-        customStyle={{
-          margin: 0,
-          borderBottomLeftRadius: '0.5rem',
-          borderBottomRightRadius: '0.5rem',
-          backgroundColor: "var(--layoutTabsLineColor)"
-        }}
-        showLineNumbers={codeBlockHook.hasMultipleLines}
-        showInlineLineNumbers={codeBlockHook.hasMultipleLines}
-      >
-        {codeBlockHook.text}
-      </SyntaxHighlighter>
-    </div>
-  )
+    )
+  } else {
+    return (
+      <code className="code-block-inline-container" {...props}>
+        {children}
+      </code>
+    )
+  }
 }
 
 export default CodeBlock;

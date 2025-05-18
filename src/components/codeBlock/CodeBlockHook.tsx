@@ -33,7 +33,6 @@ const useCodeBlockHook = ({children}: useCodeBlockHookProps) => {
     let terminal = terminalStore.getTerminal(shellId);
     if (terminal === undefined) {
       createTerminalTab({title: 'FreeLens AI', id: shellId});
-    } else {
     }
 
     // Multiline commands are executed in reverse order by the terminal.

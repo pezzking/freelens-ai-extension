@@ -1,14 +1,11 @@
-import { ChatOpenAI } from "@langchain/openai";
-
-
+import {ChatOpenAI} from "@langchain/openai";
 
 export const useModelProvider = () => {
 
-    const getModel = (modelName: string, modelApiKey: string) => {
-        const model = new ChatOpenAI({ model: modelName, apiKey: modelApiKey });
-        return model;
-    }
+  const getModel = (modelName: string, modelApiKey: string) => {
+    return new ChatOpenAI({model: modelName, apiKey: modelApiKey});
+  }
 
-    return {getModel}
+  return {getModel}
 
 };

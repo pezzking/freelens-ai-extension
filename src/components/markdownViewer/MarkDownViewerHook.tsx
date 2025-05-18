@@ -8,9 +8,9 @@ const useMarkDownViewerHook = () => {
     return match?.[1] || "";
   }
 
-  const renderCode = (text: string, className: string) => {
+  const renderCode = (inline: boolean, className: string, children: any, ...props: any) => {
     const language = getLanguage(className);
-    return <CodeBlock language={language}>{text}</CodeBlock>
+    return <CodeBlock inline={inline} language={language} props={props}>{children}</CodeBlock>
   }
 
   const renderLinks = (href: string, children: ReactNode, props: any) => {

@@ -1,14 +1,12 @@
 import {useEffect, useRef} from "react";
-import useAiAnalysisService from "../../business/AiAnalysisService";
-import { AiAnalysisService } from "../../business/AiAnalysisService";
+import useAiAnalysisService, {AiAnalysisService} from "../../business/AiAnalysisService";
 import {PreferencesStore} from "../../store/PreferencesStore";
 import {MessageType} from "../message/Message";
-import { useAgentService, AgentService } from "../../business/agent/AgentService";
-import {AIModels} from "../../business/AIModels";
+import {AgentService, useAgentService} from "../../business/agent/AgentService";
 
 const useChatHook = (preferencesStore: PreferencesStore) => {
   const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
-  const agentService: AgentService = useAgentService(AIModels.GPT_4_O, preferencesStore.openAIApiKey);
+  const agentService: AgentService = useAgentService(preferencesStore);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -86,7 +84,7 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     }
   }
 
-  return {containerRef, sendMessage, sendMessageToAgent }
+  return {containerRef, sendMessage, sendMessageToAgent}
 
 }
 
