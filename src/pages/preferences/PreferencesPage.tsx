@@ -3,7 +3,7 @@ import React from "react";
 import {observer} from "mobx-react";
 import {PreferencesStore} from "../../store/PreferencesStore";
 
-const {Component: {Checkbox, Input}} = Renderer;
+const {Component: {SubTitle, Input}} = Renderer;
 
 const PreferencesPage = observer(() => {
   // @ts-ignore
@@ -11,14 +11,18 @@ const PreferencesPage = observer(() => {
 
   return (
     <>
-      {/*<Checkbox label="I have my own chatgpt API key"*/}
-      {/*          value={preferencesStore.isChatGptApiKeySelected}*/}
-      {/*          onChange={(value: boolean) => preferencesStore.isChatGptApiKeySelected = value}/>*/}
       <Input
-        disabled={!preferencesStore.isChatGptApiKeySelected}
-        placeholder="ChatGpt key"
-        value={preferencesStore.modelApiKey}
-        onChange={(value: string) => preferencesStore.modelApiKey = value}
+        placeholder="OpenAI API key"
+        value={preferencesStore.openAIApiKey}
+        onChange={(value: string) => preferencesStore.openAIApiKey = value}
+      />
+
+      <br/>
+      <SubTitle title="Deep seek API key"/>
+      <Input
+        placeholder="Deep seek API key"
+        value={preferencesStore.deepSeekApiKey}
+        onChange={(value: string) => preferencesStore.deepSeekApiKey = value}
       />
     </>
   )

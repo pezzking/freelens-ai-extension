@@ -12,7 +12,7 @@ export enum AIModels {
   GPT_3_5_TURBO = "gpt-3.5-turbo",
   O3_MINI = "o3-mini",
   GPT_4_1 = "gpt-4.1",
-  DEEP_SEEK_R1 = "r1",
+  DEEP_SEEK_R1 = "deep-seek-r1",
 }
 
 export enum AIProviders {

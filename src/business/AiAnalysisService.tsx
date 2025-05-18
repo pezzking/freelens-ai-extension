@@ -2,6 +2,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatOpenAI } from "@langchain/openai";
 import { ANALYSIS_PROMPT_TEMPLATE } from "./PromptTemplateProvider";
 import { PreferencesStore } from "../store/PreferencesStore";
+import AIModelInfos, {AIProviders} from "./AIModels";
 
 
 interface AiAnalysisService {
@@ -19,11 +20,13 @@ const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisSer
             throw new Error("No message provided for analysis.");
         }
 
-        if (!preferencesStore.modelApiKey) {
+        if (!preferencesStore.openAIApiKey) {
             throw new Error("API key is required. Use the settings to register it.");
         }
 
-        const model = new ChatOpenAI({ model: preferencesStore.selectedModel, apiKey: preferencesStore.modelApiKey });
+        const provider = AIModelInfos[preferencesStore.selectedModel].provider
+        const apiKey = AIProviders.OPEN_AI === provider ? preferencesStore.openAIApiKey : preferencesStore.deepSeekApiKey;
+        const model = new ChatOpenAI({ model: preferencesStore.selectedModel, apiKey: apiKey });
         const chain = ChatPromptTemplate.fromTemplate(ANALYSIS_PROMPT_TEMPLATE).pipe(model);
         const streamResponse = await chain.stream({ context: message });
 

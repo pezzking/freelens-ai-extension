@@ -4,14 +4,14 @@ import { MessageType } from "../components/message/Message";
 import { AIModels } from "../business/AIModels";
 
 export type PreferencesModel = {
-  isChatGptApiKeySelected: boolean;
-  modelApiKey: string;
+  openAIApiKey: string;
+  deepSeekApiKey: string;
   selectedModel: string;
 };
 
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
-  @observable isChatGptApiKeySelected: boolean = true;
-  @observable modelApiKey: string = "";
+  @observable openAIApiKey: string = "";
+  @observable deepSeekApiKey: string = "";
   @observable selectedModel: string = AIModels.GPT_3_5_TURBO;
   @observable private _chatMessages: MessageType[] = [];
 
@@ -19,8 +19,8 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     super({
       configName: "freelens-ai-preferences-store",
       defaults: {
-        isChatGptApiKeySelected: true,
         modelApiKey: "",
+        deepSeekApiKey: "",
         selectedModel: AIModels.GPT_3_5_TURBO
       }
     });
@@ -43,15 +43,15 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   }
 
   protected fromStore = (preferencesModel: PreferencesModel): void => {
-    this.isChatGptApiKeySelected = preferencesModel.isChatGptApiKeySelected;
-    this.modelApiKey = preferencesModel.modelApiKey;
+    this.openAIApiKey = preferencesModel.openAIApiKey;
+    this.deepSeekApiKey = preferencesModel.deepSeekApiKey;
     this.selectedModel = preferencesModel.selectedModel;
   }
 
   toJSON = (): PreferencesModel => {
     const value: PreferencesModel = {
-      isChatGptApiKeySelected: this.isChatGptApiKeySelected,
-      modelApiKey: this.modelApiKey,
+      openAIApiKey: this.openAIApiKey,
+      deepSeekApiKey: this.deepSeekApiKey,
       selectedModel: this.selectedModel,
     };
 
