@@ -9,7 +9,7 @@
   border: 1px solid var(--inputControlHoverBorder);
   background-color: var(--inputControlBackground);
   border-radius: 1rem;
-  padding: 0.5rem 0.75rem;
+  padding: 20px 20px 8px 20px;
 }
 
 .text-input-buttons-container {
@@ -47,9 +47,16 @@
 }
 
 .text-input-select-box {
-  min-width: 90px !important;
+  min-width: 70px !important;
 }
 
 .text-input-select-box .Select__single-value {
   font-size: 13px;
+}
+
+.text-input-select-box .Select__value-container {
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-right: 0;
 }
