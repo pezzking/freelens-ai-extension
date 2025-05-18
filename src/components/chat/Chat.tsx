@@ -19,7 +19,7 @@ const Chat = observer(() => {
         ))}
       </div>
 
-      <TextInput onSend={chatHook.sendMessage}/>
+      <TextInput onSend={chatHook.sendMessageToAgent}/>
     </div>
   )
 })

@@ -1,10 +1,13 @@
 import {useEffect, useRef} from "react";
 import useAiAnalysisService from "../../business/AiAnalysisService";
+import { AiAnalysisService } from "../../business/AiAnalysisService";
 import {PreferencesStore} from "../../store/PreferencesStore";
 import {MessageType} from "../message/Message";
+import { useAgentService, AgentService } from "../../business/agent/AgentService";
 
 const useChatHook = (preferencesStore: PreferencesStore) => {
-  const aiAnalisysService = useAiAnalysisService(preferencesStore);
+  const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
+  const agentService: AgentService = useAgentService("gpt-4o", preferencesStore.modelApiKey);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -12,17 +15,32 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     scrollToBottom(false);
   }, []);
 
+  const sendMessage = (message: string, sent: boolean = true) => {
+    preferencesStore.addMessage(message, sent);
+    scrollToBottom();
+    processResponse();
+  }
+
+  const sendMessageToAgent = (message: string, sent: boolean = true) => {
+    console.log("Send message to agent: ", message);
+    preferencesStore.addMessage(message, sent);
+    scrollToBottom();
+
+    const messagesNumber = preferencesStore.chatMessages.length;
+    if (messagesNumber > 0) {
+      const lastMessage = preferencesStore.chatMessages.at(messagesNumber - 1);
+      if (lastMessage.sent) {
+        runAgent(lastMessage);
+      }
+    }
+  }
+
   const processResponse = async () => {
     const messagesNumber = preferencesStore.chatMessages.length;
     if (messagesNumber > 0) {
       const lastMessage = preferencesStore.chatMessages.at(messagesNumber - 1);
       if (lastMessage.sent) {
-        try {
-          analyzeEvent(lastMessage);
-        } catch (error) {
-          console.error("Error in AI analysis: ", error);
-          sendMessage("Error in AI analysis: " + error.message, false);
-        }
+        analyzeEvent(lastMessage);
       }
     }
   }
@@ -42,10 +60,19 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     }
   }
 
-  const sendMessage = (message: string, sent: boolean = true) => {
-    preferencesStore.addMessage(message, sent);
-    scrollToBottom();
-    processResponse();
+  const runAgent = async (lastMessage: MessageType) => {
+    try {
+      const agentResponseStream = agentService.run(lastMessage.text);
+      let aiResult = "";
+      sendMessage(aiResult, false);
+      for await (const chunk of agentResponseStream) {
+        // console.log("Streaming to UI chunk: ", chunk);
+        preferencesStore.updateLastMessage(chunk);
+      }
+    } catch (error) {
+      console.error("Error while running Freelens Agent: ", error);
+      sendMessage("Error while running Freelens Agent: " + error.message, false);
+    }
   }
 
   const scrollToBottom = (withDelay: boolean = true) => {
@@ -58,7 +85,7 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     }
   }
 
-  return {containerRef, sendMessage}
+  return {containerRef, sendMessage, sendMessageToAgent }
 
 }
 
