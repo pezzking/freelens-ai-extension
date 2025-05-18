@@ -2,7 +2,7 @@ import {ChatPromptTemplate} from "@langchain/core/prompts";
 import {ANALYSIS_PROMPT_TEMPLATE} from "./provider/PromptTemplateProvider";
 import {PreferencesStore} from "../store/PreferencesStore";
 import {useModelProvider} from "./provider/ModelProvider";
-import getaPiKey from "./AIApiKeyProvider";
+import getAPIKey from "./AIApiKeyProvider";
 
 
 export interface AiAnalysisService {
@@ -21,7 +21,7 @@ const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisSer
       throw new Error("API key is required. Use the settings to register it.");
     }
 
-    const apiKey = getaPiKey(preferencesStore);
+    const apiKey = getAPIKey(preferencesStore);
     const model = useModelProvider().getModel(preferencesStore.selectedModel, apiKey);
     const chain = ChatPromptTemplate.fromTemplate(ANALYSIS_PROMPT_TEMPLATE).pipe(model);
     const streamResponse = await chain.stream({context: message});
