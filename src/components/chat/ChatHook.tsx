@@ -4,10 +4,11 @@ import { AiAnalysisService } from "../../business/AiAnalysisService";
 import {PreferencesStore} from "../../store/PreferencesStore";
 import {MessageType} from "../message/Message";
 import { useAgentService, AgentService } from "../../business/agent/AgentService";
+import {AIModels} from "../../business/AIModels";
 
 const useChatHook = (preferencesStore: PreferencesStore) => {
   const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
-  const agentService: AgentService = useAgentService("gpt-4o", preferencesStore.modelApiKey);
+  const agentService: AgentService = useAgentService(AIModels.GPT_4_O, preferencesStore.openAIApiKey);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

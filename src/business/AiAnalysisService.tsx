@@ -21,10 +21,9 @@ const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisSer
             throw new Error("API key is required. Use the settings to register it.");
         }
 
-        const model = useModelProvider().getModel("gpt-3.5-turbo", preferencesStore.modelApiKey);
         const provider = AIModelInfos[preferencesStore.selectedModel].provider
         const apiKey = AIProviders.OPEN_AI === provider ? preferencesStore.openAIApiKey : preferencesStore.deepSeekApiKey;
-        const model = new ChatOpenAI({ model: preferencesStore.selectedModel, apiKey: apiKey });
+        const model = useModelProvider().getModel(preferencesStore.selectedModel, apiKey);
         const chain = ChatPromptTemplate.fromTemplate(ANALYSIS_PROMPT_TEMPLATE).pipe(model);
         const streamResponse = await chain.stream({ context: message });
 
