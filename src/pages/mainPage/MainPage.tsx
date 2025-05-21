@@ -7,14 +7,10 @@ type MainPageProps = {
   extension: Renderer.LensExtension;
 };
 
-const generateConversationId = () => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-};
-
 const MainPage = ({extension}: MainPageProps) => {
   return (
     <div className="example-page">
-      <Chat conversationId={generateConversationId()}/>
+      <Chat/>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import AIModelInfos, {AIModel} from "../../business/AIModels";
+import AIModelInfos, {AIModel} from "../../business/provider/AIModels";
 import {PreferencesStore} from "../../store/PreferencesStore";
 
 type TextInputHookProps = {

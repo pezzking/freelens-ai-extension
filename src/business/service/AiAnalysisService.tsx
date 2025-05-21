@@ -2,7 +2,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ANALYSIS_PROMPT_TEMPLATE } from "../provider/PromptTemplateProvider";
 import { PreferencesStore } from "../../store/PreferencesStore";
 import { useModelProvider } from "../provider/ModelProvider";
-import getAPIKey from "./AIApiKeyProvider";
+import getAPIKey from "../provider/AIApiKeyProvider";
 
 
 export interface AiAnalysisService {

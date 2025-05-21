@@ -1,6 +1,6 @@
 import { isAIMessageChunk } from "@langchain/core/messages";
 import { Interrupt } from "@langchain/langgraph";
-import { freelensAgentSystem } from "../agent/FreelensAgentSystem";
+import { useFreelensAgentSystem } from "../agent/FreelensAgentSystem";
 
 export interface AgentService {
     run(humanMessage: string, conversationId: string): AsyncGenerator<string | Interrupt, void, unknown>;
@@ -13,7 +13,7 @@ export interface AgentService {
  * @returns 
  */
 export const useAgentService = (modelName: string, modelApiKey: string): AgentService => {
-    const freelensAgent = freelensAgentSystem();
+    const freelensAgent = useFreelensAgentSystem();
 
     const run = async function* (humanMessage: string, conversationId: string) {
         console.log("Starting Freelens Agent run for message: ", humanMessage);

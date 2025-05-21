@@ -1,5 +1,5 @@
 import AIModelInfos, {AIProviders} from "./AIModels";
-import {PreferencesStore} from "../store/PreferencesStore";
+import {PreferencesStore} from "../../store/PreferencesStore";
 
 const getaPiKey = (preferencesStore: PreferencesStore) => {
   const provider = AIModelInfos[preferencesStore.selectedModel].provider

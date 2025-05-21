@@ -1,7 +1,7 @@
 import { Common } from "@freelensapp/extensions";
 import { makeObservable, observable, toJS } from "mobx";
 import { MessageType } from "../components/message/Message";
-import { AIModels } from "../business/AIModels";
+import { AIModels } from "../business/provider/AIModels";
 
 export type PreferencesModel = {
   openAIApiKey: string;
@@ -9,7 +9,12 @@ export type PreferencesModel = {
   selectedModel: string;
 };
 
+const generateConversationId = () => {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+};
+
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
+  @observable conversationId: string = generateConversationId();
   @observable openAIApiKey: string = "";
   @observable deepSeekApiKey: string = "";
   @observable selectedModel: string = AIModels.GPT_3_5_TURBO;
@@ -19,7 +24,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     super({
       configName: "freelens-ai-preferences-store",
       defaults: {
-        modelApiKey: "",
+        openAIApiKey: "",
         deepSeekApiKey: "",
         selectedModel: AIModels.GPT_3_5_TURBO
       }
@@ -32,13 +37,13 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   }
 
   addMessage = (message: string, sent: boolean = true) => {
-    this._chatMessages.push({text: message, sent: sent});
+    this._chatMessages.push({ text: message, sent: sent });
   }
 
   updateLastMessage = (newText: string) => {
     if (this._chatMessages.length > 0) {
       const lastMessage = this._chatMessages.pop();
-      this._chatMessages.push({text: lastMessage.text + newText, sent: lastMessage.sent});
+      this._chatMessages.push({ text: lastMessage.text + newText, sent: lastMessage.sent });
     }
   }
 

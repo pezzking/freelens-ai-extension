@@ -6,14 +6,10 @@ import useChatHook from "./ChatHook";
 import {observer} from "mobx-react";
 import {PreferencesStore} from "../../store/PreferencesStore";
 
-type ChatProps = {
-  conversationId: string;
-};
-
-const Chat = observer(({ conversationId }: ChatProps) => {
+const Chat = observer(() => {
   // @ts-ignore
   const preferencesStore = PreferencesStore.getInstance();
-  const chatHook = useChatHook(preferencesStore, conversationId);
+  const chatHook = useChatHook(preferencesStore);
 
   return (
     <div className="chat-container">

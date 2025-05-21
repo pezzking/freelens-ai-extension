@@ -1,12 +1,14 @@
 import { useEffect, useRef } from "react";
+import getAPiKey from "../../business/provider/AIApiKeyProvider";
 import { AgentService, useAgentService } from "../../business/service/AgentService";
 import useAiAnalysisService, { AiAnalysisService } from "../../business/service/AiAnalysisService";
 import { PreferencesStore } from "../../store/PreferencesStore";
-import { MessageType } from "../message/MessageType";
+import { MessageType } from "../message/Message";
 
-const useChatHook = (preferencesStore: PreferencesStore, conversationId: string) => {
+const useChatHook = (preferencesStore: PreferencesStore) => {
+  const apiKey = getAPiKey(preferencesStore);
   const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
-  const agentService: AgentService = useAgentService(preferencesStore);
+  const agentService: AgentService = useAgentService(preferencesStore.selectedModel, apiKey);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -61,7 +63,7 @@ const useChatHook = (preferencesStore: PreferencesStore, conversationId: string)
 
   const runAgent = async (lastMessage: MessageType) => {
     try {
-      const agentResponseStream = agentService.run(lastMessage.text, conversationId);
+      const agentResponseStream = agentService.run(lastMessage.text, preferencesStore.conversationId);
       let aiResult = "";
       sendMessage(aiResult, false);
       for await (const chunk of agentResponseStream) {
@@ -92,7 +94,7 @@ const useChatHook = (preferencesStore: PreferencesStore, conversationId: string)
     }
   }
 
-  return {containerRef, sendMessage, sendMessageToAgent}
+  return { containerRef, sendMessage, sendMessageToAgent }
 
 }
 
