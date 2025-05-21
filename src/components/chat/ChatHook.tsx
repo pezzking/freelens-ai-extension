@@ -6,7 +6,7 @@ import { MessageType } from "../message/MessageType";
 
 const useChatHook = (preferencesStore: PreferencesStore, conversationId: string) => {
   const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
-  const agentService: AgentService = useAgentService("gpt-4o", preferencesStore.modelApiKey);
+  const agentService: AgentService = useAgentService(preferencesStore);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -92,7 +92,7 @@ const useChatHook = (preferencesStore: PreferencesStore, conversationId: string)
     }
   }
 
-  return { containerRef, sendMessage, sendMessageToAgent }
+  return {containerRef, sendMessage, sendMessageToAgent}
 
 }
 

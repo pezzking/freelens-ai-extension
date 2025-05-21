@@ -37,3 +37,13 @@
 .code-block-copied-text {
   margin-left: 8px;
 }
+
+.code-block-inline-container {
+  border: solid 1px var(--borderColor);
+  background-color: var(--borderColor);
+  color: var(--textColorAccent);
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}

@@ -14,17 +14,17 @@ export type MessageProps = {
 const Message = ({message}: MessageProps) => {
   const className = message.sent ? "message-bubble sent" : "message-bubble";
 
-  return (
-    <div className={className}>
-      {message.text}
-    </div>
-  )
-  // if (message.sent) {
-  // } else {
-  //   return (
-  //     <MarkdownViewer content={message.text}/>
-  //   )
-  // }
+  if (message.sent) {
+    return (
+      <div className={className}>
+        {message.text}
+      </div>
+    )
+  } else {
+    return (
+      <MarkdownViewer content={message.text}/>
+    )
+  }
 }
 
 export default Message;

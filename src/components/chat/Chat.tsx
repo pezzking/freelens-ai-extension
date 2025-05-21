@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react'
 import './Chat.scss'
 import TextInput from "../textInput/TextInput";
-import Message, {MessageType} from "../message/MessageType";
+import Message, {MessageType} from "../message/Message";
 import useChatHook from "./ChatHook";
 import {observer} from "mobx-react";
 import {PreferencesStore} from "../../store/PreferencesStore";

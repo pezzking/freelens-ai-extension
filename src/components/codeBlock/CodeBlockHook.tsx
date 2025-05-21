@@ -26,14 +26,13 @@ const useCodeBlockHook = ({children}: useCodeBlockHookProps) => {
   }
 
   const isExecutable = (language: string) => {
-    return ['bash', 'sh', 'shell', 'zsh', 'cmd', 'powershell', 'ps1', 'pwsh', 'dos', 'fish'].includes(language);
+    return ['', 'bash', 'sh', 'shell', 'zsh', 'cmd', 'powershell', 'ps1', 'pwsh', 'dos', 'fish'].includes(language);
   }
 
   const executeCommand = () => {
     let terminal = terminalStore.getTerminal(shellId);
     if (terminal === undefined) {
       createTerminalTab({title: 'FreeLens AI', id: shellId});
-    } else {
     }
 
     // Multiline commands are executed in reverse order by the terminal.

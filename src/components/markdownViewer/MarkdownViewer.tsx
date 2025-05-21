@@ -15,7 +15,7 @@ const MarkdownViewer = ({content}: MarkdownViewerProps) => {
       <Markdown
         children={content}
         components={{
-          code: (props) => markDownHook.renderCode(props.children, props.className),
+          code: (props) => markDownHook.renderCode(props.inline, props.className, props.children, props),
           a: (props) => markDownHook.renderLinks(props.href, props.children, props)
         }}
       />
