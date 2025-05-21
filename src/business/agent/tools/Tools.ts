@@ -55,3 +55,46 @@ export const getWarningEventsByNamespace = tool(
         }),
     }
 );
+
+export const createPod = tool(
+    async ({ name, namespace, data }: { name: string, namespace: string, data: Renderer.K8sApi.KubeObject }): Promise<string> => {
+        /**
+         * Creates a pod in the Kubernetes cluster
+         */
+        console.log("[Tool invocation: createPod]");
+        try {
+            const podsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi) as Renderer.K8sApi.PodsStore;
+            const createPodResult: Renderer.K8sApi.Pod = await podsStore.create({ name, namespace }, data);
+            console.log("[Tool invocation result: createPod] - ", createPodResult);
+            return "Pod manifest applied successfully";
+        } catch (error) {
+            console.error("[Tool invocation error: createPod] - ", error);
+            return JSON.stringify(error);
+        }
+    },
+    {
+        name: "createPod",
+        description: "Creates a pod in the Kubernetes cluster",
+        schema: z.object({
+            namespace: z.string(),
+            name: z.string(),
+            data: z.object({
+                apiVersion: z.string(),
+                kind: z.string(),
+                metadata: z.object({
+                    name: z.string(),
+                    namespace: z.string(),
+                }),
+                spec: z.object({
+                    containers: z.array(z.object({
+                        name: z.string(),
+                        image: z.string(),
+                        ports: z.array(z.object({
+                            containerPort: z.number(),
+                        })),
+                    })),
+                }),
+            }),
+        }),
+    }
+);

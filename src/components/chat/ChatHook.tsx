@@ -1,11 +1,10 @@
 import { useEffect, useRef } from "react";
-import useAiAnalysisService from "../../business/AiAnalysisService";
-import { AiAnalysisService } from "../../business/AiAnalysisService";
+import { AgentService, useAgentService } from "../../business/service/AgentService";
+import useAiAnalysisService, { AiAnalysisService } from "../../business/service/AiAnalysisService";
 import { PreferencesStore } from "../../store/PreferencesStore";
 import { MessageType } from "../message/MessageType";
-import { useAgentService, AgentService } from "../../business/agent/AgentService";
 
-const useChatHook = (preferencesStore: PreferencesStore) => {
+const useChatHook = (preferencesStore: PreferencesStore, conversationId: string) => {
   const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
   const agentService: AgentService = useAgentService("gpt-4o", preferencesStore.modelApiKey);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -62,12 +61,20 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
 
   const runAgent = async (lastMessage: MessageType) => {
     try {
-      const agentResponseStream = agentService.run(lastMessage.text);
+      const agentResponseStream = agentService.run(lastMessage.text, conversationId);
       let aiResult = "";
       sendMessage(aiResult, false);
       for await (const chunk of agentResponseStream) {
         // console.log("Streaming to UI chunk: ", chunk);
-        preferencesStore.updateLastMessage(chunk);
+        if (typeof chunk === "string") {
+          preferencesStore.updateLastMessage(chunk);
+        }
+
+        // check if the chunk is an interrupt, handle it
+        if (typeof chunk === "object" && chunk.value) {
+          console.log("Agent interrupt: ", chunk);
+          sendMessage("Agent interrupt: " + chunk, false);
+        }
       }
     } catch (error) {
       console.error("Error while running Freelens Agent: ", error);
