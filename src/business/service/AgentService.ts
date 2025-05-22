@@ -1,9 +1,8 @@
 import { isAIMessageChunk } from "@langchain/core/messages";
-import { Interrupt } from "@langchain/langgraph";
-import { useFreelensAgentSystem } from "../agent/FreelensAgentSystem";
+import { Command, CompiledStateGraph, Interrupt } from "@langchain/langgraph";
 
 export interface AgentService {
-    run(humanMessage: string, conversationId: string): AsyncGenerator<string | Interrupt, void, unknown>;
+    run(agentInput: object | Command, conversationId: string): AsyncGenerator<string | Interrupt, void, unknown>;
 }
 
 /**
@@ -12,18 +11,14 @@ export interface AgentService {
  * @param modelApiKey 
  * @returns 
  */
-export const useAgentService = (modelName: string, modelApiKey: string): AgentService => {
-    const freelensAgent = useFreelensAgentSystem();
+export const useAgentService = (agent: CompiledStateGraph<object, object, string, any, any, any>): AgentService => {
+    const freelensAgent = agent;
 
-    const run = async function* (humanMessage: string, conversationId: string) {
-        console.log("Starting Freelens Agent run for message: ", humanMessage);
-        const graph = freelensAgent.buildMultiAgentSystem();
+    const run = async function* (agentInput: object | Command, conversationId: string) {
+        console.log("Starting Freelens Agent run for message: ", agentInput);
 
         let config = { thread_id: conversationId };
-        const streamResponse = await graph.stream(
-            { modelName: modelName, modelApiKey: modelApiKey, messages: [{ role: "user", content: humanMessage }], },
-            { streamMode: "messages", configurable: config },
-        );
+        const streamResponse = await freelensAgent.stream(agentInput, { streamMode: "messages", configurable: config });
 
         // streams LLM token by token to the UI
         for await (const [message, _metadata] of streamResponse) {
@@ -38,7 +33,7 @@ export const useAgentService = (modelName: string, modelApiKey: string): AgentSe
         yield "\n";
 
         // checks the agent state for any interrupts
-        const agentState = await graph.getState({ configurable: config });
+        const agentState = await freelensAgent.getState({ configurable: config });
         console.log("Agent state: ", agentState);
         if (agentState.next) {
             console.log("Agent state next: ", agentState.next);

@@ -1,5 +1,6 @@
 import { Renderer } from "@freelensapp/extensions";
 import { tool } from "@langchain/core/tools";
+import { interrupt } from "@langchain/langgraph";
 import { z } from "zod";
 
 export const getNamespaces = tool(
@@ -62,6 +63,20 @@ export const createPod = tool(
          * Creates a pod in the Kubernetes cluster
          */
         console.log("[Tool invocation: createPod]");
+
+        const interruptRequest = {
+            question: "Approve this action...",
+            options: ["yes", "no"],
+            actionToApprove: { name, namespace, data },
+            requestString: "Approve this action: " + JSON.stringify({ name, namespace, data }) + "\n\n\n options: [yes/no]",
+        }
+        const review = interrupt(interruptRequest);
+        console.log("Tool call review: ", review);
+        if (review !== "yes") {
+            console.log("[Tool invocation: createPod] - action not approved");
+            return "The user denied the action";
+        }
+
         try {
             const podsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi) as Renderer.K8sApi.PodsStore;
             const createPodResult: Renderer.K8sApi.Pod = await podsStore.create({ name, namespace }, data);
@@ -93,6 +108,74 @@ export const createPod = tool(
                             containerPort: z.number(),
                         })),
                     })),
+                }),
+            }),
+        }),
+    }
+);
+
+export const createDeployment = tool(
+    async ({ name, namespace, data }: { name: string, namespace: string, data: Renderer.K8sApi.KubeObject }): Promise<string> => {
+        /**
+         * Creates a deployment in the Kubernetes cluster
+         */
+        console.log("[Tool invocation: createDeployment]");
+
+        const interruptRequest = {
+            question: "Approve this action...",
+            options: ["yes", "no"],
+            actionToApprove: { name, namespace, data },
+            requestString: "Approve this action: " + JSON.stringify({ name, namespace, data }) + "\n\n\n options: [yes/no]",
+        }
+        const review = interrupt(interruptRequest);
+        console.log("Tool call review: ", review);
+        if (review !== "yes") {
+            console.log("[Tool invocation: createDeployment] - action not approved");
+            return "The user denied the action";
+        }
+
+        try {
+            const deploymentsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.deploymentApi) as Renderer.K8sApi.DeploymentStore;
+            const createDeploymentResult: Renderer.K8sApi.Deployment = await deploymentsStore.create({ name, namespace }, data);
+            console.log("[Tool invocation result: createDeployment] - ", createDeploymentResult);
+            return "Deployment manifest applied successfully";
+        } catch (error) {
+            console.error("[Tool invocation error: createDeployment] - ", error);
+            return JSON.stringify(error);
+        }
+    },
+    {
+        name: "createDeployment",
+        description: "Creates a deployment in the Kubernetes cluster",
+        schema: z.object({
+            namespace: z.string(),
+            name: z.string(),
+            data: z.object({
+                apiVersion: z.string(),
+                kind: z.string(),
+                metadata: z.object({
+                    name: z.string(),
+                    namespace: z.string(),
+                }),
+                spec: z.object({
+                    replicas: z.number(),
+                    selector: z.object({
+                        matchLabels: z.record(z.string()),
+                    }),
+                    template: z.object({
+                        metadata: z.object({
+                            labels: z.record(z.string()),
+                        }),
+                        spec: z.object({
+                            containers: z.array(z.object({
+                                name: z.string(),
+                                image: z.string(),
+                                ports: z.array(z.object({
+                                    containerPort: z.number(),
+                                })),
+                            })),
+                        }),
+                    }),
                 }),
             }),
         }),

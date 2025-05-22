@@ -1,7 +1,9 @@
 import { Common } from "@freelensapp/extensions";
 import { makeObservable, observable, toJS } from "mobx";
-import { MessageType } from "../components/message/Message";
 import { AIModels } from "../business/provider/AIModels";
+import { MessageType } from "../components/message/Message";
+import { useFreelensAgentSystem } from "../business/agent/FreelensAgentSystem";
+import { CompiledStateGraph, Pregel } from "@langchain/langgraph";
 
 export type PreferencesModel = {
   openAIApiKey: string;
@@ -15,10 +17,12 @@ const generateConversationId = () => {
 
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
   @observable conversationId: string = generateConversationId();
+  @observable _conversationInterrupted: boolean = false;
   @observable openAIApiKey: string = "";
   @observable deepSeekApiKey: string = "";
   @observable selectedModel: string = AIModels.GPT_3_5_TURBO;
   @observable private _chatMessages: MessageType[] = [];
+  @observable freelensAgent = useFreelensAgentSystem().buildMultiAgentSystem();
 
   constructor() {
     super({
@@ -52,6 +56,10 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     this.deepSeekApiKey = preferencesModel.deepSeekApiKey;
     this.selectedModel = preferencesModel.selectedModel;
   }
+
+  conversationIsInterrupted = () => { this._conversationInterrupted = true; }
+  conversationIsNotInterrupted = () => { this._conversationInterrupted = false; }
+  isConversationInterrupted = () => this._conversationInterrupted;
 
   toJSON = (): PreferencesModel => {
     const value: PreferencesModel = {
