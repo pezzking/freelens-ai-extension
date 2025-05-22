@@ -1,3 +1,4 @@
+import { Command } from "@langchain/langgraph";
 import { useEffect, useRef } from "react";
 import getAPiKey from "../../business/provider/AIApiKeyProvider";
 import { AgentService, useAgentService } from "../../business/service/AgentService";
@@ -5,10 +6,27 @@ import useAiAnalysisService, { AiAnalysisService } from "../../business/service/
 import { PreferencesStore } from "../../store/PreferencesStore";
 import { MessageType } from "../message/Message";
 
+interface ApprovalInterrupt {
+  question: string;
+  options: string[];
+  actionToApprove: any; // You might want to type this more specifically
+  requestString: string;
+}
+
+function isApprovalInterrupt(value: unknown): value is ApprovalInterrupt {
+  return (
+    typeof value === "object" && value !== null &&
+    'question' in value &&
+    'options' in value &&
+    'actionToApprove' in value &&
+    'requestString' in value
+  );
+}
+
 const useChatHook = (preferencesStore: PreferencesStore) => {
   const apiKey = getAPiKey(preferencesStore);
   const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
-  const agentService: AgentService = useAgentService(preferencesStore.selectedModel, apiKey);
+  const agentService: AgentService = useAgentService(preferencesStore.freelensAgent);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -31,7 +49,18 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     if (messagesNumber > 0) {
       const lastMessage = preferencesStore.chatMessages.at(messagesNumber - 1);
       if (lastMessage.sent) {
-        runAgent(lastMessage);
+        if (preferencesStore.isConversationInterrupted()) {
+          console.log("Conversation is interrupted, resuming...");
+          preferencesStore.conversationIsNotInterrupted();
+          runAgent(new Command({ resume: lastMessage.text }));
+        } else {
+          const agentInput = {
+            modelName: preferencesStore.selectedModel,
+            modelApiKey: apiKey,
+            messages: [{ role: "user", content: lastMessage.text }],
+          };
+          runAgent(agentInput);
+        }
       }
     }
   }
@@ -61,9 +90,9 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     }
   }
 
-  const runAgent = async (lastMessage: MessageType) => {
+  const runAgent = async (agentInput: object | Command) => {
     try {
-      const agentResponseStream = agentService.run(lastMessage.text, preferencesStore.conversationId);
+      const agentResponseStream = agentService.run(agentInput, preferencesStore.conversationId);
       let aiResult = "";
       sendMessage(aiResult, false);
       for await (const chunk of agentResponseStream) {
@@ -72,10 +101,11 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
           preferencesStore.updateLastMessage(chunk);
         }
 
-        // check if the chunk is an interrupt, handle it
-        if (typeof chunk === "object" && chunk.value) {
-          console.log("Agent interrupt: ", chunk);
-          sendMessage("Agent interrupt: " + chunk, false);
+        // check if the chunk is an approval interrupt
+        if (typeof chunk === "object" && isApprovalInterrupt(chunk.value)) {
+          console.log("Approval interrupt received: ", chunk);
+          sendMessage(chunk.value.requestString, false);
+          preferencesStore.conversationIsInterrupted();
         }
       }
     } catch (error) {
