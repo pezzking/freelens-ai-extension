@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import AIModelInfos, {AIModel} from "../../business/provider/AIModels";
+import AIModelInfos, {AIModel, toAIModelEnum} from "../../business/provider/AIModels";
 import {PreferencesStore} from "../../store/PreferencesStore";
 
 type TextInputHookProps = {
@@ -47,7 +47,7 @@ const useTextInput = ({onSend, preferencesStore}: TextInputHookProps) => {
   };
 
   const onChangeModel = (option: AIModel) => {
-    preferencesStore.selectedModel = option.value
+    preferencesStore.selectedModel = toAIModelEnum(option.value)
   }
 
   return {message, textareaRef, modelSelections, setMessage, handleKeyDown, handleSend, onChangeModel}

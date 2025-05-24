@@ -22,7 +22,7 @@ const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisSer
     }
 
     const apiKey = getAPIKey(preferencesStore);
-    const model = useModelProvider().getModel(preferencesStore.selectedModel, apiKey);
+    const model = useModelProvider().getModel({modelName: preferencesStore.selectedModel, apiKey: apiKey});
     const chain = ChatPromptTemplate.fromTemplate(ANALYSIS_PROMPT_TEMPLATE).pipe(model);
     const streamResponse = await chain.stream({context: message});
 

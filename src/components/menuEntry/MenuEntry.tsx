@@ -18,7 +18,7 @@ const MenuEntry = ({object}: KubeObjectMenuProps) => {
   return (
     <MenuItem onClick={() => menuEntryHook.openTab(object.message)}>
       <FreeLensAIIcon/>
-      <span className="title">Analyze</span>
+      <span className="title">Explain</span>
     </MenuItem>
   );
 }

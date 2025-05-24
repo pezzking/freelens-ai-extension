@@ -1,11 +1,12 @@
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { getNamespaces, getWarningEventsByNamespace } from "./tools/Tools";
+import { AIModels } from "../provider/AIModels";
 import { useModelProvider } from "../provider/ModelProvider";
 import { AGENT_ANALYZER_PROMPT_TEMPLATE } from "../provider/PromptTemplateProvider";
+import { getNamespaces, getWarningEventsByNamespace } from "./tools/Tools";
 
 
-export const useAgentAnalyzer = (modelName: string, modelApiKey: string) => {
-    const model = useModelProvider().getModel(modelName, modelApiKey);
+export const useAgentAnalyzer = (modelName: AIModels, modelApiKey: string) => {
+    const model = useModelProvider().getModel({ modelName: modelName, apiKey: modelApiKey });
 
     const getAgent = () => {
         return createReactAgent({

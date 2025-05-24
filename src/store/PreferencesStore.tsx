@@ -1,14 +1,13 @@
 import { Common } from "@freelensapp/extensions";
 import { makeObservable, observable, toJS } from "mobx";
+import { useFreelensAgentSystem } from "../business/agent/FreelensAgentSystem";
 import { AIModels } from "../business/provider/AIModels";
 import { MessageType } from "../components/message/Message";
-import { useFreelensAgentSystem } from "../business/agent/FreelensAgentSystem";
-import { CompiledStateGraph, Pregel } from "@langchain/langgraph";
 
 export type PreferencesModel = {
   openAIApiKey: string;
   deepSeekApiKey: string;
-  selectedModel: string;
+  selectedModel: AIModels;
 };
 
 const generateConversationId = () => {
@@ -20,7 +19,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   @observable _conversationInterrupted: boolean = false;
   @observable openAIApiKey: string = "";
   @observable deepSeekApiKey: string = "";
-  @observable selectedModel: string = AIModels.GPT_3_5_TURBO;
+  @observable selectedModel: AIModels = AIModels.GPT_3_5_TURBO;
   @observable private _chatMessages: MessageType[] = [];
   @observable freelensAgent = useFreelensAgentSystem().buildMultiAgentSystem();
 

@@ -14,6 +14,13 @@ export enum AIModels {
   GPT_4_1 = "gpt-4.1",
   GPT_4_O = "gpt-4o",
   DEEP_SEEK_R1 = "deep-seek-r1",
+  OLLAMA_MISTRAL = "ollama-mistral", 
+}
+
+export const toAIModelEnum = (value: string): AIModels | undefined => {
+  return Object.values(AIModels).includes(value as AIModels)
+    ? (value as AIModels)
+    : undefined;
 }
 
 export enum AIProviders {

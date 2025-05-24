@@ -1,12 +1,13 @@
 import { AIMessage } from "@langchain/core/messages";
 import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
+import { AIModels } from "../provider/AIModels";
 import { useModelProvider } from "../provider/ModelProvider";
-import { createPod, createDeployment } from "./tools/Tools";
+import { createDeployment, createPod } from "./tools/Tools";
 
 
-export const useAgentKubernetesOperator = (modelName: string, modelApiKey: string) => {
-    const model = useModelProvider().getModel(modelName, modelApiKey);
+export const useAgentKubernetesOperator = (modelName: AIModels, modelApiKey: string) => {
+    const model = useModelProvider().getModel({ modelName: modelName, apiKey: modelApiKey });
 
     const getAgent = () => {
         const tools = [createPod, createDeployment];

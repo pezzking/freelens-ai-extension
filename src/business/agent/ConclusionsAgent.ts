@@ -1,16 +1,16 @@
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { AIModels } from "../provider/AIModels";
 import { useModelProvider } from "../provider/ModelProvider";
-import { GENERAL_PURPOSE_AGENT_PROMPT_TEMPLATE } from "../provider/PromptTemplateProvider";
+import { CONCLUSIONS_AGENT_PROMPT_TEMPLATE } from "../provider/PromptTemplateProvider";
 
-export const useGeneralPurposeAgent = (modelName: AIModels, modelApiKey: string) => {
+export const useConclusionsAgent = (modelName: AIModels, modelApiKey: string) => {
     const model = useModelProvider().getModel({ modelName: modelName, apiKey: modelApiKey });
 
     const getAgent = () => {
         return createReactAgent({
             llm: model,
             tools: [],
-            stateModifier: GENERAL_PURPOSE_AGENT_PROMPT_TEMPLATE
+            stateModifier: CONCLUSIONS_AGENT_PROMPT_TEMPLATE
         });
     }
 
