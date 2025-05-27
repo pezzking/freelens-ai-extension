@@ -1,9 +1,9 @@
-import {Renderer} from "@freelensapp/extensions";
+import { Renderer } from "@freelensapp/extensions";
 import React from "react";
-import {observer} from "mobx-react";
-import {PreferencesStore} from "../../store/PreferencesStore";
+import { observer } from "mobx-react";
+import { PreferencesStore } from "../../store/PreferencesStore";
 
-const {Component: {SubTitle, Input}} = Renderer;
+const { Component: { SubTitle, Input } } = Renderer;
 
 const PreferencesPage = observer(() => {
   // @ts-ignore
@@ -17,8 +17,8 @@ const PreferencesPage = observer(() => {
         onChange={(value: string) => preferencesStore.openAIApiKey = value}
       />
 
-      <br/>
-      <SubTitle title="Deep seek API key"/>
+      <br />
+      <SubTitle title="Deep seek API key" />
       <Input
         placeholder="Deep seek API key"
         value={preferencesStore.deepSeekApiKey}
