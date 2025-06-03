@@ -5,8 +5,7 @@ import { AIModels } from "../business/provider/AIModels";
 import { MessageType } from "../components/message/Message";
 
 export type PreferencesModel = {
-  openAIApiKey: string;
-  deepSeekApiKey: string;
+  apiKey: string;
   selectedModel: AIModels;
 };
 
@@ -17,8 +16,7 @@ const generateConversationId = () => {
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
   @observable conversationId: string = generateConversationId();
   @observable _conversationInterrupted: boolean = false;
-  @observable openAIApiKey: string = "";
-  @observable deepSeekApiKey: string = "";
+  @observable apiKey: string = "";
   @observable selectedModel: AIModels = AIModels.GPT_3_5_TURBO;
   @observable private _chatMessages: MessageType[] = [];
   @observable freelensAgent = useFreelensAgentSystem().buildMultiAgentSystem();
@@ -27,8 +25,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     super({
       configName: "freelens-ai-preferences-store",
       defaults: {
-        openAIApiKey: "",
-        deepSeekApiKey: "",
+        apiKey: "",
         selectedModel: AIModels.GPT_3_5_TURBO
       }
     });
@@ -51,8 +48,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   }
 
   protected fromStore = (preferencesModel: PreferencesModel): void => {
-    this.openAIApiKey = preferencesModel.openAIApiKey;
-    this.deepSeekApiKey = preferencesModel.deepSeekApiKey;
+    this.apiKey = preferencesModel.apiKey;
     this.selectedModel = preferencesModel.selectedModel;
   }
 
@@ -62,8 +58,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
 
   toJSON = (): PreferencesModel => {
     const value: PreferencesModel = {
-      openAIApiKey: this.openAIApiKey,
-      deepSeekApiKey: this.deepSeekApiKey,
+      apiKey: this.apiKey,
       selectedModel: this.selectedModel,
     };
 

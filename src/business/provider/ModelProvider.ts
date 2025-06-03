@@ -1,6 +1,7 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatOllama } from "@langchain/ollama";
 import { AIModels } from "./AIModels";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 const FREELENS_OLLAMA_HOST = process.env.FREELENS_OLLAMA_HOST || "http://127.0.0.1";
 const FREELENS_OLLAMA_PORT = process.env.FREELENS_OLLAMA_PORT || "9898";
@@ -31,6 +32,12 @@ export const useModelProvider = () => {
           temperature: 0,
           headers: headers,
           baseUrl: `${FREELENS_OLLAMA_HOST}:${FREELENS_OLLAMA_PORT}`,
+        });
+      case "gemini-2.0-flash":
+        return new ChatGoogleGenerativeAI({
+          model: modelName,
+          temperature: 0,
+          apiKey: apiKey,
         });
       default:
         throw new Error(`Unsupported model: ${modelName}`);

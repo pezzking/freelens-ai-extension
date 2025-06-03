@@ -1,6 +1,5 @@
 import { Command } from "@langchain/langgraph";
 import { useEffect, useRef } from "react";
-import getAPiKey from "../../business/provider/AIApiKeyProvider";
 import { AgentService, useAgentService } from "../../business/service/AgentService";
 import useAiAnalysisService, { AiAnalysisService } from "../../business/service/AiAnalysisService";
 import { PreferencesStore } from "../../store/PreferencesStore";
@@ -24,7 +23,6 @@ function isApprovalInterrupt(value: unknown): value is ApprovalInterrupt {
 }
 
 const useChatHook = (preferencesStore: PreferencesStore) => {
-  const apiKey = getAPiKey(preferencesStore);
   const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
   const agentService: AgentService = useAgentService(preferencesStore.freelensAgent);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -56,7 +54,7 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
         } else {
           const agentInput = {
             modelName: preferencesStore.selectedModel,
-            modelApiKey: apiKey,
+            modelApiKey: preferencesStore.apiKey,
             messages: [{ role: "user", content: lastMessage.text }],
           };
           runAgent(agentInput);

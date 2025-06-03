@@ -16,6 +16,7 @@ export enum AIModels {
   DEEP_SEEK_R1 = "deep-seek-r1",
   OLLAMA_LLAMA32_1B = "llama3.2:1b", 
   OLLAMA_MISTRAL_7B = "mistral:7b",
+  GEMINI_2_FLASH = "gemini-2.0-flash",
 }
 
 export const toAIModelEnum = (value: string): AIModels | undefined => {
@@ -28,6 +29,7 @@ export enum AIProviders {
   OPEN_AI = "open-ai",
   DEEP_SEEK = "deep-seek",
   OLLAMA = "ollama",
+  GOOGLE = "google",
 }
 
 const AIModelInfos: Record<string, AIModelInfo> = {
@@ -38,6 +40,7 @@ const AIModelInfos: Record<string, AIModelInfo> = {
   [AIModels.DEEP_SEEK_R1]: {description: "deep seek r1", provider: AIProviders.DEEP_SEEK},
   [AIModels.OLLAMA_LLAMA32_1B]: {description: "ollama-llama3.2 1b", provider: AIProviders.OLLAMA},
   [AIModels.OLLAMA_MISTRAL_7B]: {description: "ollama mistral:7b", provider: AIProviders.OLLAMA},
+  [AIModels.GEMINI_2_FLASH]: {description: "gemini 2.0 flash", provider: AIProviders.GOOGLE},
 }
 
 export default AIModelInfos;

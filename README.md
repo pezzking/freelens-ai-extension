@@ -1,6 +1,15 @@
 # @freelensapp/freelens-ai
 freelens-ai is a plugin for freelens that brings AI capabilities directly into your workflow. With this extension, you can harness the power of artificial intelligence to automate complex tasks and enhance productivity.
 
+---
+
+**Quick Links:**
+- [Ollama Setup & Model Image Guide](./docs/OLLAMA.md)
+- [How to obtain a Google API Key](./docs/GOOGLE_API_KEY.md)
+- [Build & Run Guide](./docs/BUILD.md)
+
+---
+
 ## Index
 - [AI Providers](#available-ai-providers)
 - [Available Models](#available-models)

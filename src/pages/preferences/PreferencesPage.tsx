@@ -3,7 +3,7 @@ import React from "react";
 import { observer } from "mobx-react";
 import { PreferencesStore } from "../../store/PreferencesStore";
 
-const { Component: { SubTitle, Input } } = Renderer;
+const { Component: { Input } } = Renderer;
 
 const PreferencesPage = observer(() => {
   // @ts-ignore
@@ -12,17 +12,9 @@ const PreferencesPage = observer(() => {
   return (
     <>
       <Input
-        placeholder="OpenAI API key"
-        value={preferencesStore.openAIApiKey}
-        onChange={(value: string) => preferencesStore.openAIApiKey = value}
-      />
-
-      <br />
-      <SubTitle title="Deep seek API key" />
-      <Input
-        placeholder="Deep seek API key"
-        value={preferencesStore.deepSeekApiKey}
-        onChange={(value: string) => preferencesStore.deepSeekApiKey = value}
+        placeholder="Set here your API key"
+        value={preferencesStore.apiKey}
+        onChange={(value: string) => preferencesStore.apiKey = value}
       />
     </>
   )
