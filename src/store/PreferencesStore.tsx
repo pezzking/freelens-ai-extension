@@ -10,6 +10,7 @@ export type PreferencesModel = {
   apiKey: string;
   selectedModel: AIModels;
   mcpEnabled: boolean;
+  mcpConfiguration: string;
 };
 
 const generateConversationId = () => {
@@ -26,6 +27,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   @observable freelensAgent: CompiledStateGraph<object, object, string, any, any, any> = null;
   @observable mcpAgent: CompiledStateGraph<object, object, string, any, any, any> = null;
   @observable mcpEnabled: boolean = false;
+  @observable mcpConfiguration: string = "";
 
   constructor() {
     super({
@@ -33,16 +35,17 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
       defaults: {
         apiKey: "",
         selectedModel: AIModels.GPT_3_5_TURBO,
-        mcpEnabled: false
+        mcpEnabled: false,
+        mcpConfiguration: ""
       }
     });
-    this.initMcpAgent();
+    this.initMcpAgent(this.mcpConfiguration);
     this.initFreelensAgent();
     makeObservable(this);
   }
 
-  async initMcpAgent() {
-    this.mcpAgent = await useMcpAgent().buildAgentSystem();
+  async initMcpAgent(mcpConfiguration: string) {
+    this.mcpAgent = await useMcpAgent(mcpConfiguration).buildAgentSystem();
     console.log("MCP Agent initialized: ", this.mcpAgent);
   }
 
@@ -66,7 +69,6 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     }
   }
 
-
   conversationIsInterrupted = () => { this._conversationInterrupted = true; }
   conversationIsNotInterrupted = () => { this._conversationInterrupted = false; }
   isConversationInterrupted = () => this._conversationInterrupted;
@@ -74,7 +76,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   getActiveAgent = async () => {
     if (this.mcpEnabled) {
       if (this.mcpAgent == null) {
-        this.mcpAgent = await useMcpAgent().buildAgentSystem();
+        this.mcpAgent = await useMcpAgent(this.mcpConfiguration).buildAgentSystem();
       }
       return this.mcpAgent;
     }
@@ -85,17 +87,25 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     return this.freelensAgent;
   }
 
+  updateMcpConfiguration = async (newMcpConfiguration: string) => {
+    this.mcpConfiguration = newMcpConfiguration;
+    await this.initMcpAgent(newMcpConfiguration);
+    console.log("MCP Agent configuration updated: ", this.mcpConfiguration);
+  }
+
   protected fromStore = (preferencesModel: PreferencesModel): void => {
     this.apiKey = preferencesModel.apiKey;
     this.selectedModel = preferencesModel.selectedModel;
     this.mcpEnabled = preferencesModel.mcpEnabled;
+    this.mcpConfiguration = preferencesModel.mcpConfiguration;
   }
 
   toJSON = (): PreferencesModel => {
     const value: PreferencesModel = {
       apiKey: this.apiKey,
       selectedModel: this.selectedModel,
-      mcpEnabled: this.mcpEnabled
+      mcpEnabled: this.mcpEnabled,
+      mcpConfiguration: this.mcpConfiguration
     };
     return toJS(value);
   }

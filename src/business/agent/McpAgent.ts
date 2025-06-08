@@ -5,37 +5,46 @@ import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 import { useModelProvider } from "../provider/ModelProvider";
 import { GraphState } from "./state/GraphState";
 
-const client = new MultiServerMCPClient({
-    throwOnLoadError: true,
-    prefixToolNameWithServerName: false,
-    additionalToolNamePrefix: "",
-    useStandardContentBlocks: true,
-    mcpServers: {
-        kubernetes: {
-            transport: "stdio",
-            command: "npx",
-            args: ["mcp-server-kubernetes"],
-            restart: {
-                enabled: true,
-                maxAttempts: 3,
-                delayMs: 1000,
-            },
-        },
-    },
-});
+export const useMcpAgent = (mcpConfiguration: string) => {
 
-const loadMcpTools = async () => {
-    const mcpTools = await client.getTools();
-    mcpTools.forEach(tool => {
-        console.log("Loading MCP tool with name: %s, description: %s", tool.name, tool.description);
-    });
-    return mcpTools;
-}
+    const parseMcpConfiguration = (mcpConfiguration: string) => {
+        try {
+            if (!mcpConfiguration || typeof mcpConfiguration !== "string") {
+                console.warn("No MCP configuration provided or invalid type. Returning empty configuration.");
+                return {};
+            }
 
-export const useMcpAgent = () => {
+            const parsedMcpConfiguration = JSON.parse(mcpConfiguration);
+            if (!parsedMcpConfiguration.mcpServers) {
+                throw new Error("Invalid MCP configuration: 'mcpServers' property is missing.");
+            }
+            return parsedMcpConfiguration.mcpServers;
+        } catch (error) {
+            console.error("Failed to parse MCP configuration:", error);
+            return {};
+        }
+    }
+
+    const loadMcpTools = async (mcpConfiguration: string) => {
+        const mcpServers = parseMcpConfiguration(mcpConfiguration);
+
+        const client = new MultiServerMCPClient({
+            throwOnLoadError: true,
+            prefixToolNameWithServerName: false,
+            additionalToolNamePrefix: "",
+            useStandardContentBlocks: true,
+            mcpServers: mcpServers
+        });
+
+        const mcpTools = await client.getTools();
+        mcpTools.forEach(tool => {
+            console.log("Loading MCP tool with name: %s, description: %s", tool.name, tool.description);
+        });
+        return mcpTools;
+    }
 
     const buildAgentSystem = async () => {
-        const mcpTools = await loadMcpTools();
+        const mcpTools = await loadMcpTools(mcpConfiguration);
         const toolNode = new ToolNode(mcpTools);
 
         const shouldContinue = ({ messages }: typeof GraphState.State) => {
