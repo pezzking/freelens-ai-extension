@@ -16,7 +16,7 @@ const Chat = observer(() => {
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
         <button
           style={{ padding: '6px 16px', borderRadius: 4, border: 'none', background: '#d32f2f', color: '#fff', fontWeight: 'bold', cursor: 'pointer' }}
-          onClick={() => preferencesStore.clearChatMessages()}
+          onClick={async () => preferencesStore.clearChat()}
         >
           Clear Chat
         </button>

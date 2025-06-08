@@ -1,4 +1,5 @@
 import { Common } from "@freelensapp/extensions";
+import { RemoveMessage } from "@langchain/core/messages";
 import { CompiledStateGraph } from "@langchain/langgraph";
 import { makeObservable, observable, toJS } from "mobx";
 import { useFreelensAgentSystem } from "../business/agent/FreelensAgentSystem";
@@ -69,8 +70,31 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     }
   }
 
-  clearChatMessages = () => {
+  clearChat = async () => {
+    await this.cleanAgentMessageHistory(this.freelensAgent);
+    await this.cleanAgentMessageHistory(this.mcpAgent);
     this._chatMessages = [];
+  }
+
+  private async cleanAgentMessageHistory(agent: CompiledStateGraph<object, object, string, any, any, any>) {
+    console.log("Cleaning agent message history for agent: ", agent);
+    if (!agent) {
+      console.warn("No agent provided to clean message history.");
+      return;
+    }
+
+    const config = { configurable: { thread_id: this.conversationId } };
+    
+    const messages = (await agent.getState(config)).values.messages;
+    console.log("Messages to remove: ", messages);
+    if (!messages || messages.length === 0) {
+      console.log("No messages to remove.");
+      return;
+    }
+
+    for (const msg of messages) {
+      await agent.updateState(config, { messages: new RemoveMessage({ id: msg.id }) });
+    }
   }
 
   conversationIsInterrupted = () => { this._conversationInterrupted = true; }
@@ -113,4 +137,5 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     };
     return toJS(value);
   }
+
 }
