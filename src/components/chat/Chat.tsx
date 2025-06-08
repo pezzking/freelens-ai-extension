@@ -13,6 +13,14 @@ const Chat = observer(() => {
 
   return (
     <div className="chat-container">
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <button
+          style={{ padding: '6px 16px', borderRadius: 4, border: 'none', background: '#d32f2f', color: '#fff', fontWeight: 'bold', cursor: 'pointer' }}
+          onClick={() => preferencesStore.clearChatMessages()}
+        >
+          Clear Chat
+        </button>
+      </div>
       <div className="messagesContainer" ref={chatHook.containerRef}>
         {preferencesStore.chatMessages.map((msg: MessageType, index: number) => (
           <Message key={index} message={msg}/>

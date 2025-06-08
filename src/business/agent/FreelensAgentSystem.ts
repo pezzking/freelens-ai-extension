@@ -7,6 +7,7 @@ import { useGeneralPurposeAgent } from "./GeneralPurposeAgent";
 import { useAgentKubernetesOperator } from "./KubernetesOperatorAgent";
 import { GraphState } from "./state/GraphState";
 import { useAgentSupervisor } from "./SupervisorAgent";
+import { teardownNode } from "./nodes/Teardown";
 
 /**
  * Multi-agent system for Freelens
@@ -98,11 +99,13 @@ export const useFreelensAgentSystem = () => {
             .addNode("kubernetesOperator", kubernetesOperatorNode)
             .addNode("generalPurposeAgent", generalPurposeAgentNode)
             .addNode(conclusionsAgentName, conclusionsAgentNode)
+            .addNode("teardownNode", teardownNode)
             .addEdge("__start__", "supervisorAgent")
             .addEdge("agentAnalyzer", "supervisorAgent")
-            .addEdge("kubernetesOperator", "__end__")
-            .addEdge("generalPurposeAgent", "__end__")
-            .addEdge(conclusionsAgentName, "__end__")
+            .addEdge("kubernetesOperator", "teardownNode")
+            .addEdge("generalPurposeAgent", "teardownNode")
+            .addEdge(conclusionsAgentName, "teardownNode")
+            .addEdge("teardownNode", "__end__")
             .compile({ checkpointer: new MemorySaver() });
 
         return graph;

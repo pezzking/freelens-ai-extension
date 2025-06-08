@@ -69,6 +69,10 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     }
   }
 
+  clearChatMessages = () => {
+    this._chatMessages = [];
+  }
+
   conversationIsInterrupted = () => { this._conversationInterrupted = true; }
   conversationIsNotInterrupted = () => { this._conversationInterrupted = false; }
   isConversationInterrupted = () => this._conversationInterrupted;

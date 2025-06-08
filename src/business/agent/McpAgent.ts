@@ -4,6 +4,7 @@ import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 import { useModelProvider } from "../provider/ModelProvider";
 import { GraphState } from "./state/GraphState";
+import { teardownNode } from "./nodes/Teardown";
 
 export const useMcpAgent = (mcpConfiguration: string) => {
 
@@ -52,7 +53,7 @@ export const useMcpAgent = (mcpConfiguration: string) => {
             if (lastMessage.tool_calls?.length) {
                 return "tools";
             }
-            return "__end__";
+            return "teardownNode";
         }
 
         const callModel = async (state: typeof GraphState.State) => {
@@ -66,10 +67,12 @@ export const useMcpAgent = (mcpConfiguration: string) => {
 
         return new StateGraph(GraphState)
             .addNode("agent", callModel)
-            .addEdge("__start__", "agent")
             .addNode("tools", toolNode)
+            .addNode("teardownNode", teardownNode)
+            .addEdge("__start__", "agent")
             .addEdge("tools", "agent")
             .addConditionalEdges("agent", shouldContinue)
+            .addEdge("teardownNode", "__end__")
             .compile({ checkpointer: new MemorySaver() });
     }
 
