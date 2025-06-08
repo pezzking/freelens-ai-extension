@@ -41,7 +41,7 @@ export default class FreeLensAIRenderer extends Renderer.LensExtension {
 
   appPreferences = [
     {
-      title: "API key",
+      title: "Freelens AI Settings",
       components: {
         Input: () => <PreferencesPage/>,
         Hint: () => <span></span>

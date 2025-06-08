@@ -1,12 +1,12 @@
-import { BaseMessage, HumanMessage } from "@langchain/core/messages";
+import { HumanMessage } from "@langchain/core/messages";
 import { RunnableLambda } from "@langchain/core/runnables";
-import { Annotation, Command, CompiledStateGraph, MemorySaver, type Messages, messagesStateReducer, StateGraph } from "@langchain/langgraph";
-import { AIModels } from "../provider/AIModels";
+import { Command, CompiledStateGraph, MemorySaver, StateGraph } from "@langchain/langgraph";
 import { useAgentAnalyzer } from "./AnalyzerAgent";
+import { useConclusionsAgent } from "./ConclusionsAgent";
 import { useGeneralPurposeAgent } from "./GeneralPurposeAgent";
 import { useAgentKubernetesOperator } from "./KubernetesOperatorAgent";
+import { GraphState } from "./state/GraphState";
 import { useAgentSupervisor } from "./SupervisorAgent";
-import { useConclusionsAgent } from "./ConclusionsAgent";
 
 /**
  * Multi-agent system for Freelens
@@ -14,20 +14,12 @@ import { useConclusionsAgent } from "./ConclusionsAgent";
  */
 export const useFreelensAgentSystem = () => {
     const subAgents = ["agentAnalyzer", "kubernetesOperator", "generalPurposeAgent"];
-    const conclusionAgentName = "conclusionsAgent";
+    const conclusionsAgentName = "conclusionsAgent";
     const subAgentResponsibilities = [
         "agentAnalyzer: Reads cluster events and find for warnings and errors",
         "kubernetesOperator: Operates on the cluster in write mode (for example apply changes) and then exits",
         "generalPurposeAgent: Handles general queries including but not limited to: Kubernetes conceptual explanations, best practices, architecture patterns, and non-Kubernetes technical questions. This agent doesn't interact with the live cluster but provides comprehensive knowledge-based responses.",
     ];
-
-    const GraphState = Annotation.Root({
-        modelName: Annotation<AIModels>,
-        modelApiKey: Annotation<string>,
-        messages: Annotation<BaseMessage[], Messages>({
-            reducer: messagesStateReducer,
-        }),
-    });
 
     const supervisorAgentNode = async (state: typeof GraphState.State) => {
         console.log("Supervisor agent - calling agent supervisor with input: ", state);
@@ -38,7 +30,7 @@ export const useFreelensAgentSystem = () => {
 
         // handoff
         if (response.goto === "__end__") {
-            response.goto = conclusionAgentName;
+            response.goto = conclusionsAgentName;
         }
         return new Command({ goto: response.goto });
     }
@@ -95,24 +87,26 @@ export const useFreelensAgentSystem = () => {
         };
     }
 
-    const buildMultiAgentSystem = (): CompiledStateGraph<object, object, string, any, any, any> => {
-        return new StateGraph(GraphState)
+    const buildAgentSystem = (): CompiledStateGraph<object, object, string, any, any, any> => {
+        const graph = new StateGraph(GraphState)
             .addNode(
                 "supervisorAgent",
                 RunnableLambda.from(supervisorAgentNode).withConfig({ tags: ["nostream"] }),
-                { ends: [...subAgents, conclusionAgentName] }
+                { ends: [...subAgents, conclusionsAgentName] }
             )
             .addNode("agentAnalyzer", agentAnalyzerNode)
             .addNode("kubernetesOperator", kubernetesOperatorNode)
             .addNode("generalPurposeAgent", generalPurposeAgentNode)
-            .addNode(conclusionAgentName, conclusionsAgentNode)
+            .addNode(conclusionsAgentName, conclusionsAgentNode)
             .addEdge("__start__", "supervisorAgent")
             .addEdge("agentAnalyzer", "supervisorAgent")
             .addEdge("kubernetesOperator", "__end__")
             .addEdge("generalPurposeAgent", "__end__")
-            .addEdge(conclusionAgentName, "__end__")
+            .addEdge(conclusionsAgentName, "__end__")
             .compile({ checkpointer: new MemorySaver() });
+
+        return graph;
     }
 
-    return { buildMultiAgentSystem };
+    return { buildAgentSystem };
 }

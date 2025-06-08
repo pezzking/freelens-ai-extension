@@ -24,7 +24,6 @@ function isApprovalInterrupt(value: unknown): value is ApprovalInterrupt {
 
 const useChatHook = (preferencesStore: PreferencesStore) => {
   const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
-  const agentService: AgentService = useAgentService(preferencesStore.freelensAgent);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -90,6 +89,8 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
 
   const runAgent = async (agentInput: object | Command) => {
     try {
+      const activeAgent = await preferencesStore.getActiveAgent();
+      const agentService: AgentService = useAgentService(activeAgent);
       const agentResponseStream = agentService.run(agentInput, preferencesStore.conversationId);
       let aiResult = "";
       sendMessage(aiResult, false);

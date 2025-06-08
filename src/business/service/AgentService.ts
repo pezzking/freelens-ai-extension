@@ -12,13 +12,12 @@ export interface AgentService {
  * @returns 
  */
 export const useAgentService = (agent: CompiledStateGraph<object, object, string, any, any, any>): AgentService => {
-    const freelensAgent = agent;
 
     const run = async function* (agentInput: object | Command, conversationId: string) {
         console.log("Starting Freelens Agent run for message: ", agentInput);
 
         let config = { thread_id: conversationId };
-        const streamResponse = await freelensAgent.stream(agentInput, { streamMode: "messages", configurable: config });
+        const streamResponse = await agent.stream(agentInput, { streamMode: "messages", configurable: config });
 
         // streams LLM token by token to the UI
         for await (const [message, _metadata] of streamResponse) {
@@ -33,7 +32,7 @@ export const useAgentService = (agent: CompiledStateGraph<object, object, string
         yield "\n";
 
         // checks the agent state for any interrupts
-        const agentState = await freelensAgent.getState({ configurable: config });
+        const agentState = await agent.getState({ configurable: config });
         console.log("Agent state: ", agentState);
         if (agentState.next) {
             console.log("Agent state next: ", agentState.next);
