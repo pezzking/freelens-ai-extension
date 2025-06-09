@@ -30,6 +30,8 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   @observable mcpEnabled: boolean = false;
   @observable mcpConfiguration: string = "";
 
+  @observable isLoading: boolean = false;
+
   constructor() {
     super({
       configName: "freelens-ai-preferences-store",

@@ -16,3 +16,13 @@
   width: 100%;
   margin: 0 auto;
 }
+
+.chat-loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

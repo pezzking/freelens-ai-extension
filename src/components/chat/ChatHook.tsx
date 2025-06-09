@@ -89,6 +89,7 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
 
   const runAgent = async (agentInput: object | Command) => {
     try {
+      preferencesStore.isLoading = true;
       const activeAgent = await preferencesStore.getActiveAgent();
       const agentService: AgentService = useAgentService(activeAgent);
       const agentResponseStream = agentService.run(agentInput, preferencesStore.conversationId);
@@ -110,6 +111,8 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     } catch (error) {
       console.error("Error while running Freelens Agent: ", error);
       sendMessage("Error while running Freelens Agent: " + error.message, false);
+    } finally {
+      preferencesStore.isLoading = false;
     }
   }
 
