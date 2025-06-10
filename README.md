@@ -1,5 +1,5 @@
-# @freelensapp/freelens-ai
-freelens-ai is a plugin for freelens that brings AI capabilities directly into your workflow. With this extension, you can harness the power of artificial intelligence to automate complex tasks and enhance productivity.
+# @freelensapp/freelens-ai-extension
+freelens-ai-extension is a plugin for freelens that brings AI capabilities directly into your workflow. With this extension, you can harness the power of artificial intelligence to automate complex tasks and enhance productivity.
 
 ---
 
@@ -23,7 +23,7 @@ freelens-ai is a plugin for freelens that brings AI capabilities directly into y
 ***
 
 ### Available AI Providers
-freelens-ai integrates with multiple AI providers to offer a diverse range of capabilities. Currently supported providers include:
+freelens-ai-extension integrates with multiple AI providers to offer a diverse range of capabilities. Currently supported providers include:
 
 - ***open-ai***
 - ***deep-seek***
@@ -33,7 +33,7 @@ freelens-ai integrates with multiple AI providers to offer a diverse range of ca
 ***
 
 ### Available Models
-freelens-ai currently supports integration with the following AI models:
+freelens-ai-extension currently supports integration with the following AI models:
 
 - ***gpt-3.5-turbo***
 - ***o3-mini***
@@ -59,7 +59,7 @@ Each model offers different capabilities and performance characteristics. Choose
 
 #### Additional Resources
 - [***Contribute***](CONTRIBUTING.md)
-- [***Build freelens-ai extension***](./docs/BUILD.md)
+- [***Build freelens-ai-extension extension***](./docs/BUILD.md)
 - [***Set up extension on freelens***](./docs/SET_UP_EXTENSION.md)
 
 If you find this project useful, please consider giving it a ⭐️ on [***GitHub***](https://github.com/freelensapp/freelens-ai)!
