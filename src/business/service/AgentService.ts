@@ -6,7 +6,8 @@ export interface AgentService {
 }
 
 /**
- * Function responsible for running the agent and handling the response logic
+ * This service takes an agent, runs it and streams the response back to the caller.
+ * If the agent has any interrupts, it will yield those as well.
  * @param modelName 
  * @param modelApiKey 
  * @returns 

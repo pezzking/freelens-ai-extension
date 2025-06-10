@@ -1,5 +1,5 @@
-import { AIMessage } from "@langchain/core/messages";
-import { interrupt, MemorySaver, StateGraph } from "@langchain/langgraph";
+import { AIMessage, ToolMessage } from "@langchain/core/messages";
+import { Command, interrupt, MemorySaver, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 import { useModelProvider } from "../provider/ModelProvider";
@@ -48,25 +48,36 @@ export const useMcpAgent = (mcpConfiguration: string) => {
         const mcpTools = await loadMcpTools(mcpConfiguration);
         const toolNode = new ToolNode(mcpTools);
 
-        const shouldContinue = ({ messages }: typeof GraphState.State) => {
-            const lastMessage = messages[messages.length - 1] as AIMessage;
+        const shouldContinue = (state: typeof GraphState.State) => {
+            const lastMessage = state.messages[state.messages.length - 1] as AIMessage;
             if (lastMessage.tool_calls?.length) {
-                const action = lastMessage.tool_calls.map(toolCall => { toolCall.name + " - " + toolCall.args });
+                console.log("MCP Agent - tool calls detected: ", lastMessage.tool_calls);
+                const toolNames = lastMessage.tool_calls.map(toolCall => toolCall.name);
                 const interruptRequest = {
                     question: "The agent has requested to use a tool",
                     options: ["yes", "no"],
-                    actionToApprove: { action },
-                    requestString: "Approve this action: " + JSON.stringify({ action }) + "\n\n\n options: [yes/no]",
+                    actionToApprove: { action: toolNames },
+                    requestString: "The agent wants to use this tool: " + toolNames + "\n\n\napprove options: [yes/no]",
                 }
                 const review = interrupt(interruptRequest)
                 console.log("Tool call review: ", review);
                 if (review !== "yes") {
                     console.log("[Tool invocation] - action not approved");
-                    return "teardownNode";
+                    const toolMessages: ToolMessage[] = [];
+                    lastMessage.tool_calls.forEach(toolCall => {
+                        const toolMessage = new ToolMessage({
+                            tool_call_id: toolCall.id,
+                            content: "The user denied the action",
+                            name: toolCall.name
+                        });
+                        toolMessages.push(toolMessage);
+                    });
+                    console.log("ToolMessages output: ", toolMessages)
+                    return new Command({ goto: "agent", update: { messages: toolMessages } })
                 }
-                return "tools";
+                return new Command({ goto: "tools" });
             }
-            return "teardownNode";
+            return new Command({ goto: "teardownNode" });
         }
 
         const callModel = async (state: typeof GraphState.State) => {
@@ -82,9 +93,10 @@ export const useMcpAgent = (mcpConfiguration: string) => {
             .addNode("agent", callModel)
             .addNode("tools", toolNode)
             .addNode("teardownNode", teardownNode)
+            .addNode("shouldContinue", shouldContinue, { ends: ["agent", "tools", "teardownNode"] })
             .addEdge("__start__", "agent")
             .addEdge("tools", "agent")
-            .addConditionalEdges("agent", shouldContinue)
+            .addEdge("agent", "shouldContinue")
             .addEdge("teardownNode", "__end__")
             .compile({ checkpointer: new MemorySaver() });
     }
