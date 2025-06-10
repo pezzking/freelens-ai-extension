@@ -14,7 +14,7 @@ export interface AgentService {
 export const useAgentService = (agent: CompiledStateGraph<object, object, string, any, any, any>): AgentService => {
 
     const run = async function* (agentInput: object | Command, conversationId: string) {
-        console.log("Starting Freelens Agent run for message: ", agentInput);
+        console.log("Starting Agent Service run for message: ", agentInput);
 
         let config = { thread_id: conversationId };
         const streamResponse = await agent.stream(agentInput, { streamMode: "messages", configurable: config });

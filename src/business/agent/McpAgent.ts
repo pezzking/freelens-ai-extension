@@ -1,10 +1,10 @@
 import { AIMessage } from "@langchain/core/messages";
-import { MemorySaver, StateGraph } from "@langchain/langgraph";
+import { interrupt, MemorySaver, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 import { useModelProvider } from "../provider/ModelProvider";
-import { GraphState } from "./state/GraphState";
 import { teardownNode } from "./nodes/Teardown";
+import { GraphState } from "./state/GraphState";
 
 export const useMcpAgent = (mcpConfiguration: string) => {
 
@@ -51,6 +51,19 @@ export const useMcpAgent = (mcpConfiguration: string) => {
         const shouldContinue = ({ messages }: typeof GraphState.State) => {
             const lastMessage = messages[messages.length - 1] as AIMessage;
             if (lastMessage.tool_calls?.length) {
+                const action = lastMessage.tool_calls.map(toolCall => { toolCall.name + " - " + toolCall.args });
+                const interruptRequest = {
+                    question: "The agent has requested to use a tool",
+                    options: ["yes", "no"],
+                    actionToApprove: { action },
+                    requestString: "Approve this action: " + JSON.stringify({ action }) + "\n\n\n options: [yes/no]",
+                }
+                const review = interrupt(interruptRequest)
+                console.log("Tool call review: ", review);
+                if (review !== "yes") {
+                    console.log("[Tool invocation] - action not approved");
+                    return "teardownNode";
+                }
                 return "tools";
             }
             return "teardownNode";

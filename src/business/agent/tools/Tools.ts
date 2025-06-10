@@ -130,7 +130,7 @@ export const createDeployment = tool(
         const review = interrupt(interruptRequest);
         console.log("Tool call review: ", review);
         if (review !== "yes") {
-            console.log("[Tool invocation: createDeployment] - action not approved");
+            console.log("[Tool invocation] - action not approved");
             return "The user denied the action";
         }
 
