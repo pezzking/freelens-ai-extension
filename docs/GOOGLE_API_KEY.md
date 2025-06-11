@@ -3,7 +3,7 @@
 Follow the instructions at the link https://ai.google.dev/gemini-api/docs/api-key?hl=it
 
 ## Details
-To obtain a key you have to access to Google AI Studio with you Google account; from herwe you can require an API key:
+To obtain a key you have to access to Google AI Studio with you Google account; from here you can require an API key:
 ![gaistudioscreen](images/gaistudioscreen.png)
 
 Once you click on the dedicated button, you should bind the API key with one of your GCP projects:
