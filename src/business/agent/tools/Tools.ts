@@ -68,7 +68,7 @@ export const createPod = tool(
             question: "Approve this action...",
             options: ["yes", "no"],
             actionToApprove: { name, namespace, data },
-            requestString: "Approve this action: " + JSON.stringify({ name, namespace, data }) + "\n\n\n options: [yes/no]",
+            requestString: "Approve this action: " + JSON.stringify({ name, namespace, data }),
         }
         const review = interrupt(interruptRequest);
         console.log("Tool call review: ", review);

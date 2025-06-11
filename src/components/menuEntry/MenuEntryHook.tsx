@@ -1,5 +1,6 @@
 import {PreferencesStore} from "../../store/PreferencesStore";
 import {Renderer} from "@freelensapp/extensions";
+import {getTextMessage} from "../../business/objects/MessageObjectProvider";
 
 const {
   Navigation: {navigate}
@@ -9,7 +10,7 @@ const useMenuEntryHook = (preferencesStore: PreferencesStore) => {
 
   const openTab = (message: string) => {
     const prompt = "Could you explain this message?\n\n";
-    preferencesStore.addMessage(`${prompt}${message}`, true);
+    preferencesStore.addMessage(getTextMessage(`${prompt}${message}`, true));
     navigate("/extension/freelensapp--freelens-ai/freelens-ai-page");
   }
 
