@@ -58,6 +58,6 @@ In order to use the extension, you need to set up an API key.
 #### Additional Resources
 - [***README***](../README.md)
 - [***Contribute***](CONTRIBUTING.md)
-- [***Build freelens-ai extension***](./docs/BUILD.md)
+- [***Build freelens-ai extension***](./BUILD.md)
 
 If you find this project useful, please consider giving it a ⭐️ on [***GitHub***](https://github.com/freelensapp/freelens-ai)!
