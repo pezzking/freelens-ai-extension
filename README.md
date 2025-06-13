@@ -1,5 +1,6 @@
 # @freelensapp/freelens-ai-extension
-freelens-ai-extension is a plugin for freelens that brings AI capabilities directly into your workflow. With this extension, you can harness the power of artificial intelligence to automate complex tasks and enhance productivity.
+Freelens AI is an extension for [Freelens](https://freelens.app) that brings AI capabilities directly into your workflow.<br />
+With Freelens AI, you can harness the power of artificial intelligence to automate complex tasks and enhance productivity.
 
 ---
 
