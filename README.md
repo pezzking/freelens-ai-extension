@@ -18,9 +18,7 @@ With Freelens AI, you can harness the power of artificial intelligence to automa
 - [Local Testing](#rocket-how-to-test-it-locally)
 - [Additional Resources](#other-link)
 
-
 <br>
-
 ***
 
 ### Available AI Providers
@@ -30,7 +28,6 @@ freelens-ai-extension integrates with multiple AI providers to offer a diverse r
 - ***deep-seek***
 
 <br>
-
 ***
 
 ### Available Models
@@ -45,7 +42,6 @@ freelens-ai-extension currently supports integration with the following AI model
 Each model offers different capabilities and performance characteristics. Choose the one that best suits your needs and workflow requirements.
 
 <br>
-
 ***
 
 ### Key Features
@@ -55,7 +51,6 @@ Each model offers different capabilities and performance characteristics. Choose
 - **Intelligent Assistance**: Get contextual help and suggestions for your operations
 
 <br>
-
 ***
 
 #### Additional Resources
@@ -64,5 +59,3 @@ Each model offers different capabilities and performance characteristics. Choose
 - [***Set up extension on freelens***](./docs/SET_UP_EXTENSION.md)
 
 If you find this project useful, please consider giving it a ⭐️ on [***GitHub***](https://github.com/freelensapp/freelens-ai)!
-
-
