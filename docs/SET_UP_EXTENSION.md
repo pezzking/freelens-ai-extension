@@ -12,14 +12,14 @@ This guide will help you install the extension in your freelens app.
 
 ### 1) Prerequisites
 - Have following the [_**build guide**_](./BUILD.md) in order to create the tgz file.
-- [_**freelens**_](https://freelensapp.github.io/)
+- [_**Freelens**_](https://freelensapp.github.io/)
 
 <br>
 
 ***
 
 ### 2) Install the extension
-1. Open freelens
+1. Open Freelens
 
 <br>
 
@@ -58,6 +58,6 @@ In order to use the extension, you need to set up an API key.
 #### Additional Resources
 - [***README***](../README.md)
 - [***Contribute***](CONTRIBUTING.md)
-- [***Build freelens-ai extension***](./docs/BUILD.md)
+- [***Build freelens-ai extension***](./BUILD.md)
 
 If you find this project useful, please consider giving it a ⭐️ on [***GitHub***](https://github.com/freelensapp/freelens-ai)!

@@ -74,7 +74,7 @@ After creating the tgz file, you can proceed with the extension setup guide to i
 #### Additional Resources
 - [***README***](../README.md)
 - [***Contribute***](CONTRIBUTING.md)
-- [***Set up extension on freelens***](./docs/SET*UP*EXTENSION.md)
+- [***Set up extension on freelens***](./SET_UP_EXTENSION.md)
 
 If you find this project useful, please consider giving it a ⭐️ on [***GitHub***](https://github.com/freelensapp/freelens-ai)!
 
