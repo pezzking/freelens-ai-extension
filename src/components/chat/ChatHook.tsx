@@ -27,21 +27,14 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
   const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    processResponse();
-    scrollToBottom(false);
-  }, []);
-
   const sendMessage = (message: MessageObject) => {
     preferencesStore.addMessage(message);
     scrollToBottom();
-    processResponse();
   }
 
   const sendMessageToAgent = (message: string, sent: boolean = true) => {
     console.log("Send message to agent: ", message);
-    preferencesStore.addMessage(getTextMessage(message, sent));
-    scrollToBottom();
+    sendMessage(getTextMessage(message, sent));
 
     const messagesNumber = preferencesStore.chatMessages.length;
     if (messagesNumber > 0) {
@@ -68,10 +61,13 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     if (messagesNumber > 0) {
       const lastMessage = preferencesStore.chatMessages.at(messagesNumber - 1);
       if (lastMessage.sent) {
-        analyzeEvent(lastMessage);
+        analyzeEvent(lastMessage)
+          .finally(() => scrollToBottom(false))
       }
     }
   }
+
+  processResponse();
 
   const analyzeEvent = async (lastMessage: MessageObject) => {
     try {
