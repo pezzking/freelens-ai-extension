@@ -1,16 +1,18 @@
 import {PreferencesStore} from "../../store/PreferencesStore";
 import {Renderer} from "@freelensapp/extensions";
-import {getTextMessage} from "../../business/objects/MessageObjectProvider";
+import {getExplainMessage} from "../../business/objects/MessageObjectProvider";
+import useChatHook from "../chat/ChatHook";
 
 const {
   Navigation: {navigate}
 } = Renderer;
 
 const useMenuEntryHook = (preferencesStore: PreferencesStore) => {
+  const chatHook = useChatHook(preferencesStore)
 
   const openTab = (message: string) => {
     const prompt = "Could you explain this message?\n\n";
-    preferencesStore.addMessage(getTextMessage(`${prompt}${message}`, true));
+    chatHook.sendMessageToAgent(getExplainMessage(`${prompt}${message}`));
     navigate("/extension/freelensapp--freelens-ai/freelens-ai-page");
   }
 

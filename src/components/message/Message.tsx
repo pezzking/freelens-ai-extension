@@ -6,6 +6,7 @@ import {MessageType} from "../../business/objects/MessageType";
 import {Renderer} from "@freelensapp/extensions";
 import {PreferencesStore} from "../../store/PreferencesStore";
 import useChatHook from "../chat/ChatHook";
+import {getTextMessage} from "../../business/objects/MessageObjectProvider";
 
 const {Component: {Button}} = Renderer;
 
@@ -22,7 +23,7 @@ const Message = ({message, preferencesStore}: MessageProps) => {
   const renderOptions = (options: string[]) => {
     return options.map(option =>
       <Button label={option} onClick={() =>
-        chatHook.sendMessageToAgent(option, true)
+        chatHook.sendMessageToAgent(getTextMessage(option, true))
       }/>
     )
   }

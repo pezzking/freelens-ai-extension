@@ -7,6 +7,7 @@ import {observer} from "mobx-react";
 import {PreferencesStore} from "../../store/PreferencesStore";
 import {Loader2} from "lucide-react";
 import {MessageObject} from "../../business/objects/MessageObject";
+import {getTextMessage} from "../../business/objects/MessageObjectProvider";
 
 const Chat = observer(() => {
   // @ts-ignore
@@ -28,7 +29,7 @@ const Chat = observer(() => {
         )}
       </div>
 
-      <TextInput onSend={chatHook.sendMessageToAgent}/>
+      <TextInput onSend={text => chatHook.sendMessageToAgent(getTextMessage(text, true))}/>
     </div>
   )
 })

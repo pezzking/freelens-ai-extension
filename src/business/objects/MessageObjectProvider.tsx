@@ -9,6 +9,14 @@ export function getTextMessage(message: string, sent: boolean) {
   };
 }
 
+export function getExplainMessage(message: string) {
+  return {
+    type: MessageType.EXPLAIN,
+    text: message,
+    sent: true
+  };
+}
+
 export function getInterruptMessage(chunk: Interrupt, sent: boolean) {
   return {
     type: MessageType.INTERRUPT,
