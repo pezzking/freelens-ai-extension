@@ -1,20 +1,12 @@
 # @freelensapp/freelens-ai
 freelens-ai is a plugin for freelens that brings AI capabilities directly into your workflow. With this extension, you can harness the power of artificial intelligence to automate complex tasks and enhance productivity.
 
----
-
-**Quick Links:**
-- [Ollama Setup & Model Image Guide](./docs/OLLAMA.md)
-- [How to obtain a Google API Key](./docs/GOOGLE_API_KEY.md)
-- [Build & Run Guide](./docs/BUILD.md)
-
----
-
 ## Index
 - [AI Providers](#available-ai-providers)
 - [Available Models](#available-models)
 - [Key Features](#key-features)
 - [Local Testing](#rocket-how-to-test-it-locally)
+- [MCP Agent](#mcp-agent)
 - [Additional Resources](#other-link)
 
 
@@ -40,6 +32,7 @@ freelens-ai currently supports integration with the following AI models:
 - ***gpt-4.1***
 - ***gpt-4o***
 - ***deep-seek-r1***
+- ***gemini-2.0-flash***
 
 Each model offers different capabilities and performance characteristics. Choose the one that best suits your needs and workflow requirements.
 
@@ -54,6 +47,10 @@ Each model offers different capabilities and performance characteristics. Choose
 - **Intelligent Assistance**: Get contextual help and suggestions for your operations
 
 <br>
+
+### MCP Agent
+We support MCP Agent through a dedicated configuration.
+Go deeper by reading our [MCP Agent documentation](docs/MCP_AGENT.md).
 
 ***
 
