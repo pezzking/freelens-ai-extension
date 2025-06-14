@@ -37,17 +37,7 @@ automate complex tasks and enhance productivity.
 
 ---
 
-### Available AI Providers
-
-freelens-ai-extension integrates with multiple AI providers to offer a diverse
-range of capabilities. Currently supported providers include:
-
-- ***open-ai***
-- ***deep-seek***
-
----
-
-### Available Models
+## Available Models
 
 freelens-ai-extension currently supports integration with the following AI models:
 
@@ -56,10 +46,20 @@ freelens-ai-extension currently supports integration with the following AI model
 - ***gpt-4.1***
 - ***gpt-4o***
 - ***deep-seek-r1***
-- ***gemini-2.0-flash***
+- ***ollama llama3.2:1b***
+- ***ollama mistral:7b***
+- ***gemini 2.0 flash***
 
 Each model offers different capabilities and performance characteristics.
 Choose the one that best suits your needs and workflow requirements.
+
+### Connecting a model
+You can connect your model by setting its API Key in the preferences page or by using you environment variables;
+for example you can set:
+- GOOGLE_API_KEY = ...
+- OPENAI_API_KEY = ...
+
+together to switch model without switch the API Key in settings page.
 
 ---
 
