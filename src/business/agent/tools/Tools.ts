@@ -181,3 +181,85 @@ export const createDeployment = tool(
         }),
     }
 );
+
+export const deletePod = tool(
+    async ({ name, namespace }: { name: string, namespace: string }): Promise<string> => {
+        /**
+         * Deletes a pod in the Kubernetes cluster
+         */
+        console.log("[Tool invocation: deletePod]");
+
+        const interruptRequest = {
+            question: "Approve this action...",
+            options: ["yes", "no"],
+            actionToApprove: { name, namespace },
+            requestString: "Approve this action: " + JSON.stringify({ name, namespace }),
+        }
+        const review = interrupt(interruptRequest);
+        console.log("Tool call review: ", review);
+        if (review !== "yes") {
+            console.log("[Tool invocation: deletePod] - action not approved");
+            return "The user denied the action";
+        }
+
+        try {
+            const podsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi) as Renderer.K8sApi.PodsStore;
+            const podToRemove = podsStore.getByName(name, namespace);
+            await podsStore.remove(podToRemove);
+            console.log("[Tool invocation result: deletePod] - Pod deleted successfully");
+            return "Pod deleted successfully";
+        } catch (error) {
+            console.error("[Tool invocation error: deletePod] - ", error);
+            return JSON.stringify(error);
+        }
+    },
+    {
+        name: "deletePod",
+        description: "Deletes a pod in the Kubernetes cluster",
+        schema: z.object({
+            namespace: z.string(),
+            name: z.string(),
+        }),
+    }
+);
+
+export const deleteDeployment = tool(
+    async ({ name, namespace }: { name: string, namespace: string }): Promise<string> => {
+        /**
+         * Deletes a deployment in the Kubernetes cluster
+         */
+        console.log("[Tool invocation: deleteDeployment]");
+
+        const interruptRequest = {
+            question: "Approve this action...",
+            options: ["yes", "no"],
+            actionToApprove: { name, namespace },
+            requestString: "Approve this action: " + JSON.stringify({ name, namespace }),
+        }
+        const review = interrupt(interruptRequest);
+        console.log("Tool call review: ", review);
+        if (review !== "yes") {
+            console.log("[Tool invocation: deleteDeployment] - action not approved");
+            return "The user denied the action";
+        }
+
+        try {
+            const deploymentsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.deploymentApi) as Renderer.K8sApi.DeploymentStore;
+            const deploymentToRemove = deploymentsStore.getByName(name, namespace);
+            await deploymentsStore.remove(deploymentToRemove);
+            console.log("[Tool invocation result: deleteDeployment] - Deployment deleted successfully");
+            return "Deployment deleted successfully";
+        } catch (error) {
+            console.error("[Tool invocation error: deleteDeployment] - ", error);
+            return JSON.stringify(error);
+        }
+    },
+    {
+        name: "deleteDeployment",
+        description: "Deletes a deployment in the Kubernetes cluster",
+        schema: z.object({
+            namespace: z.string(),
+            name: z.string(),
+        }),
+    }
+);
