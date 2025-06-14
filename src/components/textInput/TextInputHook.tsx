@@ -33,7 +33,7 @@ const useTextInput = ({onSend, preferencesStore}: TextInputHookProps) => {
   }, [message]);
 
   const handleSend = () => {
-    if (message.trim()) {
+    if (!preferencesStore.isLoading && message.trim()) {
       onSend(message.trim());
       setMessage("");
     }

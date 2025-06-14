@@ -1,21 +1,21 @@
-import { Renderer } from "@freelensapp/extensions";
-import { Eraser, SendHorizonal } from "lucide-react";
-import { observer } from "mobx-react";
+import {Renderer} from "@freelensapp/extensions";
+import {Eraser, SendHorizonal} from "lucide-react";
+import {observer} from "mobx-react";
 import React from "react";
-import { PreferencesStore } from "../../store/PreferencesStore";
+import {PreferencesStore} from "../../store/PreferencesStore";
 import "./TextInput.scss";
 import useTextInput from "./TextInputHook";
 
-const { Component: { Select } } = Renderer;
+const {Component: {Select}} = Renderer;
 
 type TextInputProps = {
   onSend: (message: string) => void;
 };
 
-const TextInput = observer(({ onSend }: TextInputProps) => {
+const TextInput = observer(({onSend}: TextInputProps) => {
   // @ts-ignore
   const preferencesStore = PreferencesStore.getInstance();
-  const textInputHook = useTextInput({ onSend, preferencesStore });
+  const textInputHook = useTextInput({onSend, preferencesStore});
 
   return (
     <div className="text-input-container">
@@ -36,9 +36,9 @@ const TextInput = observer(({ onSend }: TextInputProps) => {
             disabled={preferencesStore.chatMessages.length === 0}
             title="Clear chat"
           >
-            <Eraser size={20} />
+            <Eraser size={20}/>
           </button>
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{display: "flex", alignItems: "center"}}>
             <Select
               id="update-channel-input"
               options={textInputHook.modelSelections}
@@ -48,13 +48,13 @@ const TextInput = observer(({ onSend }: TextInputProps) => {
               className="text-input-select-box"
             />
             <button
-              className="chat-button"
+              className="text-input-send-button"
               onClick={textInputHook.handleSend}
-              disabled={!textInputHook.message.trim()}
+              disabled={preferencesStore.isLoading || !textInputHook.message.trim()}
               title="Send"
               id="send-button"
             >
-              <SendHorizonal size={25} />
+              <SendHorizonal size={25}/>
             </button>
           </div>
         </div>

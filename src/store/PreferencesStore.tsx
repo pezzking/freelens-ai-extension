@@ -1,11 +1,11 @@
-import { Common } from "@freelensapp/extensions";
-import { RemoveMessage } from "@langchain/core/messages";
-import { CompiledStateGraph } from "@langchain/langgraph";
-import { makeObservable, observable, toJS } from "mobx";
-import { useFreelensAgentSystem } from "../business/agent/FreelensAgentSystem";
-import { useMcpAgent } from "../business/agent/McpAgent";
-import { AIModels } from "../business/provider/AIModels";
-import { MessageType } from "../components/message/Message";
+import {Common} from "@freelensapp/extensions";
+import {RemoveMessage} from "@langchain/core/messages";
+import {CompiledStateGraph} from "@langchain/langgraph";
+import {makeObservable, observable, toJS} from "mobx";
+import {useFreelensAgentSystem} from "../business/agent/FreelensAgentSystem";
+import {useMcpAgent} from "../business/agent/McpAgent";
+import {AIModels} from "../business/provider/AIModels";
+import {MessageObject} from "../business/objects/MessageObject";
 
 export type PreferencesModel = {
   apiKey: string;
@@ -23,7 +23,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   @observable _conversationInterrupted: boolean = false;
   @observable apiKey: string = "";
   @observable selectedModel: AIModels = AIModels.GPT_3_5_TURBO;
-  @observable private _chatMessages: MessageType[] = [];
+  @observable private _chatMessages: MessageObject[] = [];
 
   @observable freelensAgent: CompiledStateGraph<object, object, string, any, any, any> = null;
   @observable mcpAgent: CompiledStateGraph<object, object, string, any, any, any> = null;
@@ -57,18 +57,19 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     console.log("Freelens Agent initialized: ", this.freelensAgent);
   }
 
-  get chatMessages(): MessageType[] {
+  get chatMessages(): MessageObject[] {
     return this._chatMessages;
   }
 
-  addMessage = (message: string, sent: boolean = true) => {
-    this._chatMessages.push({ text: message, sent: sent });
+  addMessage = (message: MessageObject) => {
+    this._chatMessages.push(message);
   }
 
   updateLastMessage = (newText: string) => {
     if (this._chatMessages.length > 0) {
       const lastMessage = this._chatMessages.pop();
-      this._chatMessages.push({ text: lastMessage.text + newText, sent: lastMessage.sent });
+      lastMessage.text += newText
+      this._chatMessages.push(lastMessage);
     }
   }
 
@@ -85,8 +86,8 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
       return;
     }
 
-    const config = { configurable: { thread_id: this.conversationId } };
-    
+    const config = {configurable: {thread_id: this.conversationId}};
+
     const messages = (await agent.getState(config)).values.messages;
     console.log("Messages to remove: ", messages);
     if (!messages || messages.length === 0) {
@@ -95,12 +96,16 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     }
 
     for (const msg of messages) {
-      await agent.updateState(config, { messages: new RemoveMessage({ id: msg.id }) });
+      await agent.updateState(config, {messages: new RemoveMessage({id: msg.id})});
     }
   }
 
-  conversationIsInterrupted = () => { this._conversationInterrupted = true; }
-  conversationIsNotInterrupted = () => { this._conversationInterrupted = false; }
+  conversationIsInterrupted = () => {
+    this._conversationInterrupted = true;
+  }
+  conversationIsNotInterrupted = () => {
+    this._conversationInterrupted = false;
+  }
   isConversationInterrupted = () => this._conversationInterrupted;
 
   getActiveAgent = async () => {

@@ -1,9 +1,11 @@
-import { Command } from "@langchain/langgraph";
-import { useEffect, useRef } from "react";
-import { AgentService, useAgentService } from "../../business/service/AgentService";
-import useAiAnalysisService, { AiAnalysisService } from "../../business/service/AiAnalysisService";
-import { PreferencesStore } from "../../store/PreferencesStore";
-import { MessageType } from "../message/Message";
+import {Command} from "@langchain/langgraph";
+import {useEffect, useRef} from "react";
+import {AgentService, useAgentService} from "../../business/service/AgentService";
+import useAiAnalysisService, {AiAnalysisService} from "../../business/service/AiAnalysisService";
+import {PreferencesStore} from "../../store/PreferencesStore";
+import {getInterruptMessage, getTextMessage} from "../../business/objects/MessageObjectProvider";
+import {MessageObject} from "../../business/objects/MessageObject";
+import {MessageType} from "../../business/objects/MessageType";
 
 interface ApprovalInterrupt {
   question: string;
@@ -23,67 +25,55 @@ function isApprovalInterrupt(value: unknown): value is ApprovalInterrupt {
 }
 
 const useChatHook = (preferencesStore: PreferencesStore) => {
-  const aiAnalisysService: AiAnalysisService = useAiAnalysisService(preferencesStore);
+  const aiAnalysisService: AiAnalysisService = useAiAnalysisService(preferencesStore);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    processResponse();
-    scrollToBottom(false);
+    scrollToBottom();
   }, []);
 
-  const sendMessage = (message: string, sent: boolean = true) => {
-    preferencesStore.addMessage(message, sent);
+  const sendMessage = (message: MessageObject) => {
+    preferencesStore.addMessage(message);
     scrollToBottom();
-    processResponse();
   }
 
-  const sendMessageToAgent = (message: string, sent: boolean = true) => {
+  const sendMessageToAgent = (message: MessageObject) => {
     console.log("Send message to agent: ", message);
-    preferencesStore.addMessage(message, sent);
-    scrollToBottom();
+    sendMessage(message);
 
-    const messagesNumber = preferencesStore.chatMessages.length;
-    if (messagesNumber > 0) {
-      const lastMessage = preferencesStore.chatMessages.at(messagesNumber - 1);
-      if (lastMessage.sent) {
-        if (preferencesStore.isConversationInterrupted()) {
-          console.log("Conversation is interrupted, resuming...");
-          preferencesStore.conversationIsNotInterrupted();
-          runAgent(new Command({ resume: lastMessage.text }));
-        } else {
-          const agentInput = {
-            modelName: preferencesStore.selectedModel,
-            modelApiKey: preferencesStore.apiKey,
-            messages: [{ role: "user", content: lastMessage.text }],
-          };
-          runAgent(agentInput);
-        }
+    if (message.sent) {
+      if (MessageType.EXPLAIN === message.type) {
+        analyzeEvent(message).finally(() => scrollToBottom())
+      } else if (preferencesStore.isConversationInterrupted()) {
+        console.log("Conversation is interrupted, resuming...");
+        preferencesStore.conversationIsNotInterrupted();
+        runAgent(new Command({resume: message.text})).finally(() => null);
+      } else {
+        const agentInput = {
+          modelName: preferencesStore.selectedModel,
+          modelApiKey: preferencesStore.apiKey,
+          messages: [{role: "user", content: message.text}],
+        };
+        runAgent(agentInput).finally(() => null);
       }
+    } else {
+      console.error("You cannot call sendMessageToAgent with 'sent: false'");
     }
   }
 
-  const processResponse = async () => {
-    const messagesNumber = preferencesStore.chatMessages.length;
-    if (messagesNumber > 0) {
-      const lastMessage = preferencesStore.chatMessages.at(messagesNumber - 1);
-      if (lastMessage.sent) {
-        analyzeEvent(lastMessage);
-      }
-    }
-  }
-
-  const analyzeEvent = async (lastMessage: MessageType) => {
+  const analyzeEvent = async (lastMessage: MessageObject) => {
     try {
-      const analysisResultStream = aiAnalisysService.analyze(lastMessage.text);
+      const analysisResultStream = aiAnalysisService.analyze(lastMessage.text);
       let aiResult = "";
-      sendMessage(aiResult, false);
+      sendMessage(getTextMessage(aiResult, false));
       for await (const chunk of analysisResultStream) {
         // console.log("Streaming to UI chunk: ", chunk);
         preferencesStore.updateLastMessage(chunk);
+        scrollToBottom();
       }
     } catch (error) {
       console.error("Error in AI analysis: ", error);
-      sendMessage("Error in AI analysis: " + error.message, false);
+      sendMessage(getTextMessage("Error in AI analysis: " + error.message, false));
     }
   }
 
@@ -94,7 +84,7 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
       const agentService: AgentService = useAgentService(activeAgent);
       const agentResponseStream = agentService.run(agentInput, preferencesStore.conversationId);
       let aiResult = "";
-      sendMessage(aiResult, false);
+      sendMessage(getTextMessage(aiResult, false));
       for await (const chunk of agentResponseStream) {
         // console.log("Streaming to UI chunk: ", chunk);
         if (typeof chunk === "string") {
@@ -104,29 +94,27 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
         // check if the chunk is an approval interrupt
         if (typeof chunk === "object" && isApprovalInterrupt(chunk.value)) {
           console.log("Approval interrupt received: ", chunk);
-          sendMessage(chunk.value.requestString, false);
+          sendMessage(getInterruptMessage(chunk, false));
           preferencesStore.conversationIsInterrupted();
         }
       }
     } catch (error) {
       console.error("Error while running Freelens Agent: ", error);
-      sendMessage("Error while running Freelens Agent: " + error.message, false);
+
+      sendMessage(getTextMessage("Error while running Freelens Agent: " + error.message, false));
     } finally {
       preferencesStore.isLoading = false;
     }
   }
 
-  const scrollToBottom = (withDelay: boolean = true) => {
+  const scrollToBottom = () => {
     const el = containerRef.current;
     if (el) {
-      const delay = withDelay ? 10 : 0;
-      setTimeout(() => {
-        el.scrollTop = el.scrollHeight;
-      }, delay);
+      el.scrollTop = el.scrollHeight;
     }
   }
 
-  return { containerRef, sendMessage, sendMessageToAgent }
+  return {containerRef, sendMessage, sendMessageToAgent}
 
 }
 
