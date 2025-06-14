@@ -1,11 +1,11 @@
-📡 Setting Up an MCP Agent for Freelens-AI
+# Setting Up an MCP Agent for Freelens-AI 📡 
 This guide will walk you through setting up an MCP (Model Control Protocol) agent to work with Freelens-AI, enabling you to control and interact with AI agents running on your infrastructure.
 
-🛠️ Prerequisites
+## Prerequisites
 - You have Freelens-AI installed.
 - You have Node.js and npx available in your system.
 
-⚙️ Configuration
+## Configuration
 Freelens-AI allows you to configure MCP agents directly from its Preferences page.
 
 1. Open Freelens-AI Preferences
