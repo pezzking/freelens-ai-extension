@@ -6,6 +6,7 @@ freelens-ai is a plugin for freelens that brings AI capabilities directly into y
 - [Available Models](#available-models)
 - [Key Features](#key-features)
 - [Local Testing](#rocket-how-to-test-it-locally)
+- [Base Agent](#base-agent)
 - [MCP Agent](#mcp-agent)
 - [Additional Resources](#other-link)
 
@@ -47,6 +48,10 @@ Each model offers different capabilities and performance characteristics. Choose
 - **Intelligent Assistance**: Get contextual help and suggestions for your operations
 
 <br>
+
+### Base Agent
+We have a base multi agent system that processes user prompts with a set of basic tools to get started.
+Go deeper by reading our [Base Agent documentation](docs/BASE_AGENT.md).
 
 ### MCP Agent
 We support MCP Agent through a dedicated configuration.

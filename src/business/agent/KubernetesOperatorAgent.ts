@@ -3,14 +3,14 @@ import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { AIModels } from "../provider/AIModels";
 import { useModelProvider } from "../provider/ModelProvider";
-import { createDeployment, createPod } from "./tools/Tools";
+import { createDeployment, createPod, deletePod } from "./tools/Tools";
 
 
 export const useAgentKubernetesOperator = (modelName: AIModels, modelApiKey: string) => {
     const model = useModelProvider().getModel({ modelName: modelName, apiKey: modelApiKey });
 
     const getAgent = () => {
-        const tools = [createPod, createDeployment];
+        const tools = [createPod, createDeployment, deletePod];
         const toolNode = new ToolNode(tools);
         const boundModel = model.bindTools(tools);
 
