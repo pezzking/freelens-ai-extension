@@ -39,3 +39,7 @@ https://github.com/Flux159/mcp-server-kubernetes
 
 ![alt text](images/mcpsettings.png)
 ![alt text](images/mcpset.png)
+
+# Troubleshooting
+- When you set up MCP Agent, the first message in chat it handles can be slow because it need to be initialized (our client should connect to the MCP Server you specified), so just wait for it to be fully initialized
+- Google Gemini models seems to have issued in MCP tool calling, thus the MCP Agent may have problems

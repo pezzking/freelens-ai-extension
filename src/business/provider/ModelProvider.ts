@@ -20,7 +20,8 @@ export const useModelProvider = () => {
       case "o3-mini":
       case "gpt-4.1":
       case "gpt-4o":
-        return new ChatOpenAI({ model: modelName, apiKey });
+        const openAiApiKey = process.env.OPENAI_API_KEY || apiKey
+        return new ChatOpenAI({ model: modelName, apiKey: openAiApiKey });
       case "deep-seek-r1":
         return null;
       case "llama3.2:1b":
@@ -34,10 +35,11 @@ export const useModelProvider = () => {
           baseUrl: `${FREELENS_OLLAMA_HOST}:${FREELENS_OLLAMA_PORT}`,
         });
       case "gemini-2.0-flash":
+        const googleApiKey = process.env.GOOGLE_API_KEY || apiKey
         return new ChatGoogleGenerativeAI({
           model: modelName,
           temperature: 0,
-          apiKey: apiKey,
+          apiKey: googleApiKey,
         });
       default:
         throw new Error(`Unsupported model: ${modelName}`);

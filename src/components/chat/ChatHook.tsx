@@ -1,11 +1,11 @@
-import {Command} from "@langchain/langgraph";
-import {useEffect, useRef} from "react";
-import {AgentService, useAgentService} from "../../business/service/AgentService";
-import useAiAnalysisService, {AiAnalysisService} from "../../business/service/AiAnalysisService";
-import {PreferencesStore} from "../../store/PreferencesStore";
-import {getInterruptMessage, getTextMessage} from "../../business/objects/MessageObjectProvider";
-import {MessageObject} from "../../business/objects/MessageObject";
-import {MessageType} from "../../business/objects/MessageType";
+import { Command } from "@langchain/langgraph";
+import { useEffect, useRef } from "react";
+import { AgentService, useAgentService } from "../../business/service/AgentService";
+import useAiAnalysisService, { AiAnalysisService } from "../../business/service/AiAnalysisService";
+import { PreferencesStore } from "../../store/PreferencesStore";
+import { getInterruptMessage, getTextMessage } from "../../business/objects/MessageObjectProvider";
+import { MessageObject } from "../../business/objects/MessageObject";
+import { MessageType } from "../../business/objects/MessageType";
 
 interface ApprovalInterrupt {
   question: string;
@@ -47,12 +47,12 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
       } else if (preferencesStore.isConversationInterrupted()) {
         console.log("Conversation is interrupted, resuming...");
         preferencesStore.conversationIsNotInterrupted();
-        runAgent(new Command({resume: message.text})).finally(() => null);
+        runAgent(new Command({ resume: message.text })).finally(() => null);
       } else {
         const agentInput = {
           modelName: preferencesStore.selectedModel,
           modelApiKey: preferencesStore.apiKey,
-          messages: [{role: "user", content: message.text}],
+          messages: [{ role: "user", content: message.text }],
         };
         runAgent(agentInput).finally(() => null);
       }
@@ -100,8 +100,7 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
       }
     } catch (error) {
       console.error("Error while running Freelens Agent: ", error);
-
-      sendMessage(getTextMessage("Error while running Freelens Agent: " + error.message, false));
+      sendMessage(getTextMessage("Sorry, there was and error while running Freelens Agent: " + error.message, false));
     } finally {
       preferencesStore.isLoading = false;
     }
@@ -114,7 +113,7 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     }
   }
 
-  return {containerRef, sendMessage, sendMessageToAgent}
+  return { containerRef, sendMessage, sendMessageToAgent }
 
 }
 
