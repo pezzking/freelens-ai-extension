@@ -67,8 +67,8 @@ export const createPod = tool(
         const interruptRequest = {
             question: "Approve this action...",
             options: ["yes", "no"],
-            actionToApprove: { name, namespace, data },
-            requestString: "Approve this action: " + JSON.stringify({ name, namespace, data }),
+            actionToApprove: { action: "CREATE POD", name, namespace, data },
+            requestString: "Approve this action: " + JSON.stringify({ action: "CREATE POD", name, namespace, data }),
         }
         const review = interrupt(interruptRequest);
         console.log("Tool call review: ", review);
@@ -124,8 +124,8 @@ export const createDeployment = tool(
         const interruptRequest = {
             question: "Approve this action...",
             options: ["yes", "no"],
-            actionToApprove: { name, namespace, data },
-            requestString: "Approve this action: " + JSON.stringify({ name, namespace, data }) + "\n\n\n options: [yes/no]",
+            actionToApprove: { action: "CREATE DEPLOYMENT", name, namespace, data },
+            requestString: "Approve this action: " + JSON.stringify({ action: "CREATE DEPLOYMENT", name, namespace, data }) + "\n\n\n options: [yes/no]",
         }
         const review = interrupt(interruptRequest);
         console.log("Tool call review: ", review);
@@ -192,8 +192,8 @@ export const deletePod = tool(
         const interruptRequest = {
             question: "Approve this action...",
             options: ["yes", "no"],
-            actionToApprove: { name, namespace },
-            requestString: "Approve this action: " + JSON.stringify({ name, namespace }),
+            actionToApprove: { action: "DELETE POD", name, namespace },
+            requestString: "Approve this action: " + JSON.stringify({ action: "DELETE POD", name, namespace }),
         }
         const review = interrupt(interruptRequest);
         console.log("Tool call review: ", review);
@@ -233,8 +233,8 @@ export const deleteDeployment = tool(
         const interruptRequest = {
             question: "Approve this action...",
             options: ["yes", "no"],
-            actionToApprove: { name, namespace },
-            requestString: "Approve this action: " + JSON.stringify({ name, namespace }),
+            actionToApprove: { action: "DELETE DEPLOYMENT", name, namespace },
+            requestString: "Approve this action: " + JSON.stringify({ action: "DELETE DEPLOYMENT", name, namespace }),
         }
         const review = interrupt(interruptRequest);
         console.log("Tool call review: ", review);
