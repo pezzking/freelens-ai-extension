@@ -67,8 +67,6 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     }
   }
 
-  processResponse();
-
   const analyzeEvent = async (lastMessage: MessageObject) => {
     try {
       const analysisResultStream = aiAnalisysService.analyze(lastMessage.text);
@@ -123,6 +121,8 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
       }, delay);
     }
   }
+
+  processResponse();
 
   return {containerRef, sendMessage, sendMessageToAgent}
 
