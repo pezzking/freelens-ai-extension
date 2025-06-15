@@ -16,8 +16,8 @@ export enum AIModelsEnum {
 
 export type AIModels = (typeof AIModelsEnum)[keyof typeof AIModelsEnum];
 
-export const toAIModelEnum = (value: string): AIModels | undefined => {
-  return Object.values(AIModelsEnum).includes(value as AIModelsEnum) ? (value as AIModelsEnum) : undefined;
+export const toAIModelEnum = (value: AIModels): AIModels | undefined => {
+  return Object.values(AIModelsEnum).includes(value) ? value : undefined;
 };
 
 export enum AIProviders {

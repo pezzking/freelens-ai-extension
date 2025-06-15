@@ -17,15 +17,15 @@ export const useAgentKubernetesOperator = (modelName: AIModels, modelApiKey: str
     const toolNode = new ToolNode(tools);
     const boundModel = model.bindTools(tools);
 
-    const shouldContinue = ({ messages }: typeof MessagesAnnotation.State) => {
-      const lastMessage = messages[messages.length - 1] as AIMessage;
+    const shouldContinue = ({ messages }: { messages: AIMessage[] }) => {
+      const lastMessage = messages[messages.length - 1];
       if (lastMessage.tool_calls?.length) {
         return "tools";
       }
       return "__end__";
     };
 
-    const callModel = async (state: typeof MessagesAnnotation.State) => {
+    const callModel = async (state: { messages: AIMessage[] }) => {
       const response = await boundModel.invoke(state.messages);
       return { messages: [response] };
     };
