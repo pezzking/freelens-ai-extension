@@ -9,9 +9,11 @@ export const getNamespaces = tool(
      * Get all namespaces of the Kubernetes cluster
      */
     console.log("[Tool invocation: getNamespaces]");
-    const namespaceStore = Renderer.K8sApi.apiManager.getStore(
-      Renderer.K8sApi.namespacesApi,
-    ) as Renderer.K8sApi.NamespaceStore;
+    const namespaceStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.namespacesApi);
+    if (!namespaceStore) {
+      console.log("Namespace store does not exist");
+      return [];
+    }
     const allNamespaces: Renderer.K8sApi.Namespace[] = namespaceStore.items.toJSON();
     const getNamespacesToolResult = allNamespaces.map((ns) => ns.getName());
     console.log("[Tool invocation result: getNamespaces] - ", getNamespacesToolResult);
@@ -29,7 +31,10 @@ export const getWarningEventsByNamespace = tool(
      * Get all events in status WARNING for a specific Kubernetes namespace
      */
     console.log("[Tool invocation: getWarningEventsForNamespace] - namespace: ", namespace);
-    const eventStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.eventApi) as Renderer.K8sApi.EventStore;
+    const eventStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.eventApi);
+    if (!eventStore) {
+      return "Event store does not exist";
+    }
     const allEventsByNs: Renderer.K8sApi.KubeEvent[] = eventStore.getAllByNs(namespace);
     console.log("[Tool invocation debug: getWarningEventsForNamespace] - all WARNING events: ", allEventsByNs);
     const getWarningEventsByNsToolResult = JSON.stringify(
@@ -150,9 +155,10 @@ export const createDeployment = tool(
     }
 
     try {
-      const deploymentsStore = Renderer.K8sApi.apiManager.getStore(
-        Renderer.K8sApi.deploymentApi,
-      ) as Renderer.K8sApi.DeploymentStore;
+      const deploymentsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.deploymentApi);
+      if (!deploymentsStore) {
+        return "Deployment store does not exist";
+      }
       const createDeploymentResult: Renderer.K8sApi.Deployment = await deploymentsStore.create(
         { name, namespace },
         data,
@@ -227,7 +233,10 @@ export const deletePod = tool(
     }
 
     try {
-      const podsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi) as Renderer.K8sApi.PodsStore;
+      const podsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi);
+      if (!podsStore) {
+        return "Pod store does not exist";
+      }
       const podToRemove = podsStore.getByName(name, namespace);
       if (!podToRemove) {
         return "Pod does not exist";
@@ -271,9 +280,10 @@ export const deleteDeployment = tool(
     }
 
     try {
-      const deploymentsStore = Renderer.K8sApi.apiManager.getStore(
-        Renderer.K8sApi.deploymentApi,
-      ) as Renderer.K8sApi.DeploymentStore;
+      const deploymentsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.deploymentApi);
+      if (!deploymentsStore) {
+        return "Deployment store does not exist";
+      }
       const deploymentToRemove = deploymentsStore.getByName(name, namespace);
       if (!deploymentToRemove) {
         return "Deployment does not exist";
