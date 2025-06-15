@@ -1,7 +1,7 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { PreferencesStore } from "../../../common/store";
 import { useModelProvider } from "../provider/model-provider";
 import { ANALYSIS_PROMPT_TEMPLATE } from "../provider/prompt-template-provider";
-import {PreferencesStore} from "../../../common/store";
 
 export interface AiAnalysisService {
   analyze: (message: string) => AsyncGenerator<string, void, unknown>;

@@ -5,9 +5,9 @@ import { Renderer } from "@freelensapp/extensions";
 import { Eraser, SendHorizonal } from "lucide-react";
 import { observer } from "mobx-react";
 import { PreferencesStore } from "../../../common/store";
+import { AIModels } from "../../business/provider/ai-models";
 import { useTextInput } from "./text-input-hook";
 import styleInline from "./text-input.scss?inline";
-import {AIModels} from "../../business/provider/ai-models";
 
 const {
   Component: { Select },

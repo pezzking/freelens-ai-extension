@@ -2,10 +2,10 @@ import { Common } from "@freelensapp/extensions";
 import { RemoveMessage } from "@langchain/core/messages";
 import { CompiledStateGraph } from "@langchain/langgraph";
 import { makeObservable, observable, toJS } from "mobx";
-import {AIModels, AIModelsEnum} from "../../renderer/business/provider/ai-models";
-import {MessageObject} from "../../renderer/business/objects/message-object";
-import {useMcpAgent} from "../../renderer/business/agent/mcp-agent";
-import {useFreelensAgentSystem} from "../../renderer/business/agent/freelens-agent-system";
+import { useFreelensAgentSystem } from "../../renderer/business/agent/freelens-agent-system";
+import { useMcpAgent } from "../../renderer/business/agent/mcp-agent";
+import { MessageObject } from "../../renderer/business/objects/message-object";
+import { AIModels, AIModelsEnum } from "../../renderer/business/provider/ai-models";
 
 export type PreferencesModel = {
   apiKey: string;
@@ -19,20 +19,19 @@ const generateConversationId = () => {
 };
 
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
-  @observable conversationId: string = generateConversationId();
-  @observable _conversationInterrupted: boolean = false;
-  @observable apiKey: string = "";
-  @observable selectedModel: AIModels = AIModelsEnum.GPT_3_5_TURBO;
-  @observable private _chatMessages: MessageObject[] = [];
-
+  @observable accessor conversationId: string = generateConversationId();
+  @observable accessor apiKey: string = "";
+  @observable accessor selectedModel: AIModels = AIModelsEnum.GPT_3_5_TURBO;
   // TODO replace any with the correct types
-  @observable freelensAgent?: CompiledStateGraph<object, object, any, any, any, any>;
+  @observable accessor freelensAgent?: CompiledStateGraph<object, object, any, any, any, any>;
   // TODO replace any with the correct types
-  @observable mcpAgent?: CompiledStateGraph<object, object, any, any, any, any>;
-  @observable mcpEnabled: boolean = false;
-  @observable mcpConfiguration: string = "";
+  @observable accessor mcpAgent?: CompiledStateGraph<object, object, any, any, any, any>;
+  @observable accessor mcpEnabled: boolean = false;
+  @observable accessor mcpConfiguration: string = "";
+  @observable accessor isLoading: boolean = false;
 
-  @observable isLoading: boolean = false;
+  private _conversationInterrupted: boolean = false;
+  private _chatMessages: MessageObject[] = [];
 
   constructor() {
     super({
@@ -112,9 +111,11 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   conversationIsInterrupted = () => {
     this._conversationInterrupted = true;
   };
+
   conversationIsNotInterrupted = () => {
     this._conversationInterrupted = false;
   };
+
   isConversationInterrupted = () => this._conversationInterrupted;
 
   getActiveAgent = async () => {

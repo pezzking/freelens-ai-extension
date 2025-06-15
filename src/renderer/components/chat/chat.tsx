@@ -4,12 +4,12 @@ import React from "react";
 import { Loader2 } from "lucide-react";
 import { observer } from "mobx-react";
 import { PreferencesStore } from "../../../common/store";
+import { MessageObject } from "../../business/objects/message-object";
+import { getTextMessage } from "../../business/objects/message-object-provider";
 import { Message } from "../message";
 import { TextInput } from "../text-input";
 import { useChatHook } from "./chat-hook";
 import styleInline from "./chat.scss?inline";
-import {MessageObject} from "../../business/objects/message-object";
-import {getTextMessage} from "../../business/objects/message-object-provider";
 
 export const Chat = observer(() => {
   const preferencesStore = PreferencesStore.getInstance();
