@@ -19,16 +19,16 @@ const generateConversationId = () => {
 };
 
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
-  @observable accessor conversationId: string = generateConversationId();
-  @observable accessor apiKey: string = "";
-  @observable accessor selectedModel: AIModels = AIModelsEnum.GPT_3_5_TURBO;
+  @observable conversationId: string = generateConversationId();
+  @observable apiKey: string = "";
+  @observable selectedModel: AIModels = AIModelsEnum.GPT_3_5_TURBO;
   // TODO replace any with the correct types
-  @observable accessor freelensAgent?: CompiledStateGraph<object, object, any, any, any, any>;
+  @observable freelensAgent: CompiledStateGraph<object, object, any, any, any, any> | undefined;
   // TODO replace any with the correct types
-  @observable accessor mcpAgent?: CompiledStateGraph<object, object, any, any, any, any>;
-  @observable accessor mcpEnabled: boolean = false;
-  @observable accessor mcpConfiguration: string = "";
-  @observable accessor isLoading: boolean = false;
+  @observable mcpAgent: CompiledStateGraph<object, object, any, any, any, any> | undefined;
+  @observable mcpEnabled: boolean = false;
+  @observable mcpConfiguration: string = "";
+  @observable isLoading: boolean = false;
 
   private _conversationInterrupted: boolean = false;
   private _chatMessages: MessageObject[] = [];
