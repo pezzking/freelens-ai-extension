@@ -3,10 +3,10 @@ services:
   freelens-ollama:
     build:
       context: .
-      dockerfile: FreelensOllamaImage
+      dockerfile: Dockerfile
     container_name: freelens-ollama
     ports:
-      - "9898:11434"
+      - 9898:11434
     volumes:
       - ollama:/root/.ollama
     environment:
