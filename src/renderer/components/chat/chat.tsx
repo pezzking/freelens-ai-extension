@@ -19,7 +19,7 @@ export const Chat = observer(() => {
     <>
       <style>{styleInline}</style>
       <div className="chat-container">
-        <div className="messagesContainer" ref={chatHook.containerRef}>
+        <div className="messages-container" ref={chatHook.containerRef}>
           {preferencesStore.chatMessages.map((msg: MessageObject, index: number) => (
             <Message key={index} message={msg} preferencesStore={preferencesStore} />
           ))}
