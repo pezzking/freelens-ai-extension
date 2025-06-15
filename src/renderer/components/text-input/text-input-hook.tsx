@@ -13,7 +13,7 @@ const MAX_ROWS = 5;
 
 export const useTextInput = ({ onSend, preferencesStore }: TextInputHookProps) => {
   const [message, setMessage] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const modelSelections = Object.entries(AIModelInfos).map(([value, aiModelInfo]) => {
     return { value, label: aiModelInfo.description };
   });
