@@ -1,5 +1,6 @@
 // @ts-ignore
-import React from "react";import { Command } from "@langchain/langgraph";
+import React from "react";import { Main } from "@freelensapp/extensions";
+import { Command } from "@langchain/langgraph";
 import { useEffect, useRef } from "react";
 import { MessageObject } from "../../../common/business/objects/message-object";
 import { getInterruptMessage, getTextMessage } from "../../../common/business/objects/message-object-provider";
@@ -8,10 +9,17 @@ import { AgentService, useAgentService } from "../../../common/business/service/
 import { AiAnalysisService, useAiAnalysisService } from "../../../common/business/service/ai-analysis-service";
 import { PreferencesStore } from "../../../common/store";
 
-interface ApprovalInterrupt {
+export interface ActionToApprove {
+  action: string;
+  name?: string;
+  namespace?: string;
+  data?: Main.K8sApi.KubeObject;
+}
+
+export interface ApprovalInterrupt {
   question: string;
   options: string[];
-  actionToApprove: any; // You might want to type this more specifically
+  actionToApprove: ActionToApprove;
   requestString: string;
 }
 
