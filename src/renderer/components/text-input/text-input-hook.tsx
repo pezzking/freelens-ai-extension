@@ -1,8 +1,8 @@
 import { Renderer } from "@freelensapp/extensions";
 import React, { useEffect, useRef, useState } from "react";
 import type { SingleValue } from "react-select";
-import { AIModelInfos, AIModels, toAIModelEnum } from "../../business/provider/ai-models";
 import { PreferencesStore } from "../../../common/store";
+import { AIModelInfos, AIModels, toAIModelEnum } from "../../business/provider/ai-models";
 
 type TextInputHookProps = {
   onSend: (message: string) => void;
@@ -13,7 +13,7 @@ const MAX_ROWS = 5;
 
 export const useTextInput = ({ onSend, preferencesStore }: TextInputHookProps) => {
   const [message, setMessage] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const modelSelections = Object.entries(AIModelInfos).map(([value, aiModelInfo]) => {
     return { value, label: aiModelInfo.description };
   });
