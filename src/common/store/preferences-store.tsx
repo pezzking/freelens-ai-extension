@@ -2,10 +2,10 @@ import { Common } from "@freelensapp/extensions";
 import { RemoveMessage } from "@langchain/core/messages";
 import { CompiledStateGraph } from "@langchain/langgraph";
 import { makeObservable, observable, toJS } from "mobx";
-import { useFreelensAgentSystem } from "../business/agent/freelens-agent-system";
-import { useMcpAgent } from "../business/agent/mcp-agent";
-import { MessageObject } from "../business/objects/message-object";
-import { AIModels, AIModelsEnum } from "../business/provider/ai-models";
+import {AIModels, AIModelsEnum} from "../../renderer/business/provider/ai-models";
+import {MessageObject} from "../../renderer/business/objects/message-object";
+import {useMcpAgent} from "../../renderer/business/agent/mcp-agent";
+import {useFreelensAgentSystem} from "../../renderer/business/agent/freelens-agent-system";
 
 export type PreferencesModel = {
   apiKey: string;

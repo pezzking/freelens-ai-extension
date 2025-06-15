@@ -2,9 +2,9 @@
 import React from "react";
 
 import { Renderer } from "@freelensapp/extensions";
-import { getExplainMessage } from "../../../common/business/objects/message-object-provider";
 import { PreferencesStore } from "../../../common/store";
 import { useChatHook } from "../chat";
+import {getExplainMessage} from "../../business/objects/message-object-provider";
 
 const {
   Navigation: { navigate },

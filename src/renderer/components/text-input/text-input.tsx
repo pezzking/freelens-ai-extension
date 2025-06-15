@@ -4,10 +4,10 @@ import React from "react";
 import { Renderer } from "@freelensapp/extensions";
 import { Eraser, SendHorizonal } from "lucide-react";
 import { observer } from "mobx-react";
-import { AIModels } from "../../../common/business/provider/ai-models";
 import { PreferencesStore } from "../../../common/store";
 import { useTextInput } from "./text-input-hook";
 import styleInline from "./text-input.scss?inline";
+import {AIModels} from "../../business/provider/ai-models";
 
 const {
   Component: { Select },

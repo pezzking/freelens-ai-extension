@@ -3,13 +3,13 @@ import React from "react";
 
 import { Loader2 } from "lucide-react";
 import { observer } from "mobx-react";
-import { MessageObject } from "../../../common/business/objects/message-object";
-import { getTextMessage } from "../../../common/business/objects/message-object-provider";
 import { PreferencesStore } from "../../../common/store";
 import { Message } from "../message";
 import { TextInput } from "../text-input";
 import { useChatHook } from "./chat-hook";
 import styleInline from "./chat.scss?inline";
+import {MessageObject} from "../../business/objects/message-object";
+import {getTextMessage} from "../../business/objects/message-object-provider";
 
 export const Chat = observer(() => {
   const preferencesStore = PreferencesStore.getInstance();

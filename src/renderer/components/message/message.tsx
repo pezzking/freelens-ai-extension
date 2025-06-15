@@ -2,13 +2,13 @@
 import React from "react";
 
 import { Renderer } from "@freelensapp/extensions";
-import { MessageObject } from "../../../common/business/objects/message-object";
-import { getTextMessage } from "../../../common/business/objects/message-object-provider";
-import { MessageType } from "../../../common/business/objects/message-type";
 import { PreferencesStore } from "../../../common/store";
 import { useChatHook } from "../chat";
 import { MarkdownViewer } from "../markdown-viewer";
 import styleInline from "./message.scss?inline";
+import {MessageObject} from "../../business/objects/message-object";
+import {getTextMessage} from "../../business/objects/message-object-provider";
+import {MessageType} from "../../business/objects/message-type";
 
 const {
   Component: { Button },

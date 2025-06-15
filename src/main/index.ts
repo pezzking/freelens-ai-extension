@@ -1,5 +1,5 @@
 import { Main } from "@freelensapp/extensions";
-import { PreferencesStore } from "../common/store/preferences-store";
+import { PreferencesStore } from "../common/store";
 
 export default class LensExtensionAiMain extends Main.LensExtension {
   async onActivate() {

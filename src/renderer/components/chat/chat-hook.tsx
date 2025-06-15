@@ -2,12 +2,12 @@
 import React from "react";import { Main } from "@freelensapp/extensions";
 import { Command } from "@langchain/langgraph";
 import { useEffect, useRef } from "react";
-import { MessageObject } from "../../../common/business/objects/message-object";
-import { getInterruptMessage, getTextMessage } from "../../../common/business/objects/message-object-provider";
-import { MessageType } from "../../../common/business/objects/message-type";
-import { AgentService, useAgentService } from "../../../common/business/service/agent-service";
-import { AiAnalysisService, useAiAnalysisService } from "../../../common/business/service/ai-analysis-service";
 import { PreferencesStore } from "../../../common/store";
+import {MessageType} from "../../business/objects/message-type";
+import {MessageObject} from "../../business/objects/message-object";
+import {AiAnalysisService, useAiAnalysisService} from "../../business/service/ai-analysis-service";
+import {getInterruptMessage, getTextMessage} from "../../business/objects/message-object-provider";
+import {AgentService, useAgentService} from "../../business/service/agent-service";
 
 export interface ActionToApprove {
   action: string;
