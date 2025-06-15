@@ -3,8 +3,7 @@ import React from "react";
 
 import Markdown from "react-markdown";
 import { useMarkDownViewerHook } from "./markdown-viewer-hook";
-
-import styleInline from "./markdown-viewer.scss";
+import styleInline from "./markdown-viewer.scss?inline";
 
 type MarkdownViewerProps = {
   content: string;

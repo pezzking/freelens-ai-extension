@@ -9,7 +9,6 @@ import { PreferencesStore } from "../../../common/store";
 import { Message } from "../message";
 import { TextInput } from "../text-input";
 import { useChatHook } from "./chat-hook";
-
 import styleInline from "./chat.scss?inline";
 
 export const Chat = observer(() => {

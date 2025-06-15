@@ -8,7 +8,6 @@ import { MessageType } from "../../../common/business/objects/message-type";
 import { PreferencesStore } from "../../../common/store";
 import { useChatHook } from "../chat";
 import { MarkdownViewer } from "../markdown-viewer";
-
 import styleInline from "./message.scss?inline";
 
 const {
