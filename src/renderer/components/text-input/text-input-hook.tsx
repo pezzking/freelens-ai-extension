@@ -1,5 +1,7 @@
+import { Renderer } from "@freelensapp/extensions";
 import React, { useEffect, useRef, useState } from "react";
-import AIModelInfos, { AIModel, toAIModelEnum } from "../../../common/business/provider/ai-models";
+import type { SingleValue } from "react-select";
+import { AIModelInfos, toAIModelEnum } from "../../../common/business/provider/ai-models";
 import { PreferencesStore } from "../../../common/store";
 
 type TextInputHookProps = {
@@ -9,7 +11,7 @@ type TextInputHookProps = {
 
 const MAX_ROWS = 5;
 
-const useTextInput = ({ onSend, preferencesStore }: TextInputHookProps) => {
+export const useTextInput = ({ onSend, preferencesStore }: TextInputHookProps) => {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const modelSelections = Object.entries(AIModelInfos).map(([value, aiModelInfo]) => {
@@ -46,11 +48,14 @@ const useTextInput = ({ onSend, preferencesStore }: TextInputHookProps) => {
     }
   };
 
-  const onChangeModel = (option: AIModel) => {
-    preferencesStore.selectedModel = toAIModelEnum(option.value);
+  const onChangeModel = (option: SingleValue<Renderer.Component.SelectOption<string>>) => {
+    if (option) {
+      const selectedModel = toAIModelEnum(option.value);
+      if (selectedModel) {
+        preferencesStore.selectedModel = selectedModel;
+      }
+    }
   };
 
   return { message, textareaRef, modelSelections, setMessage, handleKeyDown, handleSend, onChangeModel };
 };
-
-export default useTextInput;

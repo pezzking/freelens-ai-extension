@@ -8,9 +8,9 @@ import { useCodeBlockHook } from "./code-block-hook";
 import styleInline from "./code-block.scss?inline";
 
 type CodeBlockProps = {
-  inline: boolean;
+  inline?: boolean;
   children: string;
-  language: string;
+  language?: string;
   props: any;
 };
 

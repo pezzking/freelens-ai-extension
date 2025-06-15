@@ -14,7 +14,12 @@ export function teardownNode(state: typeof GraphState.State) {
   console.log("Teardown Node - called with input: ", state);
   const messages = state.messages;
   if (messages.length > HISTORY_SIZE) {
-    return { messages: messages.slice(0, -HISTORY_SIZE).map((m) => new RemoveMessage({ id: m.id })) };
+    return {
+      messages: messages
+        .slice(0, -HISTORY_SIZE)
+        .filter((m) => m.id)
+        .map((m) => new RemoveMessage({ id: m.id! })),
+    };
   }
   return {};
 }

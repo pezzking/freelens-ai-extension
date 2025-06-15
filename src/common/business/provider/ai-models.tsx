@@ -1,14 +1,9 @@
-export type AIModel = {
-  value: string;
-  label: string;
-};
-
 export type AIModelInfo = {
   description: string;
   provider: string;
 };
 
-export enum AIModels {
+export enum AIModelsEnum {
   GPT_3_5_TURBO = "gpt-3.5-turbo",
   O3_MINI = "o3-mini",
   GPT_4_1 = "gpt-4.1",
@@ -19,8 +14,10 @@ export enum AIModels {
   GEMINI_2_FLASH = "gemini-2.0-flash",
 }
 
+export type AIModels = (typeof AIModelsEnum)[keyof typeof AIModelsEnum];
+
 export const toAIModelEnum = (value: string): AIModels | undefined => {
-  return Object.values(AIModels).includes(value as AIModels) ? (value as AIModels) : undefined;
+  return Object.values(AIModelsEnum).includes(value as AIModelsEnum) ? (value as AIModelsEnum) : undefined;
 };
 
 export enum AIProviders {
@@ -30,15 +27,13 @@ export enum AIProviders {
   GOOGLE = "google",
 }
 
-const AIModelInfos: Record<string, AIModelInfo> = {
-  [AIModels.GPT_3_5_TURBO]: { description: "gpt 3.5 turbo", provider: AIProviders.OPEN_AI },
-  [AIModels.O3_MINI]: { description: "o3 mini", provider: AIProviders.OPEN_AI },
-  [AIModels.GPT_4_1]: { description: "gpt 4.1", provider: AIProviders.OPEN_AI },
-  [AIModels.GPT_4_O]: { description: "gpt 4o", provider: AIProviders.OPEN_AI },
-  [AIModels.DEEP_SEEK_R1]: { description: "deep seek r1", provider: AIProviders.DEEP_SEEK },
-  [AIModels.OLLAMA_LLAMA32_1B]: { description: "ollama-llama3.2 1b", provider: AIProviders.OLLAMA },
-  [AIModels.OLLAMA_MISTRAL_7B]: { description: "ollama mistral:7b", provider: AIProviders.OLLAMA },
-  [AIModels.GEMINI_2_FLASH]: { description: "gemini 2.0 flash", provider: AIProviders.GOOGLE },
+export const AIModelInfos: Record<string, AIModelInfo> = {
+  [AIModelsEnum.GPT_3_5_TURBO]: { description: "gpt 3.5 turbo", provider: AIProviders.OPEN_AI },
+  [AIModelsEnum.O3_MINI]: { description: "o3 mini", provider: AIProviders.OPEN_AI },
+  [AIModelsEnum.GPT_4_1]: { description: "gpt 4.1", provider: AIProviders.OPEN_AI },
+  [AIModelsEnum.GPT_4_O]: { description: "gpt 4o", provider: AIProviders.OPEN_AI },
+  [AIModelsEnum.DEEP_SEEK_R1]: { description: "deep seek r1", provider: AIProviders.DEEP_SEEK },
+  [AIModelsEnum.OLLAMA_LLAMA32_1B]: { description: "ollama-llama3.2 1b", provider: AIProviders.OLLAMA },
+  [AIModelsEnum.OLLAMA_MISTRAL_7B]: { description: "ollama mistral:7b", provider: AIProviders.OLLAMA },
+  [AIModelsEnum.GEMINI_2_FLASH]: { description: "gemini 2.0 flash", provider: AIProviders.GOOGLE },
 };
-
-export default AIModelInfos;

@@ -25,10 +25,13 @@ export const Message = ({ message, preferencesStore }: MessageProps) => {
   const buttonsOptionsClassName = "message-buttons-options";
   const chatHook = useChatHook(preferencesStore);
 
-  const renderOptions = (options: string[]) => {
-    return options.map((option) => (
-      <Button label={option} onClick={() => chatHook.sendMessageToAgent(getTextMessage(option, true))} />
-    ));
+  const renderOptions = (options?: string[]) => {
+    return (
+      options &&
+      options.map((option) => (
+        <Button label={option} onClick={() => chatHook.sendMessageToAgent(getTextMessage(option, true))} />
+      ))
+    );
   };
 
   return (

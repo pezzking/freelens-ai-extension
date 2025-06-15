@@ -5,7 +5,7 @@ import { makeObservable, observable, toJS } from "mobx";
 import { useFreelensAgentSystem } from "../business/agent/freelens-agent-system";
 import { useMcpAgent } from "../business/agent/mcp-agent";
 import { MessageObject } from "../business/objects/message-object";
-import { AIModels } from "../business/provider/ai-models";
+import { AIModels, AIModelsEnum } from "../business/provider/ai-models";
 
 export type PreferencesModel = {
   apiKey: string;
@@ -22,11 +22,13 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   @observable conversationId: string = generateConversationId();
   @observable _conversationInterrupted: boolean = false;
   @observable apiKey: string = "";
-  @observable selectedModel: AIModels = AIModels.GPT_3_5_TURBO;
+  @observable selectedModel: AIModels = AIModelsEnum.GPT_3_5_TURBO;
   @observable private _chatMessages: MessageObject[] = [];
 
-  @observable freelensAgent: CompiledStateGraph<object, object, string, any, any, any> = null;
-  @observable mcpAgent: CompiledStateGraph<object, object, string, any, any, any> = null;
+  // TODO replace any with the correct types
+  @observable freelensAgent?: CompiledStateGraph<object, object, any, any, any, any>;
+  // TODO replace any with the correct types
+  @observable mcpAgent?: CompiledStateGraph<object, object, any, any, any, any>;
   @observable mcpEnabled: boolean = false;
   @observable mcpConfiguration: string = "";
 
@@ -37,7 +39,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
       configName: "freelens-ai-preferences-store",
       defaults: {
         apiKey: "",
-        selectedModel: AIModels.GPT_3_5_TURBO,
+        selectedModel: AIModelsEnum.GPT_3_5_TURBO,
         mcpEnabled: false,
         mcpConfiguration: "",
       },
@@ -68,18 +70,25 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   updateLastMessage = (newText: string) => {
     if (this._chatMessages.length > 0) {
       const lastMessage = this._chatMessages.pop();
-      lastMessage.text += newText;
-      this._chatMessages.push(lastMessage);
+      if (lastMessage) {
+        lastMessage.text += newText;
+        this._chatMessages.push(lastMessage);
+      }
     }
   };
 
   clearChat = async () => {
-    await this.cleanAgentMessageHistory(this.freelensAgent);
-    await this.cleanAgentMessageHistory(this.mcpAgent);
+    if (this.freelensAgent) {
+      await this.cleanAgentMessageHistory(this.freelensAgent);
+    }
+    if (this.mcpAgent) {
+      await this.cleanAgentMessageHistory(this.mcpAgent);
+    }
     this._chatMessages = [];
   };
 
-  private async cleanAgentMessageHistory(agent: CompiledStateGraph<object, object, string, any, any, any>) {
+  // TODO replace any with the correct types
+  private async cleanAgentMessageHistory(agent: CompiledStateGraph<object, object, any, any, any, any>) {
     console.log("Cleaning agent message history for agent: ", agent);
     if (!agent) {
       console.warn("No agent provided to clean message history.");
@@ -128,7 +137,7 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     console.log("MCP Agent configuration updated: ", this.mcpConfiguration);
   };
 
-  protected fromStore = (preferencesModel: PreferencesModel): void => {
+  fromStore = (preferencesModel: PreferencesModel): void => {
     this.apiKey = preferencesModel.apiKey;
     this.selectedModel = preferencesModel.selectedModel;
     this.mcpEnabled = preferencesModel.mcpEnabled;

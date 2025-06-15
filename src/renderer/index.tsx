@@ -10,7 +10,7 @@ import React from "react";
 import { Renderer } from "@freelensapp/extensions";
 import { PreferencesStore } from "../common/store";
 import { FreelensAiIcon } from "./components/freelens-ai-icon";
-import MenuEntry from "./components/menu-entry/menu-entry";
+import { MenuEntry } from "./components/menu-entry";
 import { MainPage } from "./pages/main";
 import { PreferencesPage } from "./pages/preferences";
 

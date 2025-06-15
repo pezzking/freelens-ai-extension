@@ -8,6 +8,9 @@ export const useAgentSupervisor = (modelName: AIModels, modelApiKey: string) => 
   const model = useModelProvider().getModel({ modelName: modelName, apiKey: modelApiKey });
 
   const getAgent = async (subAgents: string[], subAgentResponsibilities: string[]) => {
+    if (!model) {
+      return;
+    }
     const destinations = ["__end__", ...subAgents] as const;
     const supervisorResponseSchema = z.object({
       reflection: z.string().describe("The supervisor's reflection about the next step to take."),
@@ -30,7 +33,9 @@ export const useAgentSupervisor = (modelName: AIModels, modelApiKey: string) => 
       workerResponsibilities: subAgentResponsibilities.join(", "),
       members: subAgents.join(", "),
     });
-    return formattedPrompt.pipe(model.withStructuredOutput(supervisorResponseSchema));
+    // TODO check why types fail
+    const modelAsAny = model as any;
+    return formattedPrompt.pipe(modelAsAny.withStructuredOutput(supervisorResponseSchema));
   };
 
   return { getAgent };

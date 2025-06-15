@@ -1,6 +1,6 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { RunnableLambda } from "@langchain/core/runnables";
-import { Command, CompiledStateGraph, MemorySaver, StateGraph } from "@langchain/langgraph";
+import { Command, MemorySaver, StateGraph } from "@langchain/langgraph";
 import { useAgentAnalyzer } from "./analyzer-agent";
 import { useConclusionsAgent } from "./conclusions-agent";
 import { useGeneralPurposeAgent } from "./general-purpose-agent";
@@ -28,19 +28,27 @@ export const useFreelensAgentSystem = () => {
       subAgents,
       subAgentResponsibilities,
     );
+    if (!agentSupervisor) {
+      return;
+    }
     const response = await agentSupervisor.invoke({ messages: state.messages });
     console.log("Supervisor agent - supervisor response", response);
 
-    // handoff
-    if (response.goto === "__end__") {
-      response.goto = conclusionsAgentName;
+    const responseAsAny = response as any;
+
+    // TOOD check why response is unknown
+    if (responseAsAny.goto === "__end__") {
+      responseAsAny.goto = conclusionsAgentName;
     }
-    return new Command({ goto: response.goto });
+    return new Command({ goto: responseAsAny.goto });
   };
 
   const agentAnalyzerNode = async (state: typeof GraphState.State) => {
     console.log("Analyzer Agent - calling agent analyzer with input: ", state);
     const agentAnalyzer = useAgentAnalyzer(state.modelName, state.modelApiKey).getAgent();
+    if (!agentAnalyzer) {
+      return;
+    }
     const result = await agentAnalyzer.invoke(state);
     const lastMessage = result.messages[result.messages.length - 1];
     console.log("Analyzer Agent - analysis result: ", result);
@@ -52,6 +60,9 @@ export const useFreelensAgentSystem = () => {
   const kubernetesOperatorNode = async (state: typeof GraphState.State) => {
     console.log("Kubernetes Operator Agent - called with input: ", state);
     const agentKubernetesOperator = useAgentKubernetesOperator(state.modelName, state.modelApiKey).getAgent();
+    if (!agentKubernetesOperator) {
+      return;
+    }
     const result = await agentKubernetesOperator.invoke(state);
     const lastMessage = result.messages[result.messages.length - 1];
     console.log("Kubernetes Operator - k8s operator result: ", result);
@@ -63,6 +74,9 @@ export const useFreelensAgentSystem = () => {
   const generalPurposeAgentNode = async (state: typeof GraphState.State) => {
     console.log("General Purpose Agent - called with input: ", state);
     const generalPurposeAgent = useGeneralPurposeAgent(state.modelName, state.modelApiKey).getAgent();
+    if (!generalPurposeAgent) {
+      return;
+    }
     const result = await generalPurposeAgent.invoke(state);
     const lastMessage = result.messages[result.messages.length - 1];
     console.log("General Purpose Agent - response: ", result);
@@ -74,6 +88,9 @@ export const useFreelensAgentSystem = () => {
   const conclusionsAgentNode = async (state: typeof GraphState.State) => {
     console.log("Conclusions Agent - called with input: ", state);
     const conclusionsAgent = useConclusionsAgent(state.modelName, state.modelApiKey).getAgent();
+    if (!conclusionsAgent) {
+      return;
+    }
     const result = await conclusionsAgent.invoke(state);
     const lastMessage = result.messages[result.messages.length - 1];
     console.log("Conclusions Agent - conclusions: ", result);
@@ -82,11 +99,15 @@ export const useFreelensAgentSystem = () => {
     };
   };
 
-  const buildAgentSystem = (): CompiledStateGraph<object, object, string, any, any, any> => {
+  const buildAgentSystem = () => {
     const graph = new StateGraph(GraphState)
-      .addNode("supervisorAgent", RunnableLambda.from(supervisorAgentNode).withConfig({ tags: ["nostream"] }), {
-        ends: [...subAgents, conclusionsAgentName],
-      })
+      .addNode(
+        "supervisorAgent",
+        { default: RunnableLambda.from(supervisorAgentNode).withConfig({ tags: ["nostream"] }) },
+        {
+          ends: [...subAgents, conclusionsAgentName],
+        },
+      )
       .addNode("agentAnalyzer", agentAnalyzerNode)
       .addNode("kubernetesOperator", kubernetesOperatorNode)
       .addNode("generalPurposeAgent", generalPurposeAgentNode)

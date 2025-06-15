@@ -64,12 +64,14 @@ export const useMcpAgent = (mcpConfiguration: string) => {
           console.log("[Tool invocation] - action not approved");
           const toolMessages: ToolMessage[] = [];
           lastMessage.tool_calls.forEach((toolCall) => {
-            const toolMessage = new ToolMessage({
-              tool_call_id: toolCall.id,
-              content: "The user denied the action",
-              name: toolCall.name,
-            });
-            toolMessages.push(toolMessage);
+            if (toolCall.id) {
+              const toolMessage = new ToolMessage({
+                tool_call_id: toolCall.id,
+                content: "The user denied the action",
+                name: toolCall.name,
+              });
+              toolMessages.push(toolMessage);
+            }
           });
           console.log("ToolMessages output: ", toolMessages);
           return new Command({ goto: "agent", update: { messages: toolMessages } });
@@ -82,6 +84,9 @@ export const useMcpAgent = (mcpConfiguration: string) => {
     const callModel = async (state: typeof GraphState.State) => {
       console.log("MCP Agent - called with input: ", state);
       const model = useModelProvider().getModel({ modelName: state.modelName, apiKey: state.modelApiKey });
+      if (!model) {
+        return;
+      }
       const boundModel = model.bindTools(mcpTools);
       const response = await boundModel.invoke(state.messages);
       console.log("MCP Agent - response: ", response);

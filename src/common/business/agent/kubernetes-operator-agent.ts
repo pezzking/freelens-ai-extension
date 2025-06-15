@@ -9,6 +9,10 @@ export const useAgentKubernetesOperator = (modelName: AIModels, modelApiKey: str
   const model = useModelProvider().getModel({ modelName: modelName, apiKey: modelApiKey });
 
   const getAgent = () => {
+    if (!model) {
+      return;
+    }
+
     const tools = [createPod, createDeployment, deletePod, deleteDeployment];
     const toolNode = new ToolNode(tools);
     const boundModel = model.bindTools(tools);

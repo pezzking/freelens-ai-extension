@@ -8,11 +8,14 @@ export const useAgentAnalyzer = (modelName: AIModels, modelApiKey: string) => {
   const model = useModelProvider().getModel({ modelName: modelName, apiKey: modelApiKey });
 
   const getAgent = () => {
-    return createReactAgent({
-      llm: model,
-      tools: [getNamespaces, getWarningEventsByNamespace],
-      stateModifier: AGENT_ANALYZER_PROMPT_TEMPLATE,
-    });
+    return (
+      model &&
+      createReactAgent({
+        llm: model,
+        tools: [getNamespaces, getWarningEventsByNamespace],
+        stateModifier: AGENT_ANALYZER_PROMPT_TEMPLATE,
+      })
+    );
   };
 
   return { getAgent };

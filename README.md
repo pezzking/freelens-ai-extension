@@ -28,8 +28,8 @@ automate complex tasks and enhance productivity.
 
 - [@freelensapp/ai-extension](#freelensappai-extension)
   - [Index](#index)
-    - [Available AI Providers](#available-ai-providers)
-    - [Available Models](#available-models)
+  - [Available Models](#available-models)
+    - [Connecting a model](#connecting-a-model)
     - [Key Features](#key-features)
     - [Base Agent](#base-agent)
     - [MCP Agent](#mcp-agent)

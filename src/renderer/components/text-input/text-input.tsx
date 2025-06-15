@@ -5,13 +5,16 @@ import { Renderer } from "@freelensapp/extensions";
 import { Eraser, SendHorizonal } from "lucide-react";
 import { observer } from "mobx-react";
 import { PreferencesStore } from "../../../common/store";
-import useTextInput from "./text-input-hook";
+import { useTextInput } from "./text-input-hook";
 
+import { AIModels } from "../../../common/business/provider/ai-models";
 import styleInline from "./TextInput.scss?inline";
 
 const {
   Component: { Select },
 } = Renderer;
+
+type TextInputOption = Renderer.Component.SelectOption<AIModels>;
 
 type TextInputProps = {
   onSend: (message: string) => void;
@@ -20,6 +23,7 @@ type TextInputProps = {
 export const TextInput = observer(({ onSend }: TextInputProps) => {
   const preferencesStore = PreferencesStore.getInstance();
   const textInputHook = useTextInput({ onSend, preferencesStore });
+  const textInputOptions = textInputHook.modelSelections as TextInputOption[];
 
   return (
     <>
@@ -47,7 +51,7 @@ export const TextInput = observer(({ onSend }: TextInputProps) => {
             <div style={{ display: "flex", alignItems: "center" }}>
               <Select
                 id="update-channel-input"
-                options={textInputHook.modelSelections}
+                options={textInputOptions}
                 value={preferencesStore.selectedModel}
                 onChange={textInputHook.onChangeModel}
                 themeName="lens"

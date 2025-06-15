@@ -1,4 +1,4 @@
-import { Renderer } from "@freelensapp/extensions";
+import { Main, Renderer } from "@freelensapp/extensions";
 import { tool } from "@langchain/core/tools";
 import { interrupt } from "@langchain/langgraph";
 import { z } from "zod";
@@ -59,11 +59,7 @@ export const getWarningEventsByNamespace = tool(
 );
 
 export const createPod = tool(
-  async ({
-    name,
-    namespace,
-    data,
-  }: { name: string; namespace: string; data: Renderer.K8sApi.KubeObject }): Promise<string> => {
+  async ({ name, namespace, data }: { name: string; namespace: string; data: Main.K8sApi.Pod }): Promise<string> => {
     /**
      * Creates a pod in the Kubernetes cluster
      */
@@ -83,7 +79,10 @@ export const createPod = tool(
     }
 
     try {
-      const podsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi) as Renderer.K8sApi.PodsStore;
+      const podsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi);
+      if (!podsStore) {
+        return "Pod store is not available";
+      }
       const createPodResult: Renderer.K8sApi.Pod = await podsStore.create({ name, namespace }, data);
       console.log("[Tool invocation result: createPod] - ", createPodResult);
       return "Pod manifest applied successfully";
@@ -128,7 +127,7 @@ export const createDeployment = tool(
     name,
     namespace,
     data,
-  }: { name: string; namespace: string; data: Renderer.K8sApi.KubeObject }): Promise<string> => {
+  }: { name: string; namespace: string; data: Main.K8sApi.Deployment }): Promise<string> => {
     /**
      * Creates a deployment in the Kubernetes cluster
      */
@@ -230,6 +229,9 @@ export const deletePod = tool(
     try {
       const podsStore = Renderer.K8sApi.apiManager.getStore(Renderer.K8sApi.podsApi) as Renderer.K8sApi.PodsStore;
       const podToRemove = podsStore.getByName(name, namespace);
+      if (!podToRemove) {
+        return "Pod does not exist";
+      }
       await podsStore.remove(podToRemove);
       console.log("[Tool invocation result: deletePod] - Pod deleted successfully");
       return "Pod deleted successfully";
@@ -273,6 +275,9 @@ export const deleteDeployment = tool(
         Renderer.K8sApi.deploymentApi,
       ) as Renderer.K8sApi.DeploymentStore;
       const deploymentToRemove = deploymentsStore.getByName(name, namespace);
+      if (!deploymentToRemove) {
+        return "Deployment does not exist";
+      }
       await deploymentsStore.remove(deploymentToRemove);
       console.log("[Tool invocation result: deleteDeployment] - Deployment deleted successfully");
       return "Deployment deleted successfully";

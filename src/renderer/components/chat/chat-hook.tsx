@@ -7,7 +7,7 @@ import { MessageObject } from "../../../common/business/objects/message-object";
 import { getInterruptMessage, getTextMessage } from "../../../common/business/objects/message-object-provider";
 import { MessageType } from "../../../common/business/objects/message-type";
 import { AgentService, useAgentService } from "../../../common/business/service/agent-service";
-import useAiAnalysisService, { AiAnalysisService } from "../../../common/business/service/ai-analysis-service";
+import { AiAnalysisService, useAiAnalysisService } from "../../../common/business/service/ai-analysis-service";
 import { PreferencesStore } from "../../../common/store";
 
 interface ApprovalInterrupt {

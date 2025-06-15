@@ -7,7 +7,7 @@ export interface AiAnalysisService {
   analyze: (message: string) => AsyncGenerator<string, void, unknown>;
 }
 
-const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisService => {
+export const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisService => {
   const analyze = async function* (message: string) {
     console.log("Starting AI analysis for message: ", message);
 
@@ -23,6 +23,9 @@ const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisSer
       modelName: preferencesStore.selectedModel,
       apiKey: preferencesStore.apiKey,
     });
+    if (!model) {
+      return;
+    }
     const chain = ChatPromptTemplate.fromTemplate(ANALYSIS_PROMPT_TEMPLATE).pipe(model);
     const streamResponse = await chain.stream({ context: message });
 
@@ -35,5 +38,3 @@ const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisSer
 
   return { analyze };
 };
-
-export default useAiAnalysisService;

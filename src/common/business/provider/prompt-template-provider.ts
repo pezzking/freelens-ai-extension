@@ -90,9 +90,9 @@ Each worker has specific responsibilities:
 Your task is to decide, at each step, which worker should act next, or whether the conversation should end. Use the following strict protocol:
 
 1. Given the user request and the responses so far, determine if the last worker has already fully answered the user’s question.
-   - If the user's request has been fully addressed, you MUST stop the conversation by returning: __end__.
-   - If the user provided and incomplete request and one of the worker is requesting integrations, you MUST stop the conversation by returning: __end__.
-   - If there is an error, you MUST stop the conversation by returning: __end__.
+    - If the user's request has been fully addressed, you MUST stop the conversation by returning: __end__.
+    - If the user provided and incomplete request and one of the worker is requesting integrations, you MUST stop the conversation by returning: __end__.
+    - If there is an error, you MUST stop the conversation by returning: __end__.
 2. DO NOT repeat or loop workers unnecessarily. Avoid redundant calls to the same worker unless absolutely necessary.
 3. Consider the sequence of actions and avoid circular reasoning. Each worker should contribute meaningfully.
 4. before calling each worker, first explain to the USER why you are calling it.
