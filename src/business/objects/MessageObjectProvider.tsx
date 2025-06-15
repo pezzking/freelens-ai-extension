@@ -20,6 +20,7 @@ export function getExplainMessage(message: string) {
 export function getInterruptMessage(chunk: Interrupt, sent: boolean) {
   return {
     type: MessageType.INTERRUPT,
+    action: chunk.value.actionToApprove.action,
     text: chunk.value.requestString,
     options: chunk.value.options,
     sent: sent

@@ -12,7 +12,7 @@ type CodeBlockProps = {
 }
 
 const CodeBlock = ({inline, children, language, props}: CodeBlockProps) => {
-  const codeBlockHook = useCodeBlockHook({children});
+  const codeBlockHook = useCodeBlockHook({children, language});
 
   if (!inline) {
     return (

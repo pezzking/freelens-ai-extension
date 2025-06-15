@@ -106,10 +106,13 @@ const useChatHook = (preferencesStore: PreferencesStore) => {
     }
   }
 
-  const scrollToBottom = () => {
+  const scrollToBottom = (withDelay: boolean = true) => {
     const el = containerRef.current;
     if (el) {
-      el.scrollTop = el.scrollHeight;
+      const delay = withDelay ? 10 : 0;
+      setTimeout(() => {
+        el.scrollTop = el.scrollHeight;
+      }, delay);
     }
   }
 

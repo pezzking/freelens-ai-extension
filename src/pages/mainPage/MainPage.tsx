@@ -9,7 +9,7 @@ type MainPageProps = {
 
 const MainPage = ({extension}: MainPageProps) => {
   return (
-    <div className="example-page">
+    <div className="main-page">
       <Chat/>
     </div>
   );

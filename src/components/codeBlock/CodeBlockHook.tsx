@@ -1,5 +1,6 @@
-import {useState} from "react";
+import {use, useEffect, useState} from "react";
 import {Renderer} from "@freelensapp/extensions";
+import codeBlock from "./CodeBlock";
 
 const {
   Component: {
@@ -9,14 +10,29 @@ const {
 } = Renderer;
 
 type useCodeBlockHookProps = {
-  children: string
+  children: string,
+  language: string,
 }
 
-const useCodeBlockHook = ({children}: useCodeBlockHookProps) => {
+const useCodeBlockHook = ({children, language}: useCodeBlockHookProps) => {
   const [copied, setCopied] = useState(false)
-  const text = String(children).replace(/\n$/, '')
+  const [text, setText] = useState("");
   const hasMultipleLines = text.split('\n').length > 1
   const shellId = "FreeLensAI-tabid";
+
+  useEffect(() => {
+    const beautified = String(children).replace(/\n$/, '');
+    if ("json" === language) {
+      try {
+        setText(JSON.stringify(JSON.parse(beautified), null, 2));
+      } catch (ex) {
+        setText(beautified);
+        console.error(`An error occurred while parsing json`, ex);
+      }
+    } else {
+      setText(beautified);
+    }
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(text).then(() => {
