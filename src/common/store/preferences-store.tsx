@@ -19,9 +19,9 @@ const generateConversationId = () => {
 };
 
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
-  @observable conversationId: string = generateConversationId();
-  @observable apiKey: string = "";
-  @observable selectedModel: AIModelsEnum = AIModelsEnum.GPT_3_5_TURBO;
+  @observable accessor conversationId: string = generateConversationId();
+  @observable accessor apiKey: string = "";
+  @observable accessor selectedModel: AIModelsEnum = AIModelsEnum.GPT_3_5_TURBO;
   // TODO replace any with the correct types
   @observable accessor freelensAgent: CompiledStateGraph<object, object, any, any, any, any> | null = null;
   // TODO replace any with the correct types
