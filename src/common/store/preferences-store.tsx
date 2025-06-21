@@ -5,14 +5,14 @@ import { makeObservable, observable, toJS } from "mobx";
 import { useFreelensAgentSystem } from "../../renderer/business/agent/freelens-agent-system";
 import { useMcpAgent } from "../../renderer/business/agent/mcp-agent";
 import { MessageObject } from "../../renderer/business/objects/message-object";
-import { AIModels, AIModelsEnum } from "../../renderer/business/provider/ai-models";
+import { AIModelsEnum } from "../../renderer/business/provider/ai-models";
 
-export type PreferencesModel = {
+export interface PreferencesModel {
   apiKey: string;
-  selectedModel: AIModels;
+  selectedModel: AIModelsEnum;
   mcpEnabled: boolean;
   mcpConfiguration: string;
-};
+}
 
 const generateConversationId = () => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -21,14 +21,14 @@ const generateConversationId = () => {
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
   @observable conversationId: string = generateConversationId();
   @observable apiKey: string = "";
-  @observable selectedModel: AIModels = AIModelsEnum.GPT_3_5_TURBO;
+  @observable selectedModel: AIModelsEnum = AIModelsEnum.GPT_3_5_TURBO;
   // TODO replace any with the correct types
-  @observable freelensAgent: CompiledStateGraph<object, object, any, any, any, any> | undefined;
+  @observable accessor freelensAgent: CompiledStateGraph<object, object, any, any, any, any> | null = null;
   // TODO replace any with the correct types
-  @observable mcpAgent: CompiledStateGraph<object, object, any, any, any, any> | undefined;
-  @observable mcpEnabled: boolean = false;
-  @observable mcpConfiguration: string = "";
-  @observable isLoading: boolean = false;
+  @observable accessor mcpAgent: CompiledStateGraph<object, object, any, any, any, any> | null = null;
+  @observable accessor mcpEnabled: boolean = false;
+  @observable accessor mcpConfiguration: string = "";
+  @observable accessor isLoading: boolean = false;
 
   private _conversationInterrupted: boolean = false;
   private _chatMessages: MessageObject[] = [];

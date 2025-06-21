@@ -5,7 +5,7 @@ import { Renderer } from "@freelensapp/extensions";
 import { Eraser, SendHorizonal } from "lucide-react";
 import { observer } from "mobx-react";
 import { PreferencesStore } from "../../../common/store";
-import { AIModels } from "../../business/provider/ai-models";
+import { AIModelsEnum } from "../../business/provider/ai-models";
 import { useTextInput } from "./text-input-hook";
 import styleInline from "./text-input.scss?inline";
 
@@ -13,7 +13,7 @@ const {
   Component: { Select },
 } = Renderer;
 
-type TextInputOption = Renderer.Component.SelectOption<AIModels>;
+type TextInputOption = Renderer.Component.SelectOption<AIModelsEnum>;
 
 type TextInputProps = {
   onSend: (message: string) => void;
