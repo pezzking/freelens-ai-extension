@@ -8,7 +8,7 @@ export const MainPage = () => {
   return (
     <>
       <style>{styleInline}</style>
-      <div className="extension-ai-main-page">
+      <div className="ai-extension-main-page">
         <Chat />
       </div>
     </>

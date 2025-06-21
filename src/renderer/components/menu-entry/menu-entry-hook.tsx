@@ -16,7 +16,7 @@ export const useMenuEntryHook = (preferencesStore: PreferencesStore) => {
   const openTab = (message: string) => {
     const prompt = "Could you explain this message?\n\n";
     chatHook.sendMessageToAgent(getExplainMessage(`${prompt}${message}`));
-    navigate("/extension/freelensapp--freelens-ai/freelens-ai-page");
+    navigate("/extension/freelensapp--ai-extension/ai-extension-main-page");
   };
 
   return { openTab };

@@ -8,9 +8,8 @@ export interface AgentService {
 /**
  * This service takes an agent, runs it and streams the response back to the caller.
  * If the agent has any interrupts, it will yield those as well.
- * @param modelName
- * @param modelApiKey
  * @returns
+ * @param agent
  */
 export const useAgentService = (agent: CompiledStateGraph<object, object, string, any, any, any>): AgentService => {
   const run = async function* (agentInput: object | Command, conversationId: string) {

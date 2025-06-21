@@ -24,7 +24,7 @@ export default class FreeLensAIRenderer extends Renderer.LensExtension {
 
   clusterPages = [
     {
-      id: "extension-ai-main-page",
+      id: "ai-extension-main-page",
       components: {
         Page: () => <MainPage />,
       },
@@ -33,9 +33,9 @@ export default class FreeLensAIRenderer extends Renderer.LensExtension {
 
   clusterPageMenus = [
     {
-      id: "extension-ai",
+      id: "ai-extension",
       title: "Freelens AI",
-      target: { pageId: "extension-ai-main-page" },
+      target: { pageId: "ai-extension-main-page" },
       components: {
         Icon: FreelensAiIcon,
       },
