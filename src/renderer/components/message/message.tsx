@@ -14,10 +14,10 @@ const {
   Component: { Button },
 } = Renderer;
 
-export type MessageProps = {
+export interface MessageProps {
   message: MessageObject;
   preferencesStore: PreferencesStore;
-};
+}
 
 export const Message = ({ message, preferencesStore }: MessageProps) => {
   const sentMessageClassName = message.sent ? "message-bubble sent" : "message-bubble";

@@ -1,13 +1,13 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOllama } from "@langchain/ollama";
 import { ChatOpenAI } from "@langchain/openai";
-import { AIModels, AIModelsEnum } from "./ai-models";
+import { AIModelsEnum } from "./ai-models";
 
 const FREELENS_OLLAMA_HOST = process.env.FREELENS_OLLAMA_HOST || "http://127.0.0.1";
 const FREELENS_OLLAMA_PORT = process.env.FREELENS_OLLAMA_PORT || "9898";
 
 type ModelStrategy = {
-  modelName: AIModels;
+  modelName: AIModelsEnum;
   apiKey: string;
 };
 

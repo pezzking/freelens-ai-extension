@@ -1,7 +1,7 @@
-export type AIModelInfo = {
+export interface AIModelInfo {
   description: string;
   provider: string;
-};
+}
 
 export enum AIModelsEnum {
   GPT_3_5_TURBO = "gpt-3.5-turbo",
@@ -14,15 +14,13 @@ export enum AIModelsEnum {
   GEMINI_2_FLASH = "gemini-2.0-flash",
 }
 
-export type AIModels = (typeof AIModelsEnum)[keyof typeof AIModelsEnum];
-
-export const toAIModelEnum = (value: AIModels): AIModels | undefined => {
+export const toAIModelEnum = (value: AIModelsEnum) => {
   return Object.values(AIModelsEnum).includes(value) ? value : undefined;
 };
 
 export enum AIProviders {
   OPEN_AI = "open-ai",
-  DEEP_SEEK = "deep-seek",
+  // DEEP_SEEK = "deep-seek",
   OLLAMA = "ollama",
   GOOGLE = "google",
 }
