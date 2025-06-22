@@ -11,7 +11,6 @@ import { Renderer } from "@freelensapp/extensions";
 import { PreferencesStore } from "../common/store";
 import { FreelensAiIcon } from "./components/freelens-ai-icon";
 import { MenuEntry } from "./components/menu-entry";
-import { ApplicationContextProvider } from "./context/application-context";
 import { MainPage } from "./pages/main";
 import { PreferencesPage } from "./pages/preferences";
 
