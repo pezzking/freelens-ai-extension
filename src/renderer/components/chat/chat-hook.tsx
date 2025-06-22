@@ -1,13 +1,12 @@
 import { Main } from "@freelensapp/extensions";
 import { Command } from "@langchain/langgraph"; // @ts-ignore
-import React from "react";
-import { useEffect, useRef } from "react";
-import { PreferencesStore } from "../../../common/store";
+import React, { useEffect, useRef } from "react";
 import { MessageObject } from "../../business/objects/message-object";
 import { getInterruptMessage, getTextMessage } from "../../business/objects/message-object-provider";
 import { MessageType } from "../../business/objects/message-type";
 import { AgentService, useAgentService } from "../../business/service/agent-service";
 import { AiAnalysisService, useAiAnalysisService } from "../../business/service/ai-analysis-service";
+import { useApplicationStatusStore } from "../../context/application-context";
 
 export interface ActionToApprove {
   action: string;
@@ -34,16 +33,27 @@ function isApprovalInterrupt(value: unknown): value is ApprovalInterrupt {
   );
 }
 
-export const useChatHook = (preferencesStore: PreferencesStore) => {
-  const aiAnalysisService: AiAnalysisService = useAiAnalysisService(preferencesStore);
+export const useChatHook = () => {
+  const applicationStatusStore = useApplicationStatusStore();
+  const aiAnalysisService: AiAnalysisService = useAiAnalysisService(applicationStatusStore);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  // On load scroll to bottom
   useEffect(() => {
     scrollToBottom();
   }, []);
 
+  // Perform EXPLAIN when an explain message is sent
+  useEffect(() => {
+    const message = applicationStatusStore.explainEvent;
+    if (Object.keys(message).length === 0 && MessageType.EXPLAIN === message.type) {
+      sendMessageToAgent(message);
+      applicationStatusStore.explainEvent = {} as MessageObject;
+    }
+  }, [applicationStatusStore.explainEvent]);
+
   const sendMessage = (message: MessageObject) => {
-    preferencesStore.addMessage(message);
+    applicationStatusStore.addMessage(message);
     scrollToBottom();
   };
 
@@ -54,14 +64,14 @@ export const useChatHook = (preferencesStore: PreferencesStore) => {
     if (message.sent) {
       if (MessageType.EXPLAIN === message.type) {
         analyzeEvent(message).finally(() => scrollToBottom());
-      } else if (preferencesStore.isConversationInterrupted()) {
+      } else if (applicationStatusStore.isConversationInterrupted) {
         console.log("Conversation is interrupted, resuming...");
-        preferencesStore.conversationIsNotInterrupted();
+        applicationStatusStore.setConversationInterrupted(false);
         runAgent(new Command({ resume: message.text })).finally(() => null);
       } else {
         const agentInput = {
-          modelName: preferencesStore.selectedModel,
-          modelApiKey: preferencesStore.apiKey,
+          modelName: applicationStatusStore.selectedModel,
+          modelApiKey: applicationStatusStore.apiKey,
           messages: [{ role: "user", content: message.text }],
         };
         runAgent(agentInput).finally(() => null);
@@ -78,7 +88,7 @@ export const useChatHook = (preferencesStore: PreferencesStore) => {
       sendMessage(getTextMessage(aiResult, false));
       for await (const chunk of analysisResultStream) {
         // console.log("Streaming to UI chunk: ", chunk);
-        preferencesStore.updateLastMessage(chunk);
+        applicationStatusStore.updateLastMessage(chunk);
         scrollToBottom();
       }
     } catch (error) {
@@ -89,23 +99,23 @@ export const useChatHook = (preferencesStore: PreferencesStore) => {
 
   const runAgent = async (agentInput: object | Command) => {
     try {
-      preferencesStore.isLoading = true;
-      const activeAgent = await preferencesStore.getActiveAgent();
+      applicationStatusStore.setLoading(true);
+      const activeAgent = await applicationStatusStore.getActiveAgent();
       const agentService: AgentService = useAgentService(activeAgent);
-      const agentResponseStream = agentService.run(agentInput, preferencesStore.conversationId);
+      const agentResponseStream = agentService.run(agentInput, applicationStatusStore.conversationId);
       let aiResult = "";
       sendMessage(getTextMessage(aiResult, false));
       for await (const chunk of agentResponseStream) {
         // console.log("Streaming to UI chunk: ", chunk);
         if (typeof chunk === "string") {
-          preferencesStore.updateLastMessage(chunk);
+          applicationStatusStore.updateLastMessage(chunk);
         }
 
         // check if the chunk is an approval interrupt
         if (typeof chunk === "object" && isApprovalInterrupt(chunk.value)) {
           console.log("Approval interrupt received: ", chunk);
           sendMessage(getInterruptMessage(chunk, false));
-          preferencesStore.conversationIsInterrupted();
+          applicationStatusStore.setConversationInterrupted(true);
         }
       }
     } catch (error) {
@@ -115,7 +125,7 @@ export const useChatHook = (preferencesStore: PreferencesStore) => {
         getTextMessage(`Error while running Freelens Agent: ${error instanceof Error ? error.message : error}`, false),
       );
     } finally {
-      preferencesStore.isLoading = false;
+      applicationStatusStore.setLoading(false);
     }
   };
 

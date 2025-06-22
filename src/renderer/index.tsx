@@ -11,6 +11,7 @@ import { Renderer } from "@freelensapp/extensions";
 import { PreferencesStore } from "../common/store";
 import { FreelensAiIcon } from "./components/freelens-ai-icon";
 import { MenuEntry } from "./components/menu-entry";
+import { ApplicationContextProvider } from "./context/application-context";
 import { MainPage } from "./pages/main";
 import { PreferencesPage } from "./pages/preferences";
 
@@ -19,6 +20,7 @@ type KubeObjectMenuProps<TKubeObject extends KubeObject> = Renderer.Component.Ku
 
 export default class FreeLensAIRenderer extends Renderer.LensExtension {
   async onActivate() {
+    // @ts-ignore
     PreferencesStore.createInstance().loadExtension(this);
   }
 
@@ -58,7 +60,11 @@ export default class FreeLensAIRenderer extends Renderer.LensExtension {
       apiVersions: ["v1"],
       components: {
         // TODO Freelens 1.4.0 should have Event type exposed
-        MenuItem: (props: KubeObjectMenuProps<any>) => <MenuEntry {...props} />,
+        MenuItem: (props: KubeObjectMenuProps<any>) => (
+          <ApplicationContextProvider>
+            <MenuEntry {...props} />
+          </ApplicationContextProvider>
+        ),
       },
     },
   ];

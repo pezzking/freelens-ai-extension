@@ -3,9 +3,8 @@ import React from "react";
 
 import { Renderer } from "@freelensapp/extensions";
 import { Eraser, SendHorizonal } from "lucide-react";
-import { observer } from "mobx-react";
-import { PreferencesStore } from "../../../common/store";
 import { AIModelsEnum } from "../../business/provider/ai-models";
+import { useApplicationStatusStore } from "../../context/application-context";
 import { useTextInput } from "./text-input-hook";
 import styleInline from "./text-input.scss?inline";
 
@@ -19,9 +18,9 @@ type TextInputProps = {
   onSend: (message: string) => void;
 };
 
-export const TextInput = observer(({ onSend }: TextInputProps) => {
-  const preferencesStore = PreferencesStore.getInstance();
-  const textInputHook = useTextInput({ onSend, preferencesStore });
+export const TextInput = ({ onSend }: TextInputProps) => {
+  const applicationStatusStore = useApplicationStatusStore();
+  const textInputHook = useTextInput({ onSend });
   const textInputOptions = textInputHook.modelSelections as TextInputOption[];
 
   return (
@@ -41,8 +40,8 @@ export const TextInput = observer(({ onSend }: TextInputProps) => {
           <div className="text-input-buttons-container">
             <button
               className="chat-button chat-clear-button"
-              onClick={async () => preferencesStore.clearChat()}
-              disabled={preferencesStore.chatMessages.length === 0}
+              onClick={async () => applicationStatusStore.clearChat()}
+              disabled={applicationStatusStore.chatMessages.length === 0}
               title="Clear chat"
             >
               <Eraser size={20} />
@@ -51,7 +50,7 @@ export const TextInput = observer(({ onSend }: TextInputProps) => {
               <Select
                 id="update-channel-input"
                 options={textInputOptions}
-                value={preferencesStore.selectedModel}
+                value={applicationStatusStore.selectedModel}
                 onChange={textInputHook.onChangeModel}
                 themeName="lens"
                 className="text-input-select-box"
@@ -59,7 +58,7 @@ export const TextInput = observer(({ onSend }: TextInputProps) => {
               <button
                 className="text-input-send-button"
                 onClick={textInputHook.handleSend}
-                disabled={preferencesStore.isLoading || !textInputHook.message.trim()}
+                disabled={applicationStatusStore.isLoading || !textInputHook.message.trim()}
                 title="Send"
                 id="send-button"
               >
@@ -71,4 +70,4 @@ export const TextInput = observer(({ onSend }: TextInputProps) => {
       </div>
     </>
   );
-});
+};

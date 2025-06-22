@@ -1,5 +1,5 @@
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { PreferencesStore } from "../../../common/store";
+import { AppContextType } from "../../context/application-context";
 import { useModelProvider } from "../provider/model-provider";
 import { ANALYSIS_PROMPT_TEMPLATE } from "../provider/prompt-template-provider";
 
@@ -7,7 +7,7 @@ export interface AiAnalysisService {
   analyze: (message: string) => AsyncGenerator<string, void, unknown>;
 }
 
-export const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnalysisService => {
+export const useAiAnalysisService = (applicationStatusStore: AppContextType): AiAnalysisService => {
   const analyze = async function* (message: string) {
     console.log("Starting AI analysis for message: ", message);
 
@@ -15,13 +15,13 @@ export const useAiAnalysisService = (preferencesStore: PreferencesStore): AiAnal
       throw new Error("No message provided for analysis.");
     }
 
-    if (!preferencesStore.apiKey) {
+    if (!applicationStatusStore.apiKey) {
       throw new Error("API key is required. Use the settings to register it.");
     }
 
     const model = useModelProvider().getModel({
-      modelName: preferencesStore.selectedModel,
-      apiKey: preferencesStore.apiKey,
+      modelName: applicationStatusStore.selectedModel,
+      apiKey: applicationStatusStore.apiKey,
     });
     if (!model) {
       return;

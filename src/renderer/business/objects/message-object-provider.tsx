@@ -1,7 +1,8 @@
 import { Interrupt } from "@langchain/langgraph";
+import { MessageObject } from "./message-object";
 import { MessageType } from "./message-type";
 
-export function getTextMessage(message: string, sent: boolean) {
+export function getTextMessage(message: string, sent: boolean): MessageObject {
   return {
     type: MessageType.MESSAGE,
     text: message,
@@ -9,7 +10,7 @@ export function getTextMessage(message: string, sent: boolean) {
   };
 }
 
-export function getExplainMessage(message: string) {
+export function getExplainMessage(message: string): MessageObject {
   return {
     type: MessageType.EXPLAIN,
     text: message,
@@ -17,7 +18,7 @@ export function getExplainMessage(message: string) {
   };
 }
 
-export function getInterruptMessage(chunk: Interrupt, sent: boolean) {
+export function getInterruptMessage(chunk: Interrupt, sent: boolean): MessageObject {
   return {
     type: MessageType.INTERRUPT,
     action: chunk.value.actionToApprove.action,

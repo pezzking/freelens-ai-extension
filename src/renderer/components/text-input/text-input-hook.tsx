@@ -1,22 +1,22 @@
 import { Renderer } from "@freelensapp/extensions";
 import React, { useEffect, useRef, useState } from "react";
 import type { SingleValue } from "react-select";
-import { PreferencesStore } from "../../../common/store";
 import { AIModelInfos, AIModelsEnum, toAIModelEnum } from "../../business/provider/ai-models";
+import { useApplicationStatusStore } from "../../context/application-context";
 
 type TextInputHookProps = {
   onSend: (message: string) => void;
-  preferencesStore: PreferencesStore;
 };
 
 const MAX_ROWS = 5;
 
-export const useTextInput = ({ onSend, preferencesStore }: TextInputHookProps) => {
+export const useTextInput = ({ onSend }: TextInputHookProps) => {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const modelSelections = Object.entries(AIModelInfos).map(([value, aiModelInfo]) => {
     return { value, label: aiModelInfo.description };
   });
+  const applicationStatusStore = useApplicationStatusStore();
 
   const adaptTextareaHeight = () => {
     const textarea = textareaRef.current;
@@ -35,7 +35,7 @@ export const useTextInput = ({ onSend, preferencesStore }: TextInputHookProps) =
   }, [message]);
 
   const handleSend = () => {
-    if (!preferencesStore.isLoading && message.trim()) {
+    if (!applicationStatusStore.isLoading && message.trim()) {
       onSend(message.trim());
       setMessage("");
     }
@@ -52,7 +52,7 @@ export const useTextInput = ({ onSend, preferencesStore }: TextInputHookProps) =
     if (option) {
       const selectedModel = toAIModelEnum(option.value);
       if (selectedModel) {
-        preferencesStore.selectedModel = selectedModel;
+        applicationStatusStore.selectedModel = selectedModel;
       }
     }
   };

@@ -2,7 +2,6 @@
 import React from "react";
 
 import { Renderer } from "@freelensapp/extensions";
-import { PreferencesStore } from "../../../common/store";
 import { MessageObject } from "../../business/objects/message-object";
 import { getTextMessage } from "../../business/objects/message-object-provider";
 import { MessageType } from "../../business/objects/message-type";
@@ -16,13 +15,12 @@ const {
 
 export interface MessageProps {
   message: MessageObject;
-  preferencesStore: PreferencesStore;
 }
 
-export const Message = ({ message, preferencesStore }: MessageProps) => {
+export const Message = ({ message }: MessageProps) => {
   const sentMessageClassName = message.sent ? "message-bubble sent" : "message-bubble";
   const buttonsOptionsClassName = "message-buttons-options";
-  const chatHook = useChatHook(preferencesStore);
+  const chatHook = useChatHook();
 
   const renderOptions = (options?: string[]) => {
     return (

@@ -6,10 +6,10 @@ import { useModelProvider } from "../provider/model-provider";
 import { teardownNode } from "./nodes/teardown";
 import { GraphState } from "./state/graph-state";
 
-export const useMcpAgent = (mcpConfiguration: string) => {
+export const useMcpAgent = () => {
   const parseMcpConfiguration = (mcpConfiguration: string) => {
     try {
-      if (!mcpConfiguration || typeof mcpConfiguration !== "string") {
+      if ("" === mcpConfiguration) {
         console.warn("No MCP configuration provided or invalid type. Returning empty configuration.");
         return {};
       }
@@ -43,7 +43,7 @@ export const useMcpAgent = (mcpConfiguration: string) => {
     return mcpTools;
   };
 
-  const buildAgentSystem = async () => {
+  const buildAgentSystem = async (mcpConfiguration: string) => {
     const mcpTools = await loadMcpTools(mcpConfiguration);
     const toolNode = new ToolNode(mcpTools);
 

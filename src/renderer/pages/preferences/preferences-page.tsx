@@ -43,7 +43,7 @@ export const PreferencesPage = observer(() => {
             }}
             placeholder="Paste or edit your MCP JSON configuration here"
             value={preferencesStore.mcpConfiguration}
-            onChange={async (e) => await preferencesStore.updateMcpConfiguration(e.target.value)}
+            onChange={async (e) => preferencesStore.updateMcpConfiguration(e.target.value).then(() => {})}
           />
         </div>
       </div>

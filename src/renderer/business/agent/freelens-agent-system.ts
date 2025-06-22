@@ -13,7 +13,7 @@ import { useAgentSupervisor } from "./supervisor-agent";
  * Multi-agent system for Freelens
  * @returns the multi-agent system invokable
  */
-export const useFreelensAgentSystem = () => {
+export const useFreeLensAgentSystem = () => {
   const subAgents = ["agentAnalyzer", "kubernetesOperator", "generalPurposeAgent"];
   const conclusionsAgentName = "conclusionsAgent";
   const subAgentResponsibilities = [
