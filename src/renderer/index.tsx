@@ -60,11 +60,7 @@ export default class FreeLensAIRenderer extends Renderer.LensExtension {
       apiVersions: ["v1"],
       components: {
         // TODO Freelens 1.4.0 should have Event type exposed
-        MenuItem: (props: KubeObjectMenuProps<any>) => (
-          <ApplicationContextProvider>
-            <MenuEntry {...props} />
-          </ApplicationContextProvider>
-        ),
+        MenuItem: (props: KubeObjectMenuProps<any>) => <MenuEntry {...props} />,
       },
     },
   ];
