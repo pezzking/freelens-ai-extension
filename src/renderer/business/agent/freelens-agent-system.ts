@@ -1,5 +1,5 @@
 import { HumanMessage } from "@langchain/core/messages";
-import { RunnableLambda } from "@langchain/core/runnables";
+import { RunnableLambda, RunnableLike } from "@langchain/core/runnables";
 import { Command, MemorySaver, StateGraph } from "@langchain/langgraph";
 import { useAgentAnalyzer } from "./analyzer-agent";
 import { useConclusionsAgent } from "./conclusions-agent";
@@ -31,16 +31,14 @@ export const useFreeLensAgentSystem = () => {
     if (!agentSupervisor) {
       return;
     }
-    const response = await agentSupervisor.invoke({ messages: state.messages });
+    const response: any = await agentSupervisor.invoke({ messages: state.messages });
     console.log("Supervisor agent - supervisor response", response);
 
-    const responseAsAny = response as any;
-
     // TOOD check why response is unknown
-    if (responseAsAny.goto === "__end__") {
-      responseAsAny.goto = conclusionsAgentName;
+    if (response.goto === "__end__") {
+      response.goto = conclusionsAgentName;
     }
-    return new Command({ goto: responseAsAny.goto });
+    return new Command({ goto: response.goto });
   };
 
   const agentAnalyzerNode = async (state: typeof GraphState.State) => {
@@ -103,7 +101,7 @@ export const useFreeLensAgentSystem = () => {
     const graph = new StateGraph(GraphState)
       .addNode(
         "supervisorAgent",
-        { default: RunnableLambda.from(supervisorAgentNode).withConfig({ tags: ["nostream"] }) },
+        RunnableLambda.from(supervisorAgentNode).withConfig({ tags: ["nostream"] }) as RunnableLike,
         {
           ends: [...subAgents, conclusionsAgentName],
         },

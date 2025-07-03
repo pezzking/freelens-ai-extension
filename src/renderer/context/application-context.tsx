@@ -33,12 +33,13 @@ export interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const generateConversationId = () => {
+  console.log("Generating conversation ID");
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
 
 export const ApplicationContextProvider = observer(({ children }: { children: React.ReactNode }) => {
-  const preferencesStore = PreferencesStore.getInstance();
-  const conversationId = generateConversationId();
+  const [preferencesStore, _setPreferenceStore] = useState(PreferencesStore.getInstance());
+  const [conversationId, _setConversationId] = useState("");
   const [isLoading, _setLoading] = useState(false);
   const [isConversationInterrupted, _setConversationInterrupted] = useState(false);
   const [chatMessages, _setChatMessages] = useState<MessageObject[]>([]);
@@ -55,6 +56,8 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     _setLoading(window.sessionStorage.getItem("isLoading") === "true");
     _setConversationInterrupted(window.sessionStorage.getItem("isConversationInterrupted") === "true");
 
+    getConversationId();
+
     const stringMessages = window.sessionStorage.getItem("chatMessages");
     stringMessages ? _setChatMessages(JSON.parse(stringMessages)) : _setChatMessages([]);
 
@@ -66,6 +69,27 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   useEffect(() => {
     updateMcpConfiguration().then();
   }, [preferencesStore.mcpConfiguration]);
+
+  useEffect(() => {
+    console.log("MCP Agent initialized: ", mcpAgent);
+  }, [mcpAgent]);
+
+  useEffect(() => {
+    console.log("Freelens Agent initialized: ", freeLensAgent);
+  }, [freeLensAgent]);
+
+  const getConversationId = () => {
+    const storedConversationId = window.sessionStorage.getItem("conversationId");
+    if (storedConversationId) {
+      _setConversationId(storedConversationId);
+      console.log("Using stored conversation ID: ", storedConversationId);
+    } else {
+      const newConverstionId = generateConversationId();
+      _setConversationId(newConverstionId);
+      window.sessionStorage.setItem("conversationId", newConverstionId);
+      console.log("No stored conversation ID found, generating a new one.");
+    }
+  }
 
   const setLoading = (isLoading: boolean) => {
     _setLoading(isLoading);
@@ -138,7 +162,6 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   const initMcpAgent = async (forceInitialization: boolean = false) => {
     if (mcpAgent === null || forceInitialization) {
       setMcpAgent(await mcpAgentSystem.buildAgentSystem(preferencesStore.mcpConfiguration));
-      console.log("MCP Agent initialized: ", mcpAgent);
     } else {
       console.log("MCP Agent was already initialized: ", mcpAgent);
     }
@@ -147,9 +170,8 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   const initFreeLensAgent = () => {
     if (freeLensAgent === null) {
       setFreeLensAgent(freeLensAgentSystem.buildAgentSystem());
-      console.log("Freelens Agent initialized: ", freeLensAgent);
     } else {
-      console.log("Freelens Agent was already initialized: ", mcpAgent);
+      console.log("Freelens Agent was already initialized: ", freeLensAgent);
     }
   };
 
@@ -163,6 +185,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
 
     if (freeLensAgent == null) {
       setFreeLensAgent(freeLensAgentSystem.buildAgentSystem());
+      console.log("Freelens Agent initialized: ", freeLensAgent);
     }
     return freeLensAgent;
   };
