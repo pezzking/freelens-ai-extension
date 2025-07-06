@@ -31,10 +31,13 @@ export const Message = ({ message }: MessageProps) => {
             question={message.question!}
             text={message.text}
             options={message.options!}
+            approved={message.approved!}
             onAction={(option) => {
-              console.log("HOLA!");
-              console.log(option);
-              console.log(getTextMessage(option, true));
+              if ("yes" === option) {
+                chatHook.changeInterruptStatus(message.messageId, true);
+              } else if ("no" === option) {
+                chatHook.changeInterruptStatus(message.messageId, false);
+              }
               chatHook.sendMessageToAgent(getTextMessage(option, true));
             }}
           />

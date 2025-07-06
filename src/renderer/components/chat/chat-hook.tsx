@@ -81,11 +81,13 @@ export const useChatHook = () => {
     }
   };
 
+  const changeInterruptStatus = (id: string, status: boolean) => {
+    applicationStatusStore.changeInterruptStatus(id, status);
+  };
+
   const analyzeEvent = async (lastMessage: MessageObject) => {
     try {
       const analysisResultStream = aiAnalysisService.analyze(lastMessage.text);
-      // let aiResult = "";
-      // sendMessage(getTextMessage(aiResult, false));
       for await (const chunk of analysisResultStream) {
         // console.log("Streaming to UI chunk: ", chunk);
         applicationStatusStore.updateLastMessage(chunk);
@@ -137,5 +139,5 @@ export const useChatHook = () => {
     }
   };
 
-  return { containerRef, sendMessage, sendMessageToAgent };
+  return { containerRef, sendMessage, sendMessageToAgent, changeInterruptStatus };
 };

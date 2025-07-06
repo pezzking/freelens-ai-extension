@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { PreferencesStore } from "../../common/store";
 import { AgentsStore } from "../../common/store/agents-store";
+import { generateUuid } from "../../common/utils/uuid";
 import { FreeLensAgent, useFreeLensAgentSystem } from "../business/agent/freelens-agent-system";
 import { MPCAgent, useMcpAgent } from "../business/agent/mcp-agent";
 import { MessageObject } from "../business/objects/message-object";
@@ -29,14 +30,10 @@ export interface AppContextType {
   updateLastMessage: (newText: string) => void;
   clearChat: () => void;
   getActiveAgent: () => Promise<any>;
+  changeInterruptStatus: (id: string, status: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
-
-const generateConversationId = () => {
-  console.log("Generating conversation ID");
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-};
 
 export const ApplicationContextProvider = observer(({ children }: { children: React.ReactNode }) => {
   const [preferencesStore, _setPreferenceStore] = useState<PreferencesStore>(
@@ -86,7 +83,8 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
       _setConversationId(storedConversationId);
       console.log("Using stored conversation ID: ", storedConversationId);
     } else {
-      const newConverstionId = generateConversationId();
+      console.log("Generating conversation ID");
+      const newConverstionId = generateUuid();
       _setConversationId(newConverstionId);
       window.sessionStorage.setItem("conversationId", newConverstionId);
       console.log("No stored conversation ID found, generating a new one.");
@@ -227,6 +225,12 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     preferencesStore.explainEvent = messageObject;
   };
 
+  const changeInterruptStatus = (id: string, status: boolean) => {
+    _setChatMessages((prevMessages) =>
+      prevMessages.map((msg) => (msg.messageId === id ? { ...msg, approved: status } : msg)),
+    );
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -249,6 +253,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
         updateLastMessage,
         clearChat,
         getActiveAgent,
+        changeInterruptStatus,
       }}
     >
       {children}
