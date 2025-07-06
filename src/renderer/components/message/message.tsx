@@ -34,7 +34,12 @@ export const Message = ({ message }: MessageProps) => {
             question={message.question!}
             text={message.text}
             options={message.options!}
-            onAction={(option) => chatHook.sendMessageToAgent(getTextMessage(option, true))}
+            onAction={(option) => {
+              console.log("HOLA!");
+              console.log(option);
+              console.log(getTextMessage(option, true));
+              chatHook.sendMessageToAgent(getTextMessage(option, true));
+            }}
           />
         </>
       );

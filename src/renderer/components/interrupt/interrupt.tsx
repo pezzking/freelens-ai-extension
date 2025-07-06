@@ -23,7 +23,7 @@ const Interrupt = ({ header, question, text, options, onAction }: InterruptProps
       <MarkdownViewer content={text} />
       <div>
         {options.map((option) => (
-          <Button className="message-buttons-options" label={option} onClick={(option) => onAction(option)} />
+          <Button className="message-buttons-options" label={option} onClick={() => onAction(option)} />
         ))}
       </div>
     </div>
