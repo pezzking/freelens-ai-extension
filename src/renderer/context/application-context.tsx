@@ -89,7 +89,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
       window.sessionStorage.setItem("conversationId", newConverstionId);
       console.log("No stored conversation ID found, generating a new one.");
     }
-  }
+  };
 
   const setLoading = (isLoading: boolean) => {
     _setLoading(isLoading);

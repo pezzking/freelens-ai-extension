@@ -1,5 +1,5 @@
 // @ts-ignore
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Copy, Play } from "lucide-react";
 import SyntaxHighlighter from "react-syntax-highlighter";
@@ -36,11 +36,11 @@ export const CodeBlock = ({ inline, children, language, props }: CodeBlockProps)
           <SyntaxHighlighter
             PreTag="div"
             language={language}
+            style={codeBlockHook.getTheme()}
             customStyle={{
               margin: 0,
               borderBottomLeftRadius: "0.5rem",
               borderBottomRightRadius: "0.5rem",
-              backgroundColor: "var(--layoutTabsLineColor)",
             }}
             showLineNumbers={codeBlockHook.hasMultipleLines}
             showInlineLineNumbers={codeBlockHook.hasMultipleLines}
