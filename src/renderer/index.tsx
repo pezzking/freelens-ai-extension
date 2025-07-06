@@ -3,10 +3,6 @@
  * Licensed under MIT License. See LICENSE in root directory for more information.
  */
 
-// transpiled .tsx code must have `React` symbol in the scope
-// @ts-ignore
-import React from "react";
-
 import { Renderer } from "@freelensapp/extensions";
 import { PreferencesStore } from "../common/store";
 import { FreelensAiIcon } from "./components/freelens-ai-icon";
@@ -58,8 +54,7 @@ export default class FreeLensAIRenderer extends Renderer.LensExtension {
       kind: "Event",
       apiVersions: ["v1"],
       components: {
-        // TODO Freelens 1.4.0 should have Event type exposed
-        MenuItem: (props: KubeObjectMenuProps<any>) => <MenuEntry {...props} />,
+        MenuItem: (props: KubeObjectMenuProps<Renderer.K8sApi.KubeEvent>) => <MenuEntry {...props} />,
       },
     },
   ];

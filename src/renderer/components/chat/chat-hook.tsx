@@ -84,8 +84,8 @@ export const useChatHook = () => {
   const analyzeEvent = async (lastMessage: MessageObject) => {
     try {
       const analysisResultStream = aiAnalysisService.analyze(lastMessage.text);
-      let aiResult = "";
-      sendMessage(getTextMessage(aiResult, false));
+      // let aiResult = "";
+      // sendMessage(getTextMessage(aiResult, false));
       for await (const chunk of analysisResultStream) {
         // console.log("Streaming to UI chunk: ", chunk);
         applicationStatusStore.updateLastMessage(chunk);

@@ -1,6 +1,3 @@
-// @ts-ignore
-import React from "react";
-
 import { Renderer } from "@freelensapp/extensions";
 import { Eraser, SendHorizonal } from "lucide-react";
 import { AIModelsEnum } from "../../business/provider/ai-models";

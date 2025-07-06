@@ -1,5 +1,5 @@
 // @ts-ignore
-import React, { useEffect } from "react";
+import React from "react";
 
 import { Loader2 } from "lucide-react";
 import { MessageObject } from "../../business/objects/message-object";
@@ -9,6 +9,9 @@ import { Message } from "../message";
 import { TextInput } from "../text-input";
 import { useChatHook } from "./chat-hook";
 import styleInline from "./chat.scss?inline";
+import { useChatHook } from "./chat-hook";
+
+import type { MessageObject } from "../../business/objects/message-object";
 
 export const Chat = () => {
   const applicationStatusStore = useApplicationStatusStore();
@@ -25,7 +28,13 @@ export const Chat = () => {
 
           {/* Spinner that executes while the agent is running */}
           {applicationStatusStore.isLoading && (
-            <div style={{ display: "flex", justifyContent: "center", margin: "16px 0" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                margin: "16px 0",
+              }}
+            >
               <Loader2 size={32} className="chat-loading-spinner" />
             </div>
           )}

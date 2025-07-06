@@ -1,5 +1,5 @@
 import { Renderer } from "@freelensapp/extensions";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { atomOneDark, atomOneLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 const {
@@ -9,7 +9,7 @@ const {
 const { Theme } = Renderer;
 
 type useCodeBlockHookProps = {
-  children: string;
+  children: ReactNode;
 };
 
 export const useCodeBlockHook = ({ children }: useCodeBlockHookProps) => {

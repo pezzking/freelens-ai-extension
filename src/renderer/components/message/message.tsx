@@ -1,6 +1,3 @@
-// @ts-ignore
-import React from "react";
-
 import { MessageObject } from "../../business/objects/message-object";
 import { getTextMessage } from "../../business/objects/message-object-provider";
 import { MessageType } from "../../business/objects/message-type";
