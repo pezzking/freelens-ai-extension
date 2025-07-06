@@ -1,6 +1,6 @@
 import { isAIMessageChunk } from "@langchain/core/messages";
 import { Command, Interrupt } from "@langchain/langgraph";
-import { FreelensAgent } from "../agent/freelens-agent-system";
+import { FreeLensAgent } from "../agent/freelens-agent-system";
 import { MPCAgent } from "../agent/mcp-agent";
 
 export interface AgentService {
@@ -13,7 +13,7 @@ export interface AgentService {
  * @returns
  * @param agent
  */
-export const useAgentService = (agent: FreelensAgent | MPCAgent): AgentService => {
+export const useAgentService = (agent: FreeLensAgent | MPCAgent): AgentService => {
   const run = async function* (agentInput: object | Command, conversationId: string) {
     console.log("Starting Agent Service run for message: ", agentInput);
 

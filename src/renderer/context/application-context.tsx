@@ -1,9 +1,9 @@
 import { RemoveMessage } from "@langchain/core/messages";
-import { CompiledStateGraph } from "@langchain/langgraph";
 import { observer } from "mobx-react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { PreferencesStore } from "../../common/store";
-import { FreelensAgent, useFreeLensAgentSystem } from "../business/agent/freelens-agent-system";
+import { AgentsStore } from "../../common/store/agents-store";
+import { FreeLensAgent, useFreeLensAgentSystem } from "../business/agent/freelens-agent-system";
 import { MPCAgent, useMcpAgent } from "../business/agent/mcp-agent";
 import { MessageObject } from "../business/objects/message-object";
 import { getTextMessage } from "../business/objects/message-object-provider";
@@ -19,7 +19,7 @@ export interface AppContextType {
   isLoading: boolean;
   isConversationInterrupted: boolean;
   chatMessages: MessageObject[];
-  freeLensAgent: FreelensAgent | null;
+  freeLensAgent: FreeLensAgent | null;
   mcpAgent: MPCAgent | null;
   setSelectedModel: (selectedModel: AIModelsEnum) => void;
   setExplainEvent: (messageObject: MessageObject) => void;
@@ -42,12 +42,13 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   const [preferencesStore, _setPreferenceStore] = useState<PreferencesStore>(
     PreferencesStore.getInstanceOrCreate<PreferencesStore>(),
   );
+  const [agentsStore, _setAgentsStore] = useState<AgentsStore>(AgentsStore.getInstanceOrCreate<AgentsStore>());
   const [conversationId, _setConversationId] = useState("");
   const [isLoading, _setLoading] = useState(false);
   const [isConversationInterrupted, _setConversationInterrupted] = useState(false);
   const [chatMessages, _setChatMessages] = useState<MessageObject[]>([]);
-  const [freeLensAgent, setFreeLensAgent] = useState<FreelensAgent | null>(null);
-  const [mcpAgent, setMcpAgent] = useState<MPCAgent | null>(null);
+  const [freeLensAgent, _setFreeLensAgent] = useState<FreeLensAgent | null>(agentsStore.freeLensAgent);
+  const [mcpAgent, _setMcpAgent] = useState<MPCAgent | null>(agentsStore.mcpAgent);
 
   const mcpAgentSystem = useMcpAgent();
   const freeLensAgentSystem = useFreeLensAgentSystem();
@@ -138,17 +139,20 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
 
   const clearChat = async () => {
     if (freeLensAgent) {
-      await cleanAgentMessageHistory(freeLensAgent);
+      cleanAgentMessageHistory(freeLensAgent).finally(() => {
+        _setChatMessages([]);
+        window.sessionStorage.setItem("chatMessages", JSON.stringify([]));
+      });
     }
     if (mcpAgent) {
-      await cleanAgentMessageHistory(mcpAgent);
+      await cleanAgentMessageHistory(mcpAgent).finally(() => {
+        _setChatMessages([]);
+        window.sessionStorage.setItem("chatMessages", JSON.stringify([]));
+      });
     }
-    _setChatMessages([]);
-    window.sessionStorage.setItem("chatMessages", JSON.stringify([]));
   };
 
-  // TODO replace any with the correct types
-  const cleanAgentMessageHistory = async (agent: CompiledStateGraph<object, object, any, any, any, any>) => {
+  const cleanAgentMessageHistory = async (agent: FreeLensAgent | MPCAgent) => {
     console.log("Cleaning agent message history for agent: ", agent);
     if (!agent) {
       console.warn("No agent provided to clean message history.");
@@ -167,6 +171,16 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     for (const msg of messages) {
       await agent.updateState(config, { messages: new RemoveMessage({ id: msg.id }) });
     }
+  };
+
+  const setFreeLensAgent = (freeLensAgent: FreeLensAgent) => {
+    agentsStore.freeLensAgent = freeLensAgent;
+    _setFreeLensAgent(freeLensAgent);
+  };
+
+  const setMcpAgent = (mcpAgent: MPCAgent) => {
+    agentsStore.mcpAgent = mcpAgent;
+    _setMcpAgent(mcpAgent);
   };
 
   const initMcpAgent = async (forceInitialization: boolean = false) => {

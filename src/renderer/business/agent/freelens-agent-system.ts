@@ -9,7 +9,7 @@ import { teardownNode } from "./nodes/teardown";
 import { GraphState } from "./state/graph-state";
 import { useAgentSupervisor } from "./supervisor-agent";
 
-export type FreelensAgent = ReturnType<ReturnType<typeof useFreeLensAgentSystem>["buildAgentSystem"]>;
+export type FreeLensAgent = ReturnType<ReturnType<typeof useFreeLensAgentSystem>["buildAgentSystem"]>;
 
 /**
  * Multi-agent system for Freelens

@@ -11,11 +11,13 @@ export interface PreferencesModel {
 }
 
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
+  // Persistent
   @observable accessor apiKey: string = "";
   @observable accessor selectedModel: AIModelsEnum = AIModelsEnum.GPT_3_5_TURBO;
   @observable accessor mcpEnabled: boolean = false;
   @observable accessor mcpConfiguration: string = "";
 
+  // Not persistent
   @observable accessor explainEvent: MessageObject = {} as MessageObject;
 
   constructor() {
@@ -33,7 +35,6 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
 
   updateMcpConfiguration = async (newMcpConfiguration: string) => {
     this.mcpConfiguration = newMcpConfiguration;
-    console.log("MCP Agent configuration updated: ", this.mcpConfiguration);
   };
 
   fromStore = (preferencesModel: PreferencesModel): void => {
