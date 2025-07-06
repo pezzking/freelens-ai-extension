@@ -45,10 +45,10 @@ export const useChatHook = () => {
 
   // Perform EXPLAIN when an explain message is sent
   useEffect(() => {
-    const message = applicationStatusStore.explainEvent;
-    if (Object.keys(message).length === 0 && MessageType.EXPLAIN === message.type) {
-      sendMessageToAgent(message);
-      applicationStatusStore.explainEvent = {} as MessageObject;
+    const explainMessage = applicationStatusStore.explainEvent;
+    if (explainMessage && MessageType.EXPLAIN === explainMessage.type) {
+      sendMessageToAgent(explainMessage);
+      applicationStatusStore.setExplainEvent({} as MessageObject);
     }
   }, [applicationStatusStore.explainEvent]);
 
@@ -103,8 +103,6 @@ export const useChatHook = () => {
       const activeAgent = await applicationStatusStore.getActiveAgent();
       const agentService: AgentService = useAgentService(activeAgent);
       const agentResponseStream = agentService.run(agentInput, applicationStatusStore.conversationId);
-      let aiResult = "";
-      sendMessage(getTextMessage(aiResult, false));
       for await (const chunk of agentResponseStream) {
         // console.log("Streaming to UI chunk: ", chunk);
         if (typeof chunk === "string") {

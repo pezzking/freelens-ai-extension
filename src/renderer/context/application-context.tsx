@@ -6,6 +6,7 @@ import { PreferencesStore } from "../../common/store";
 import { useFreeLensAgentSystem } from "../business/agent/freelens-agent-system";
 import { useMcpAgent } from "../business/agent/mcp-agent";
 import { MessageObject } from "../business/objects/message-object";
+import { getTextMessage } from "../business/objects/message-object-provider";
 import { AIModelsEnum } from "../business/provider/ai-models";
 
 export interface AppContextType {
@@ -23,6 +24,7 @@ export interface AppContextType {
   // TODO replace any with the correct types
   mcpAgent: CompiledStateGraph<object, object, any, any, any, any> | null;
   setSelectedModel: (selectedModel: AIModelsEnum) => void;
+  setExplainEvent: (messageObject: MessageObject) => void;
   setLoading: (isLoading: boolean) => void;
   setConversationInterrupted: (isConversationInterrupted: boolean) => void;
   addMessage: (message: MessageObject) => void;
@@ -117,6 +119,15 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
       const lastIndex = prev.length - 1;
       const messagesCopy = [...prev];
       let lastMessage = messagesCopy[lastIndex];
+
+      if (lastMessage.sent) {
+        // Agent response does not exist, add a new empty one
+        messagesCopy.push(getTextMessage("", false));
+        window.sessionStorage.setItem("chatMessages", JSON.stringify(messagesCopy));
+        return messagesCopy;
+      }
+
+      // Agent response exist, update the existing one
       messagesCopy[lastIndex] = {
         ...lastMessage,
         text: lastMessage.text + newText,
@@ -200,6 +211,10 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     preferencesStore.selectedModel = selectedModel;
   };
 
+  const setExplainEvent = (messageObject: MessageObject) => {
+    preferencesStore.explainEvent = messageObject;
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -215,6 +230,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
         mcpAgent,
         freeLensAgent,
         setSelectedModel,
+        setExplainEvent,
         setLoading,
         setConversationInterrupted,
         addMessage,
