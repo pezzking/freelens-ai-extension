@@ -9,6 +9,8 @@ import { teardownNode } from "./nodes/teardown";
 import { GraphState } from "./state/graph-state";
 import { useAgentSupervisor } from "./supervisor-agent";
 
+export type FreelensAgent = ReturnType<ReturnType<typeof useFreeLensAgentSystem>["buildAgentSystem"]>;
+
 /**
  * Multi-agent system for Freelens
  * @returns the multi-agent system invokable
@@ -98,7 +100,7 @@ export const useFreeLensAgentSystem = () => {
   };
 
   const buildAgentSystem = () => {
-    const graph = new StateGraph(GraphState)
+    return new StateGraph(GraphState)
       .addNode(
         "supervisorAgent",
         RunnableLambda.from(supervisorAgentNode).withConfig({ tags: ["nostream"] }) as RunnableLike,
@@ -118,8 +120,6 @@ export const useFreeLensAgentSystem = () => {
       .addEdge(conclusionsAgentName, "teardownNode")
       .addEdge("teardownNode", "__end__")
       .compile({ checkpointer: new MemorySaver() });
-
-    return graph;
   };
 
   return { buildAgentSystem };

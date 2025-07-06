@@ -3,6 +3,6 @@ import { PreferencesStore } from "../common/store";
 
 export default class LensExtensionAiMain extends Main.LensExtension {
   async onActivate() {
-    PreferencesStore.createInstance().loadExtension(this);
+    PreferencesStore.getInstanceOrCreate<PreferencesStore>().loadExtension(this);
   }
 }

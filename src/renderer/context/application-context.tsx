@@ -41,7 +41,9 @@ const generateConversationId = () => {
 };
 
 export const ApplicationContextProvider = observer(({ children }: { children: React.ReactNode }) => {
-  const [preferencesStore, _setPreferenceStore] = useState(PreferencesStore.getInstance());
+  const [preferencesStore, _setPreferenceStore] = useState<PreferencesStore>(
+    PreferencesStore.getInstanceOrCreate<PreferencesStore>(),
+  );
   const [conversationId, _setConversationId] = useState("");
   const [isLoading, _setLoading] = useState(false);
   const [isConversationInterrupted, _setConversationInterrupted] = useState(false);

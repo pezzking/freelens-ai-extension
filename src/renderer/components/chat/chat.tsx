@@ -1,17 +1,11 @@
-// @ts-ignore
-import React from "react";
-
 import { Loader2 } from "lucide-react";
 import { MessageObject } from "../../business/objects/message-object";
 import { getTextMessage } from "../../business/objects/message-object-provider";
 import { useApplicationStatusStore } from "../../context/application-context";
 import { Message } from "../message";
 import { TextInput } from "../text-input";
-import { useChatHook } from "./chat-hook";
 import styleInline from "./chat.scss?inline";
 import { useChatHook } from "./chat-hook";
-
-import type { MessageObject } from "../../business/objects/message-object";
 
 export const Chat = () => {
   const applicationStatusStore = useApplicationStatusStore();

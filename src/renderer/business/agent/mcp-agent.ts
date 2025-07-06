@@ -6,6 +6,8 @@ import { useModelProvider } from "../provider/model-provider";
 import { teardownNode } from "./nodes/teardown";
 import { GraphState } from "./state/graph-state";
 
+export type MPCAgent = Awaited<ReturnType<ReturnType<typeof useMcpAgent>["buildAgentSystem"]>>;
+
 export const useMcpAgent = () => {
   const parseMcpConfiguration = (mcpConfiguration: string) => {
     try {

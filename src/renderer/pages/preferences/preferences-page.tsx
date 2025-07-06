@@ -7,7 +7,7 @@ const {
 } = Renderer;
 
 export const PreferencesPage = observer(() => {
-  const preferencesStore = PreferencesStore.getInstance<PreferencesStore>();
+  const preferencesStore: PreferencesStore = PreferencesStore.getInstanceOrCreate<PreferencesStore>();
 
   return (
     <>

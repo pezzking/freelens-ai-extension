@@ -1,7 +1,7 @@
 import { isAIMessageChunk } from "@langchain/core/messages";
 import { Command, Interrupt } from "@langchain/langgraph";
-
-import type { FreelensAgent, MPCAgent } from "../../../common/store";
+import { FreelensAgent } from "../agent/freelens-agent-system";
+import { MPCAgent } from "../agent/mcp-agent";
 
 export interface AgentService {
   run(agentInput: object | Command, conversationId: string): AsyncGenerator<string | Interrupt, void, unknown>;

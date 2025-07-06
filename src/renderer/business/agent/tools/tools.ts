@@ -146,7 +146,8 @@ export const createDeployment = tool(
       question: "Do you want to approve this action?",
       options: ["yes", "no"],
       actionToApprove: { action: "CREATE DEPLOYMENT", name, namespace, data },
-      requestString: "```json\n" + JSON.stringify({ action: "CREATE DEPLOYMENT", name, namespace, data }, null, 2) + "\n```",
+      requestString:
+        "```json\n" + JSON.stringify({ action: "CREATE DEPLOYMENT", name, namespace, data }, null, 2) + "\n```",
     };
     const review = interrupt(interruptRequest);
     console.log("Tool call review: ", review);

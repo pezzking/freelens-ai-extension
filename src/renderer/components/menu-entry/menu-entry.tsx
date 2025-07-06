@@ -11,7 +11,7 @@ type KubeObject = Renderer.K8sApi.KubeObject;
 type KubeObjectMenuProps<TKubeObject extends KubeObject> = Renderer.Component.KubeObjectMenuProps<TKubeObject>;
 
 export const MenuEntry = ({ object }: KubeObjectMenuProps<Renderer.K8sApi.KubeEvent>) => {
-  const preferencesStore = PreferencesStore.getInstance<PreferencesStore>();
+  const preferencesStore: PreferencesStore = PreferencesStore.getInstanceOrCreate<PreferencesStore>();
   const menuEntryHook = useMenuEntryHook(preferencesStore);
 
   return (

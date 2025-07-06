@@ -16,7 +16,7 @@ type KubeObjectMenuProps<TKubeObject extends KubeObject> = Renderer.Component.Ku
 export default class FreeLensAIRenderer extends Renderer.LensExtension {
   async onActivate() {
     // @ts-ignore
-    PreferencesStore.createInstance().loadExtension(this);
+    PreferencesStore.getInstanceOrCreate<PreferencesStore>().loadExtension(this);
   }
 
   clusterPages = [
