@@ -22,6 +22,7 @@ export interface AppContextType {
   freeLensAgent: CompiledStateGraph<object, object, any, any, any, any> | null;
   // TODO replace any with the correct types
   mcpAgent: CompiledStateGraph<object, object, any, any, any, any> | null;
+  setSelectedModel: (selectedModel: AIModelsEnum) => void;
   setLoading: (isLoading: boolean) => void;
   setConversationInterrupted: (isConversationInterrupted: boolean) => void;
   addMessage: (message: MessageObject) => void;
@@ -195,6 +196,10 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     console.log("MCP Agent configuration updated: ", preferencesStore.mcpConfiguration);
   };
 
+  const setSelectedModel = (selectedModel: AIModelsEnum) => {
+    preferencesStore.selectedModel = selectedModel;
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -209,6 +214,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
         chatMessages,
         mcpAgent,
         freeLensAgent,
+        setSelectedModel,
         setLoading,
         setConversationInterrupted,
         addMessage,

@@ -52,7 +52,7 @@ export const useTextInput = ({ onSend }: TextInputHookProps) => {
     if (option) {
       const selectedModel = toAIModelEnum(option.value);
       if (selectedModel) {
-        applicationStatusStore.selectedModel = selectedModel;
+        applicationStatusStore.setSelectedModel(selectedModel);
       }
     }
   };
