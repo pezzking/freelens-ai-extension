@@ -5,6 +5,6 @@ const {
   Component: { Icon },
 } = Renderer;
 
-export const FreelensAiIcon = (props: Renderer.Component.IconProps) => {
+export const FreeLensAiIcon = (props: Renderer.Component.IconProps) => {
   return <Icon {...props} svg={svgIcon} />;
 };

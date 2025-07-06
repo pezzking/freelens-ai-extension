@@ -1,6 +1,6 @@
 import { Renderer } from "@freelensapp/extensions";
 import { PreferencesStore } from "../../../common/store";
-import { FreelensAiIcon } from "../freelens-ai-icon";
+import { FreeLensAiIcon } from "../freelens-ai-icon";
 import { useMenuEntryHook } from "./menu-entry-hook";
 
 const {
@@ -16,7 +16,7 @@ export const MenuEntry = ({ object }: KubeObjectMenuProps<Renderer.K8sApi.KubeEv
 
   return (
     <MenuItem hidden={!object.message} onClick={() => menuEntryHook.openTab(object.message ?? "-")}>
-      <FreelensAiIcon />
+      <FreeLensAiIcon />
       <span className="title">Explain</span>
     </MenuItem>
   );

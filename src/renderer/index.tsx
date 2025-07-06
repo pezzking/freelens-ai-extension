@@ -5,7 +5,7 @@
 
 import { Renderer } from "@freelensapp/extensions";
 import { PreferencesStore } from "../common/store";
-import { FreelensAiIcon } from "./components/freelens-ai-icon";
+import { FreeLensAiIcon } from "./components/freelens-ai-icon";
 import { MenuEntry } from "./components/menu-entry";
 import { MainPage } from "./pages/main";
 import { PreferencesPage } from "./pages/preferences";
@@ -34,7 +34,7 @@ export default class FreeLensAIRenderer extends Renderer.LensExtension {
       title: "Freelens AI",
       target: { pageId: "ai-extension-main-page" },
       components: {
-        Icon: FreelensAiIcon,
+        Icon: FreeLensAiIcon,
       },
     },
   ];

@@ -3,8 +3,8 @@ import { CompiledStateGraph } from "@langchain/langgraph";
 import { observer } from "mobx-react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { PreferencesStore } from "../../common/store";
-import { useFreeLensAgentSystem } from "../business/agent/freelens-agent-system";
-import { useMcpAgent } from "../business/agent/mcp-agent";
+import { FreelensAgent, useFreeLensAgentSystem } from "../business/agent/freelens-agent-system";
+import { MPCAgent, useMcpAgent } from "../business/agent/mcp-agent";
 import { MessageObject } from "../business/objects/message-object";
 import { getTextMessage } from "../business/objects/message-object-provider";
 import { AIModelsEnum } from "../business/provider/ai-models";
@@ -19,10 +19,8 @@ export interface AppContextType {
   isLoading: boolean;
   isConversationInterrupted: boolean;
   chatMessages: MessageObject[];
-  // TODO replace any with the correct types
-  freeLensAgent: CompiledStateGraph<object, object, any, any, any, any> | null;
-  // TODO replace any with the correct types
-  mcpAgent: CompiledStateGraph<object, object, any, any, any, any> | null;
+  freeLensAgent: FreelensAgent | null;
+  mcpAgent: MPCAgent | null;
   setSelectedModel: (selectedModel: AIModelsEnum) => void;
   setExplainEvent: (messageObject: MessageObject) => void;
   setLoading: (isLoading: boolean) => void;
@@ -48,10 +46,8 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   const [isLoading, _setLoading] = useState(false);
   const [isConversationInterrupted, _setConversationInterrupted] = useState(false);
   const [chatMessages, _setChatMessages] = useState<MessageObject[]>([]);
-  const [freeLensAgent, setFreeLensAgent] = useState<CompiledStateGraph<object, object, any, any, any, any> | null>(
-    null,
-  );
-  const [mcpAgent, setMcpAgent] = useState<CompiledStateGraph<object, object, any, any, any, any> | null>(null);
+  const [freeLensAgent, setFreeLensAgent] = useState<FreelensAgent | null>(null);
+  const [mcpAgent, setMcpAgent] = useState<MPCAgent | null>(null);
 
   const mcpAgentSystem = useMcpAgent();
   const freeLensAgentSystem = useFreeLensAgentSystem();
