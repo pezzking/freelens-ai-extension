@@ -1,9 +1,21 @@
 import { AIMessage } from "@langchain/core/messages";
+import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { AIModelsEnum } from "../provider/ai-models";
 import { useModelProvider } from "../provider/model-provider";
-import { createDeployment, createPod, deleteDeployment, deletePod } from "./tools/tools";
+import { KUBERNETES_OPERATOR_PROMPT_TEMPLATE } from "../provider/prompt-template-provider";
+import {
+  createDeployment,
+  createPod,
+  createService,
+  deleteDeployment,
+  deletePod,
+  deleteService,
+  getDeployments,
+  getPods,
+  getServices
+} from "./tools/tools";
 
 export const useAgentKubernetesOperator = (modelName: AIModelsEnum, modelApiKey: string) => {
   const model = useModelProvider().getModel({ modelName: modelName, apiKey: modelApiKey });
@@ -13,7 +25,17 @@ export const useAgentKubernetesOperator = (modelName: AIModelsEnum, modelApiKey:
       return;
     }
 
-    const tools = [createPod, createDeployment, deletePod, deleteDeployment];
+    const tools = [
+      createPod,
+      createDeployment,
+      deletePod,
+      deleteDeployment,
+      createService,
+      deleteService,
+      getPods,
+      getDeployments,
+      getServices
+    ];
     const toolNode = new ToolNode(tools);
     const boundModel = model.bindTools(tools);
 
@@ -26,7 +48,11 @@ export const useAgentKubernetesOperator = (modelName: AIModelsEnum, modelApiKey:
     };
 
     const callModel = async (state: { messages: AIMessage[] }) => {
-      const response = await boundModel.invoke(state.messages);
+      const prompt = ChatPromptTemplate.fromMessages([
+        ["system", KUBERNETES_OPERATOR_PROMPT_TEMPLATE],
+        new MessagesPlaceholder("messages"),
+      ]);
+      const response = await prompt.pipe(boundModel).invoke({ messages: state.messages });
       return { messages: [response] };
     };
 
