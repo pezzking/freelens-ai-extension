@@ -16,6 +16,8 @@ export interface AppContextType {
   mcpEnabled: boolean;
   mcpConfiguration: string;
   explainEvent: MessageObject;
+  ollamaHost: string;
+  ollamaPort: string;
   conversationId: string;
   isLoading: boolean;
   isConversationInterrupted: boolean;
@@ -36,7 +38,7 @@ export interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const ApplicationContextProvider = observer(({ children }: { children: React.ReactNode }) => {
-  const [preferencesStore, _setPreferenceStore] = useState<PreferencesStore>(
+  const [preferencesStore, _setPreferencesStore] = useState<PreferencesStore>(
     PreferencesStore.getInstanceOrCreate<PreferencesStore>(),
   );
   const [agentsStore, _setAgentsStore] = useState<AgentsStore>(AgentsStore.getInstanceOrCreate<AgentsStore>());
@@ -239,6 +241,8 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
         mcpEnabled: preferencesStore.mcpEnabled,
         mcpConfiguration: preferencesStore.mcpConfiguration,
         explainEvent: preferencesStore.explainEvent,
+        ollamaHost: preferencesStore.ollamaHost,
+        ollamaPort: preferencesStore.ollamaPort,
         conversationId,
         isLoading,
         isConversationInterrupted,

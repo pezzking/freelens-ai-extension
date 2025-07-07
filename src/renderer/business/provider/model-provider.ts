@@ -1,10 +1,8 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOllama } from "@langchain/ollama";
 import { ChatOpenAI } from "@langchain/openai";
+import { PreferencesStore } from "../../../common/store";
 import { AIModelsEnum } from "./ai-models";
-
-const FREELENS_OLLAMA_HOST = process.env.FREELENS_OLLAMA_HOST || "http://127.0.0.1";
-const FREELENS_OLLAMA_PORT = process.env.FREELENS_OLLAMA_PORT || "9898";
 
 type ModelStrategy = {
   modelName: AIModelsEnum;
@@ -12,6 +10,9 @@ type ModelStrategy = {
 };
 
 export const useModelProvider = () => {
+  // @ts-ignore
+  const preferencesStore = PreferencesStore.getInstanceOrCreate<PreferencesStore>();
+
   const getModel = ({ modelName, apiKey }: ModelStrategy) => {
     switch (modelName) {
       case AIModelsEnum.GPT_3_5_TURBO:
@@ -24,13 +25,15 @@ export const useModelProvider = () => {
       //   return null;
       case AIModelsEnum.OLLAMA_LLAMA32_1B:
       case AIModelsEnum.OLLAMA_MISTRAL_7B:
+        const ollamaHost = process.env.FREELENS_OLLAMA_HOST || preferencesStore.ollamaHost;
+        const ollamaPort = process.env.FREELENS_OLLAMA_PORT || preferencesStore.ollamaPort;
         let headers = new Headers();
-        headers.set("Origin", FREELENS_OLLAMA_HOST);
+        headers.set("Origin", ollamaHost);
         return new ChatOllama({
           model: modelName,
           temperature: 0,
           headers: headers,
-          baseUrl: `${FREELENS_OLLAMA_HOST}:${FREELENS_OLLAMA_PORT}`,
+          baseUrl: `${ollamaHost}:${ollamaPort}`,
         });
       case AIModelsEnum.GEMINI_2_FLASH:
         const googleApiKey = process.env.GOOGLE_API_KEY || apiKey;
