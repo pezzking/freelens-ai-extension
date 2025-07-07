@@ -21,8 +21,13 @@ objects, and best practices.
 The Kubernetes Operator agent can perform the following actions:
 
 - ✅ Create Pods
-- ❌ Delete Pods
+- ✅ Delete Pods
+- ✅ Get Pods
 - ✅ Create Deployments
-- ❌ Delete Deployments
+- ✅ Delete Deployments
+- ✅ Get Deployments
+- ✅ Create Service
+- ✅ Delete Service
+- ✅ Get Services
 
 🧠 Note: All actions are gated by human approval to ensure operational safety.
