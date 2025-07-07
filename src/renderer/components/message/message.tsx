@@ -1,7 +1,7 @@
+import useChatService from "../../../common/service/chat-service";
 import { MessageObject } from "../../business/objects/message-object";
 import { getTextMessage } from "../../business/objects/message-object-provider";
 import { MessageType } from "../../business/objects/message-type";
-import { useChatHook } from "../chat";
 import Interrupt from "../interrupt/interrupt";
 import { MarkdownViewer } from "../markdown-viewer";
 import styleInline from "./message.scss?inline";
@@ -12,7 +12,7 @@ export interface MessageProps {
 
 export const Message = ({ message }: MessageProps) => {
   const sentMessageClassName = message.sent ? "message-bubble sent" : "message-bubble";
-  const chatHook = useChatHook();
+  const chatService = useChatService();
 
   if (message.sent) {
     return (
@@ -34,11 +34,11 @@ export const Message = ({ message }: MessageProps) => {
             approved={message.approved!}
             onAction={(option) => {
               if ("yes" === option) {
-                chatHook.changeInterruptStatus(message.messageId, true);
+                chatService.changeInterruptStatus(message.messageId, true);
               } else if ("no" === option) {
-                chatHook.changeInterruptStatus(message.messageId, false);
+                chatService.changeInterruptStatus(message.messageId, false);
               }
-              chatHook.sendMessageToAgent(getTextMessage(option, true));
+              chatService.sendMessageToAgent(getTextMessage(option, true));
             }}
           />
         </>

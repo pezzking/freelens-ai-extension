@@ -38,7 +38,7 @@ export const TextInput = ({ onSend }: TextInputProps) => {
             <button
               className="chat-button chat-clear-button"
               onClick={async () => applicationStatusStore.clearChat()}
-              disabled={applicationStatusStore.chatMessages.length === 0}
+              disabled={applicationStatusStore.chatMessages?.length === 0}
               title="Clear chat"
             >
               <Eraser size={20} />

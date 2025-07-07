@@ -58,7 +58,7 @@ export const useMcpAgent = () => {
           question: "The agent has requested to use a tool",
           options: ["yes", "no"],
           actionToApprove: { action: toolNames },
-          requestString: "The agent wants to use this tool: " + toolNames + "\n\n\napprove options: [yes/no]",
+          requestString: "The agent wants to use this tool: " + toolNames,
         };
         const review = interrupt(interruptRequest);
         console.log("Tool call review: ", review);

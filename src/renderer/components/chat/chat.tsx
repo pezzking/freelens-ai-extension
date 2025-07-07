@@ -16,7 +16,7 @@ export const Chat = () => {
       <style>{styleInline}</style>
       <div className="chat-container">
         <div className="messages-container" ref={chatHook.containerRef}>
-          {applicationStatusStore.chatMessages.map((msg: MessageObject, index: number) => (
+          {applicationStatusStore.chatMessages?.map((msg: MessageObject, index: number) => (
             <Message key={index} message={msg} />
           ))}
 
@@ -34,7 +34,7 @@ export const Chat = () => {
           )}
         </div>
 
-        <TextInput onSend={(text) => chatHook.sendMessageToAgent(getTextMessage(text, true))} />
+        <TextInput onSend={(text) => chatHook.sendMessage(getTextMessage(text, true))} />
       </div>
     </>
   );

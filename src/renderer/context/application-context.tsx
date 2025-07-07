@@ -21,7 +21,7 @@ export interface AppContextType {
   conversationId: string;
   isLoading: boolean;
   isConversationInterrupted: boolean;
-  chatMessages: MessageObject[];
+  chatMessages: MessageObject[] | null;
   freeLensAgent: FreeLensAgent | null;
   mcpAgent: MPCAgent | null;
   setSelectedModel: (selectedModel: AIModelsEnum) => void;
@@ -45,7 +45,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   const [conversationId, _setConversationId] = useState("");
   const [isLoading, _setLoading] = useState(false);
   const [isConversationInterrupted, _setConversationInterrupted] = useState(false);
-  const [chatMessages, _setChatMessages] = useState<MessageObject[]>([]);
+  const [chatMessages, _setChatMessages] = useState<MessageObject[] | null>(null);
   const [freeLensAgent, _setFreeLensAgent] = useState<FreeLensAgent | null>(agentsStore.freeLensAgent);
   const [mcpAgent, _setMcpAgent] = useState<MPCAgent | null>(agentsStore.mcpAgent);
 
@@ -56,13 +56,8 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   useEffect(() => {
     _setLoading(window.sessionStorage.getItem("isLoading") === "true");
     _setConversationInterrupted(window.sessionStorage.getItem("isConversationInterrupted") === "true");
-
     getConversationId();
-
-    const stringMessages = window.sessionStorage.getItem("chatMessages");
-    stringMessages ? _setChatMessages(JSON.parse(stringMessages)) : _setChatMessages([]);
-
-    initMcpAgent(false).then();
+    _loadChatMessages();
     initFreeLensAgent();
   }, []);
 
@@ -78,6 +73,11 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   useEffect(() => {
     console.log("Freelens Agent initialized: ", freeLensAgent);
   }, [freeLensAgent]);
+
+  const _loadChatMessages = () => {
+    const stringMessages = window.sessionStorage.getItem("chatMessages");
+    stringMessages ? _setChatMessages(JSON.parse(stringMessages)) : _setChatMessages([]);
+  };
 
   const getConversationId = () => {
     const storedConversationId = window.sessionStorage.getItem("conversationId");
@@ -105,6 +105,9 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
 
   const addMessage = (message: MessageObject) => {
     _setChatMessages((prev) => {
+      if (!prev) {
+        prev = [];
+      }
       const updated = [...prev, message];
       window.sessionStorage.setItem("chatMessages", JSON.stringify(updated));
       return updated;
@@ -113,7 +116,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
 
   const updateLastMessage = (newText: string) => {
     _setChatMessages((prev) => {
-      if (prev.length === 0) return prev;
+      if (!prev || prev.length === 0) return prev;
 
       const lastIndex = prev.length - 1;
       const messagesCopy = [...prev];
@@ -121,7 +124,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
 
       if (lastMessage.sent) {
         // Agent response does not exist, add a new empty one
-        messagesCopy.push(getTextMessage("", false));
+        messagesCopy.push(getTextMessage(newText, false));
         window.sessionStorage.setItem("chatMessages", JSON.stringify(messagesCopy));
         return messagesCopy;
       }
@@ -229,7 +232,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
 
   const changeInterruptStatus = (id: string, status: boolean) => {
     _setChatMessages((prevMessages) =>
-      prevMessages.map((msg) => (msg.messageId === id ? { ...msg, approved: status } : msg)),
+      prevMessages!.map((msg) => (msg.messageId === id ? { ...msg, approved: status } : msg)),
     );
   };
 
