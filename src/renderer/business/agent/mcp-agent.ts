@@ -1,10 +1,12 @@
 import { AIMessage, ToolMessage } from "@langchain/core/messages";
-import { Command, MemorySaver, StateGraph, interrupt } from "@langchain/langgraph";
+import { Command, interrupt, MemorySaver, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
 import { useModelProvider } from "../provider/model-provider";
 import { teardownNode } from "./nodes/teardown";
 import { GraphState } from "./state/graph-state";
+
+export type MPCAgent = Awaited<ReturnType<ReturnType<typeof useMcpAgent>["buildAgentSystem"]>>;
 
 export const useMcpAgent = () => {
   const parseMcpConfiguration = (mcpConfiguration: string) => {
@@ -83,7 +85,10 @@ export const useMcpAgent = () => {
 
     const callModel = async (state: typeof GraphState.State) => {
       console.log("MCP Agent - called with input: ", state);
-      const model = useModelProvider().getModel({ modelName: state.modelName, apiKey: state.modelApiKey });
+      const model = useModelProvider().getModel({
+        modelName: state.modelName,
+        apiKey: state.modelApiKey,
+      });
       if (!model) {
         return;
       }

@@ -1,8 +1,9 @@
 import { Renderer } from "@freelensapp/extensions";
 import React, { useEffect, useRef, useState } from "react";
-import type { SingleValue } from "react-select";
 import { AIModelInfos, AIModelsEnum, toAIModelEnum } from "../../business/provider/ai-models";
 import { useApplicationStatusStore } from "../../context/application-context";
+
+import type { SingleValue } from "react-select";
 
 type TextInputHookProps = {
   onSend: (message: string) => void;
@@ -52,7 +53,7 @@ export const useTextInput = ({ onSend }: TextInputHookProps) => {
     if (option) {
       const selectedModel = toAIModelEnum(option.value);
       if (selectedModel) {
-        applicationStatusStore.selectedModel = selectedModel;
+        applicationStatusStore.setSelectedModel(selectedModel);
       }
     }
   };

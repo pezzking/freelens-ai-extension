@@ -1,11 +1,13 @@
 import { RemoveMessage } from "@langchain/core/messages";
-import { CompiledStateGraph } from "@langchain/langgraph";
 import { observer } from "mobx-react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { PreferencesStore } from "../../common/store";
-import { useFreeLensAgentSystem } from "../business/agent/freelens-agent-system";
-import { useMcpAgent } from "../business/agent/mcp-agent";
+import { AgentsStore } from "../../common/store/agents-store";
+import { generateUuid } from "../../common/utils/uuid";
+import { FreeLensAgent, useFreeLensAgentSystem } from "../business/agent/freelens-agent-system";
+import { MPCAgent, useMcpAgent } from "../business/agent/mcp-agent";
 import { MessageObject } from "../business/objects/message-object";
+import { getTextMessage } from "../business/objects/message-object-provider";
 import { AIModelsEnum } from "../business/provider/ai-models";
 
 export interface AppContextType {
@@ -14,39 +16,38 @@ export interface AppContextType {
   mcpEnabled: boolean;
   mcpConfiguration: string;
   explainEvent: MessageObject;
+  ollamaHost: string;
+  ollamaPort: string;
   conversationId: string;
   isLoading: boolean;
   isConversationInterrupted: boolean;
   chatMessages: MessageObject[];
-  // TODO replace any with the correct types
-  freeLensAgent: CompiledStateGraph<object, object, any, any, any, any> | null;
-  // TODO replace any with the correct types
-  mcpAgent: CompiledStateGraph<object, object, any, any, any, any> | null;
+  freeLensAgent: FreeLensAgent | null;
+  mcpAgent: MPCAgent | null;
+  setSelectedModel: (selectedModel: AIModelsEnum) => void;
+  setExplainEvent: (messageObject: MessageObject) => void;
   setLoading: (isLoading: boolean) => void;
   setConversationInterrupted: (isConversationInterrupted: boolean) => void;
   addMessage: (message: MessageObject) => void;
   updateLastMessage: (newText: string) => void;
   clearChat: () => void;
   getActiveAgent: () => Promise<any>;
+  changeInterruptStatus: (id: string, status: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const generateConversationId = () => {
-  console.log("Generating conversation ID");
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-};
-
 export const ApplicationContextProvider = observer(({ children }: { children: React.ReactNode }) => {
-  const [preferencesStore, _setPreferenceStore] = useState(PreferencesStore.getInstance());
+  const [preferencesStore, _setPreferencesStore] = useState<PreferencesStore>(
+    PreferencesStore.getInstanceOrCreate<PreferencesStore>(),
+  );
+  const [agentsStore, _setAgentsStore] = useState<AgentsStore>(AgentsStore.getInstanceOrCreate<AgentsStore>());
   const [conversationId, _setConversationId] = useState("");
   const [isLoading, _setLoading] = useState(false);
   const [isConversationInterrupted, _setConversationInterrupted] = useState(false);
   const [chatMessages, _setChatMessages] = useState<MessageObject[]>([]);
-  const [freeLensAgent, setFreeLensAgent] = useState<CompiledStateGraph<object, object, any, any, any, any> | null>(
-    null,
-  );
-  const [mcpAgent, setMcpAgent] = useState<CompiledStateGraph<object, object, any, any, any, any> | null>(null);
+  const [freeLensAgent, _setFreeLensAgent] = useState<FreeLensAgent | null>(agentsStore.freeLensAgent);
+  const [mcpAgent, _setMcpAgent] = useState<MPCAgent | null>(agentsStore.mcpAgent);
 
   const mcpAgentSystem = useMcpAgent();
   const freeLensAgentSystem = useFreeLensAgentSystem();
@@ -84,12 +85,13 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
       _setConversationId(storedConversationId);
       console.log("Using stored conversation ID: ", storedConversationId);
     } else {
-      const newConverstionId = generateConversationId();
+      console.log("Generating conversation ID");
+      const newConverstionId = generateUuid();
       _setConversationId(newConverstionId);
       window.sessionStorage.setItem("conversationId", newConverstionId);
       console.log("No stored conversation ID found, generating a new one.");
     }
-  }
+  };
 
   const setLoading = (isLoading: boolean) => {
     _setLoading(isLoading);
@@ -116,6 +118,15 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
       const lastIndex = prev.length - 1;
       const messagesCopy = [...prev];
       let lastMessage = messagesCopy[lastIndex];
+
+      if (lastMessage.sent) {
+        // Agent response does not exist, add a new empty one
+        messagesCopy.push(getTextMessage("", false));
+        window.sessionStorage.setItem("chatMessages", JSON.stringify(messagesCopy));
+        return messagesCopy;
+      }
+
+      // Agent response exist, update the existing one
       messagesCopy[lastIndex] = {
         ...lastMessage,
         text: lastMessage.text + newText,
@@ -128,17 +139,20 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
 
   const clearChat = async () => {
     if (freeLensAgent) {
-      await cleanAgentMessageHistory(freeLensAgent);
+      cleanAgentMessageHistory(freeLensAgent).finally(() => {
+        _setChatMessages([]);
+        window.sessionStorage.setItem("chatMessages", JSON.stringify([]));
+      });
     }
     if (mcpAgent) {
-      await cleanAgentMessageHistory(mcpAgent);
+      await cleanAgentMessageHistory(mcpAgent).finally(() => {
+        _setChatMessages([]);
+        window.sessionStorage.setItem("chatMessages", JSON.stringify([]));
+      });
     }
-    _setChatMessages([]);
-    window.sessionStorage.setItem("chatMessages", JSON.stringify([]));
   };
 
-  // TODO replace any with the correct types
-  const cleanAgentMessageHistory = async (agent: CompiledStateGraph<object, object, any, any, any, any>) => {
+  const cleanAgentMessageHistory = async (agent: FreeLensAgent | MPCAgent) => {
     console.log("Cleaning agent message history for agent: ", agent);
     if (!agent) {
       console.warn("No agent provided to clean message history.");
@@ -157,6 +171,16 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     for (const msg of messages) {
       await agent.updateState(config, { messages: new RemoveMessage({ id: msg.id }) });
     }
+  };
+
+  const setFreeLensAgent = (freeLensAgent: FreeLensAgent) => {
+    agentsStore.freeLensAgent = freeLensAgent;
+    _setFreeLensAgent(freeLensAgent);
+  };
+
+  const setMcpAgent = (mcpAgent: MPCAgent) => {
+    agentsStore.mcpAgent = mcpAgent;
+    _setMcpAgent(mcpAgent);
   };
 
   const initMcpAgent = async (forceInitialization: boolean = false) => {
@@ -195,6 +219,20 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     console.log("MCP Agent configuration updated: ", preferencesStore.mcpConfiguration);
   };
 
+  const setSelectedModel = (selectedModel: AIModelsEnum) => {
+    preferencesStore.selectedModel = selectedModel;
+  };
+
+  const setExplainEvent = (messageObject: MessageObject) => {
+    preferencesStore.explainEvent = messageObject;
+  };
+
+  const changeInterruptStatus = (id: string, status: boolean) => {
+    _setChatMessages((prevMessages) =>
+      prevMessages.map((msg) => (msg.messageId === id ? { ...msg, approved: status } : msg)),
+    );
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -203,18 +241,23 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
         mcpEnabled: preferencesStore.mcpEnabled,
         mcpConfiguration: preferencesStore.mcpConfiguration,
         explainEvent: preferencesStore.explainEvent,
+        ollamaHost: preferencesStore.ollamaHost,
+        ollamaPort: preferencesStore.ollamaPort,
         conversationId,
         isLoading,
         isConversationInterrupted,
         chatMessages,
         mcpAgent,
         freeLensAgent,
+        setSelectedModel,
+        setExplainEvent,
         setLoading,
         setConversationInterrupted,
         addMessage,
         updateLastMessage,
         clearChat,
         getActiveAgent,
+        changeInterruptStatus,
       }}
     >
       {children}

@@ -8,14 +8,20 @@ export interface PreferencesModel {
   selectedModel: AIModelsEnum;
   mcpEnabled: boolean;
   mcpConfiguration: string;
+  ollamaHost: string;
+  ollamaPort: string;
 }
 
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
+  // Persistent
   @observable accessor apiKey: string = "";
   @observable accessor selectedModel: AIModelsEnum = AIModelsEnum.GPT_3_5_TURBO;
   @observable accessor mcpEnabled: boolean = false;
   @observable accessor mcpConfiguration: string = "";
+  @observable accessor ollamaHost: string = "";
+  @observable accessor ollamaPort: string = "";
 
+  // Not persistent
   @observable accessor explainEvent: MessageObject = {} as MessageObject;
 
   constructor() {
@@ -26,6 +32,8 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
         selectedModel: AIModelsEnum.GPT_3_5_TURBO,
         mcpEnabled: false,
         mcpConfiguration: "",
+        ollamaHost: "http://127.0.0.1",
+        ollamaPort: "9898",
       },
     });
     makeObservable(this);
@@ -33,7 +41,6 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
 
   updateMcpConfiguration = async (newMcpConfiguration: string) => {
     this.mcpConfiguration = newMcpConfiguration;
-    console.log("MCP Agent configuration updated: ", this.mcpConfiguration);
   };
 
   fromStore = (preferencesModel: PreferencesModel): void => {
@@ -41,6 +48,8 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     this.selectedModel = preferencesModel.selectedModel;
     this.mcpEnabled = preferencesModel.mcpEnabled;
     this.mcpConfiguration = preferencesModel.mcpConfiguration;
+    this.ollamaHost = preferencesModel.ollamaHost;
+    this.ollamaPort = preferencesModel.ollamaPort;
   };
 
   toJSON = (): PreferencesModel => {
@@ -49,6 +58,8 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
       selectedModel: this.selectedModel,
       mcpEnabled: this.mcpEnabled,
       mcpConfiguration: this.mcpConfiguration,
+      ollamaHost: this.ollamaHost,
+      ollamaPort: this.ollamaPort,
     };
     return toJS(value);
   };

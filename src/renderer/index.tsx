@@ -3,13 +3,9 @@
  * Licensed under MIT License. See LICENSE in root directory for more information.
  */
 
-// transpiled .tsx code must have `React` symbol in the scope
-// @ts-ignore
-import React from "react";
-
 import { Renderer } from "@freelensapp/extensions";
 import { PreferencesStore } from "../common/store";
-import { FreelensAiIcon } from "./components/freelens-ai-icon";
+import { FreeLensAiIcon } from "./components/freelens-ai-icon";
 import { MenuEntry } from "./components/menu-entry";
 import { MainPage } from "./pages/main";
 import { PreferencesPage } from "./pages/preferences";
@@ -20,7 +16,7 @@ type KubeObjectMenuProps<TKubeObject extends KubeObject> = Renderer.Component.Ku
 export default class FreeLensAIRenderer extends Renderer.LensExtension {
   async onActivate() {
     // @ts-ignore
-    PreferencesStore.createInstance().loadExtension(this);
+    PreferencesStore.getInstanceOrCreate<PreferencesStore>().loadExtension(this);
   }
 
   clusterPages = [
@@ -38,7 +34,7 @@ export default class FreeLensAIRenderer extends Renderer.LensExtension {
       title: "Freelens AI",
       target: { pageId: "ai-extension-main-page" },
       components: {
-        Icon: FreelensAiIcon,
+        Icon: FreeLensAiIcon,
       },
     },
   ];
@@ -58,8 +54,7 @@ export default class FreeLensAIRenderer extends Renderer.LensExtension {
       kind: "Event",
       apiVersions: ["v1"],
       components: {
-        // TODO Freelens 1.4.0 should have Event type exposed
-        MenuItem: (props: KubeObjectMenuProps<any>) => <MenuEntry {...props} />,
+        MenuItem: (props: KubeObjectMenuProps<Renderer.K8sApi.KubeEvent>) => <MenuEntry {...props} />,
       },
     },
   ];

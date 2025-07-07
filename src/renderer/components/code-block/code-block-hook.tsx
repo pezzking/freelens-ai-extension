@@ -1,12 +1,15 @@
 import { Renderer } from "@freelensapp/extensions";
-import { useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { atomOneDark, atomOneLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 const {
   Component: { createTerminalTab, terminalStore },
 } = Renderer;
 
+const { Theme } = Renderer;
+
 type useCodeBlockHookProps = {
-  children: string;
+  children: ReactNode;
 };
 
 export const useCodeBlockHook = ({ children }: useCodeBlockHookProps) => {
@@ -14,6 +17,10 @@ export const useCodeBlockHook = ({ children }: useCodeBlockHookProps) => {
   const text = String(children).replace(/\n$/, "");
   const hasMultipleLines = text.split("\n").length > 1;
   const shellId = "FreeLensAI-tabid";
+
+  useEffect(() => {
+    console.log(Theme.activeTheme.get());
+  }, [Theme.activeTheme.get()]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(text).then(() => {
@@ -46,5 +53,10 @@ export const useCodeBlockHook = ({ children }: useCodeBlockHookProps) => {
     });
   };
 
-  return { copied, text, hasMultipleLines, handleCopy, executeCommand, isExecutable };
+  const getTheme = () => {
+    const themeInfo = Theme.activeTheme.get();
+    return themeInfo.name.toLowerCase() === "dark" ? atomOneDark : atomOneLight;
+  };
+
+  return { copied, text, hasMultipleLines, handleCopy, executeCommand, isExecutable, getTheme };
 };

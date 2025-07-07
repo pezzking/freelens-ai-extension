@@ -1,12 +1,9 @@
-// @ts-ignore
-import React from "react";
-
 import { Renderer } from "@freelensapp/extensions";
 import { Eraser, SendHorizonal } from "lucide-react";
 import { AIModelsEnum } from "../../business/provider/ai-models";
 import { useApplicationStatusStore } from "../../context/application-context";
-import { useTextInput } from "./text-input-hook";
 import styleInline from "./text-input.scss?inline";
+import { useTextInput } from "./text-input-hook";
 
 const {
   Component: { Select },
