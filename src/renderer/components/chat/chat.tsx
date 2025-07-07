@@ -34,7 +34,7 @@ export const Chat = () => {
           )}
         </div>
 
-        <TextInput onSend={(text) => chatHook.sendMessage(getTextMessage(text, true))} />
+        <TextInput onSend={(text) => chatHook.sendMessageToAgent(getTextMessage(text, true))} />
       </div>
     </>
   );

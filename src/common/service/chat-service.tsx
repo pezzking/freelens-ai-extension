@@ -18,31 +18,38 @@ const useChatService = () => {
   const applicationStatusStore = useApplicationStatusStore();
   const aiAnalysisService: AiAnalysisService = useAiAnalysisService(applicationStatusStore);
 
-  const sendMessage = (message: MessageObject) => {
+  const _sendMessage = (message: MessageObject) => {
     applicationStatusStore.addMessage(message);
   };
 
   const sendMessageToAgent = (message: MessageObject) => {
-    console.log("Send message to agent: ", message);
-    sendMessage(message);
+    try {
+      applicationStatusStore.setLoading(true);
+      console.log("Send message to agent: ", message);
+      _sendMessage(message);
 
-    if (message.sent) {
-      if (MessageType.EXPLAIN === message.type) {
-        analyzeEvent(message).finally(() => null);
-      } else if (applicationStatusStore.isConversationInterrupted) {
-        console.log("Conversation is interrupted, resuming...");
-        applicationStatusStore.setConversationInterrupted(false);
-        runAgent(new Command({ resume: message.text })).finally(() => null);
+      if (message.sent) {
+        if (MessageType.EXPLAIN === message.type) {
+          analyzeEvent(message).finally(() => applicationStatusStore.setLoading(false));
+        } else if (applicationStatusStore.isConversationInterrupted) {
+          console.log("Conversation is interrupted, resuming...");
+          runAgent(new Command({ resume: message.text })).finally(() => {
+            applicationStatusStore.setConversationInterrupted(false);
+            applicationStatusStore.setLoading(false);
+          });
+        } else {
+          const agentInput = {
+            modelName: applicationStatusStore.selectedModel,
+            modelApiKey: applicationStatusStore.apiKey,
+            messages: [{ role: "user", content: message.text }],
+          };
+          runAgent(agentInput).finally(() => applicationStatusStore.setLoading(false));
+        }
       } else {
-        const agentInput = {
-          modelName: applicationStatusStore.selectedModel,
-          modelApiKey: applicationStatusStore.apiKey,
-          messages: [{ role: "user", content: message.text }],
-        };
-        runAgent(agentInput).finally(() => null);
+        console.error("You cannot call sendMessageToAgent with 'sent: false'");
       }
-    } else {
-      console.error("You cannot call sendMessageToAgent with 'sent: false'");
+    } catch {
+      applicationStatusStore.setLoading(false);
     }
   };
 
@@ -59,7 +66,7 @@ const useChatService = () => {
       }
     } catch (error) {
       console.error("Error in AI analysis: ", error);
-      sendMessage(getTextMessage(`Error in AI analysis: ${error instanceof Error ? error.message : error}`, false));
+      _sendMessage(getTextMessage(`Error in AI analysis: ${error instanceof Error ? error.message : error}`, false));
     }
   };
 
@@ -76,7 +83,6 @@ const useChatService = () => {
 
   const runAgent = async (agentInput: object | Command) => {
     try {
-      applicationStatusStore.setLoading(true);
       const activeAgent = await applicationStatusStore.getActiveAgent();
       const agentService: AgentService = useAgentService(activeAgent);
       const agentResponseStream = agentService.run(agentInput, applicationStatusStore.conversationId);
@@ -89,22 +95,20 @@ const useChatService = () => {
         // check if the chunk is an approval interrupt
         if (typeof chunk === "object" && isApprovalInterrupt(chunk.value)) {
           console.log("Approval interrupt received: ", chunk);
-          sendMessage(getInterruptMessage(chunk, false));
+          _sendMessage(getInterruptMessage(chunk, false));
           applicationStatusStore.setConversationInterrupted(true);
         }
       }
     } catch (error) {
       console.error("Error while running Freelens Agent: ", error);
 
-      sendMessage(
+      _sendMessage(
         getTextMessage(`Error while running Freelens Agent: ${error instanceof Error ? error.message : error}`, false),
       );
-    } finally {
-      applicationStatusStore.setLoading(false);
     }
   };
 
-  return { sendMessage, sendMessageToAgent, changeInterruptStatus };
+  return { sendMessageToAgent, changeInterruptStatus };
 };
 
 export default useChatService;

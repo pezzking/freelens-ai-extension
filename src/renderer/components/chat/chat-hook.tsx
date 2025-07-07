@@ -38,7 +38,7 @@ export const useChatHook = () => {
     }
   }, [applicationStatusStore.chatMessages, applicationStatusStore.explainEvent]);
 
-  const sendMessage = (message: MessageObject) => {
+  const sendMessageToAgent = (message: MessageObject) => {
     chatService.sendMessageToAgent(message);
   };
 
@@ -52,5 +52,5 @@ export const useChatHook = () => {
     }
   };
 
-  return { containerRef, sendMessage };
+  return { containerRef, sendMessageToAgent };
 };
