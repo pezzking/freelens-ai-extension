@@ -310,9 +310,7 @@ export const deleteDeployment = tool(
 
 
 export const createService = tool(
-  async ({
-    name, namespace, data,
-  }: { name: string; namespace: string; data: Main.K8sApi.Service }): Promise<string> => {
+  async ({ data }: { data: Main.K8sApi.Service }): Promise<string> => {
     /**
      * Creates a service in the Kubernetes cluster
      */
@@ -321,10 +319,10 @@ export const createService = tool(
     const interruptRequest = {
       question: "Approve this action...",
       options: ["yes", "no"],
-      actionToApprove: { action: "CREATE SERVICE", name, namespace, data },
+      actionToApprove: { action: "CREATE SERVICE", data },
       requestString:
         "Approve this action: " +
-        JSON.stringify({ action: "CREATE SERVICE", name, namespace, data }) +
+        JSON.stringify({ action: "CREATE SERVICE", data }) +
         "\n\n\n options: [yes/no]",
     };
     const review = interrupt(interruptRequest);
@@ -339,7 +337,10 @@ export const createService = tool(
       if (!servicesStore) {
         return "The object that can create a service does not exist";
       }
-      const createServiceResult: Renderer.K8sApi.Service = await servicesStore.create({ name, namespace }, data);
+      const createServiceResult: Renderer.K8sApi.Service = await servicesStore.create({
+        name: data.metadata.name,
+        namespace: data.metadata.namespace
+      }, data);
       console.log("[Tool invocation result: createService] - ", createServiceResult);
       return "Service manifest applied successfully";
     } catch (error) {
@@ -351,27 +352,34 @@ export const createService = tool(
     name: "createService",
     description: "Creates a service in the Kubernetes cluster",
     schema: z.object({
-      namespace: z.string(),
-      name: z.string(),
-      data: z.object({
-        apiVersion: z.string(),
-        kind: z.string(),
-        metadata: z.object({
-          name: z.string(),
-          namespace: z.string(),
-        }),
-        spec: z.object({
-          type: z.string().optional(),
-          selector: z.record(z.string()),
-          ports: z.array(
-            z.object({
-              port: z.number(),
-              targetPort: z.union([z.number(), z.string()]),
-              protocol: z.string().optional(),
-              name: z.string().optional(),
-            }),
-          ),
-        }),
+      apiVersion: z.literal("v1"),
+      kind: z.literal("Service"),
+      metadata: z.object({
+        name: z.string(),
+        namespace: z.string().optional(),
+        labels: z.record(z.string()).optional(),
+        annotations: z.record(z.string()).optional(),
+      }),
+      spec: z.object({
+        type: z.enum(["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]).optional(),
+        selector: z.record(z.string()).optional(),
+        ports: z.array(
+          z.object({
+            name: z.string().optional(),
+            protocol: z.enum(["TCP", "UDP", "SCTP"]).optional().default("TCP"),
+            port: z.number().int().min(1).max(65535),
+            targetPort: z.union([
+              z.number().int().min(1).max(65535),
+              z.string(),
+            ]),
+            nodePort: z.number().int().min(30000).max(32767).optional(),
+          })
+        ),
+        clusterIP: z.string().optional(),
+        externalName: z.string().optional(),
+        sessionAffinity: z.enum(["None", "ClientIP"]).optional(),
+        ipFamilyPolicy: z.enum(["SingleStack", "PreferDualStack", "RequireDualStack"]).optional(),
+        ipFamilies: z.array(z.string()).optional(),
       }),
     }).describe("Service K8S manifest to create"),
   },
