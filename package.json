@@ -40,7 +40,8 @@
     "knip": "corepack pnpm dlx knip@5.61.3 --dependencies",
     "knip:development": "corepack pnpm knip",
     "knip:production": "corepack pnpm knip --production --strict",
-    "build": "electron-vite build",
+    "build": "electron-vite build --mode prod",
+    "build:dev": "electron-vite build --mode dev",
     "bump-version": "corepack pnpm version --no-commit-hooks --no-git-tag-version",
     "clean": "corepack pnpm dlx rimraf@6.0.1 binaries dist static/build",
     "clean:node_modules": "corepack pnpm dlx rimraf@6.0.1 node_modules",
@@ -63,6 +64,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@vitejs/plugin-react": "^4.6.0",
     "electron-vite": "^3.1.0",
+    "loglevel": "^1.9.2",
     "lucide-react": "^0.510.0",
     "mobx": "6.13.7",
     "mobx-react": "7.6.0",
@@ -74,8 +76,7 @@
     "typescript": "5.8.3",
     "vite": "^6.3.5",
     "vite-plugin-external": "^6.2.2",
-    "zod": "^3.25.67",
-    "loglevel": "^1.9.2"
+    "zod": "^3.25.67"
   },
   "keywords": [
     "ai",

@@ -1,7 +1,7 @@
 import log from "loglevel";
 import { useMemo } from "react";
 
-const isProd = process.env.ENV == "production";
+const isProd = import.meta.env.VITE_ENV == "production";
 
 export enum LogLevel {
   DEBUG = "debug",

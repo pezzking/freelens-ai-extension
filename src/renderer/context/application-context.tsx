@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { PreferencesStore } from "../../common/store";
 import { AgentsStore } from "../../common/store/agents-store";
+import useLog from "../../common/utils/logger/logger-service";
 import { generateUuid } from "../../common/utils/uuid";
 import { FreeLensAgent, useFreeLensAgentSystem } from "../business/agent/freelens-agent-system";
 import { MPCAgent, useMcpAgent } from "../business/agent/mcp-agent";
@@ -38,6 +39,7 @@ export interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const ApplicationContextProvider = observer(({ children }: { children: React.ReactNode }) => {
+  const { log } = useLog("useChatService");
   const [preferencesStore, _setPreferencesStore] = useState<PreferencesStore>(
     PreferencesStore.getInstanceOrCreate<PreferencesStore>(),
   );
@@ -67,11 +69,11 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   }, [preferencesStore.mcpConfiguration]);
 
   useEffect(() => {
-    console.log("MCP Agent initialized: ", mcpAgent);
+    log.debug("MCP Agent initialized: ", mcpAgent);
   }, [mcpAgent]);
 
   useEffect(() => {
-    console.log("Freelens Agent initialized: ", freeLensAgent);
+    log.debug("Freelens Agent initialized: ", freeLensAgent);
   }, [freeLensAgent]);
 
   const _loadChatMessages = () => {
@@ -83,13 +85,13 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     const storedConversationId = window.sessionStorage.getItem("conversationId");
     if (storedConversationId) {
       _setConversationId(storedConversationId);
-      console.log("Using stored conversation ID: ", storedConversationId);
+      log.debug("Using stored conversation ID: ", storedConversationId);
     } else {
-      console.log("Generating conversation ID");
+      log.debug("Generating conversation ID");
       const newConverstionId = generateUuid();
       _setConversationId(newConverstionId);
       window.sessionStorage.setItem("conversationId", newConverstionId);
-      console.log("No stored conversation ID found, generating a new one.");
+      log.debug("No stored conversation ID found, generating a new one.");
     }
   };
 
@@ -156,7 +158,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   };
 
   const cleanAgentMessageHistory = async (agent: FreeLensAgent | MPCAgent) => {
-    console.log("Cleaning agent message history for agent: ", agent);
+    log.debug("Cleaning agent message history for agent: ", agent);
     if (!agent) {
       console.warn("No agent provided to clean message history.");
       return;
@@ -165,9 +167,9 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     const config = { configurable: { thread_id: conversationId } };
 
     const messages = (await agent.getState(config)).values.messages;
-    console.log("Messages to remove: ", messages);
+    log.debug("Messages to remove: ", messages);
     if (!messages || messages.length === 0) {
-      console.log("No messages to remove.");
+      log.debug("No messages to remove.");
       return;
     }
 
@@ -190,7 +192,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     if (mcpAgent === null || forceInitialization) {
       setMcpAgent(await mcpAgentSystem.buildAgentSystem(preferencesStore.mcpConfiguration));
     } else {
-      console.log("MCP Agent was already initialized: ", mcpAgent);
+      log.debug("MCP Agent was already initialized: ", mcpAgent);
     }
   };
 
@@ -198,7 +200,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     if (freeLensAgent === null) {
       setFreeLensAgent(freeLensAgentSystem.buildAgentSystem());
     } else {
-      console.log("Freelens Agent was already initialized: ", freeLensAgent);
+      log.debug("Freelens Agent was already initialized: ", freeLensAgent);
     }
   };
 
@@ -212,14 +214,14 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
 
     if (freeLensAgent == null) {
       setFreeLensAgent(freeLensAgentSystem.buildAgentSystem());
-      console.log("Freelens Agent initialized: ", freeLensAgent);
+      log.debug("Freelens Agent initialized: ", freeLensAgent);
     }
     return freeLensAgent;
   };
 
   const updateMcpConfiguration = async () => {
     await initMcpAgent(true);
-    console.log("MCP Agent configuration updated: ", preferencesStore.mcpConfiguration);
+    log.debug("MCP Agent configuration updated: ", preferencesStore.mcpConfiguration);
   };
 
   const setSelectedModel = (selectedModel: AIModelsEnum) => {

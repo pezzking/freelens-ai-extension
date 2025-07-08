@@ -1,6 +1,7 @@
 import { HumanMessage } from "@langchain/core/messages";
 import { RunnableLambda, RunnableLike } from "@langchain/core/runnables";
 import { Command, MemorySaver, StateGraph } from "@langchain/langgraph";
+import useLog from "../../../common/utils/logger/logger-service";
 import { useAgentAnalyzer } from "./analyzer-agent";
 import { useConclusionsAgent } from "./conclusions-agent";
 import { useGeneralPurposeAgent } from "./general-purpose-agent";
@@ -16,6 +17,7 @@ export type FreeLensAgent = ReturnType<ReturnType<typeof useFreeLensAgentSystem>
  * @returns the multi-agent system invokable
  */
 export const useFreeLensAgentSystem = () => {
+  const { log } = useLog("useFreeLensAgentSystem");
   const subAgents = ["agentAnalyzer", "kubernetesOperator", "generalPurposeAgent"];
   const conclusionsAgentName = "conclusionsAgent";
   const subAgentResponsibilities = [
@@ -25,7 +27,7 @@ export const useFreeLensAgentSystem = () => {
   ];
 
   const supervisorAgentNode = async (state: typeof GraphState.State) => {
-    console.log("Supervisor agent - calling agent supervisor with input: ", state);
+    log.debug("Supervisor agent - calling agent supervisor with input: ", state);
     const agentSupervisor = await useAgentSupervisor(state.modelName, state.modelApiKey).getAgent(
       subAgents,
       subAgentResponsibilities,
@@ -34,7 +36,7 @@ export const useFreeLensAgentSystem = () => {
       return;
     }
     const response: any = await agentSupervisor.invoke({ messages: state.messages });
-    console.log("Supervisor agent - supervisor response", response);
+    log.debug("Supervisor agent - supervisor response", response);
 
     // TOOD check why response is unknown
     if (response.goto === "__end__") {
@@ -44,56 +46,56 @@ export const useFreeLensAgentSystem = () => {
   };
 
   const agentAnalyzerNode = async (state: typeof GraphState.State) => {
-    console.log("Analyzer Agent - calling agent analyzer with input: ", state);
+    log.debug("Analyzer Agent - calling agent analyzer with input: ", state);
     const agentAnalyzer = useAgentAnalyzer(state.modelName, state.modelApiKey).getAgent();
     if (!agentAnalyzer) {
       return;
     }
     const result = await agentAnalyzer.invoke(state);
     const lastMessage = result.messages[result.messages.length - 1];
-    console.log("Analyzer Agent - analysis result: ", result);
+    log.debug("Analyzer Agent - analysis result: ", result);
     return {
       messages: [new HumanMessage({ content: lastMessage.content })],
     };
   };
 
   const kubernetesOperatorNode = async (state: typeof GraphState.State) => {
-    console.log("Kubernetes Operator Agent - called with input: ", state);
+    log.debug("Kubernetes Operator Agent - called with input: ", state);
     const agentKubernetesOperator = useAgentKubernetesOperator(state.modelName, state.modelApiKey).getAgent();
     if (!agentKubernetesOperator) {
       return;
     }
     const result = await agentKubernetesOperator.invoke(state);
     const lastMessage = result.messages[result.messages.length - 1];
-    console.log("Kubernetes Operator - k8s operator result: ", result);
+    log.debug("Kubernetes Operator - k8s operator result: ", result);
     return {
       messages: [new HumanMessage({ content: lastMessage.content })],
     };
   };
 
   const generalPurposeAgentNode = async (state: typeof GraphState.State) => {
-    console.log("General Purpose Agent - called with input: ", state);
+    log.debug("General Purpose Agent - called with input: ", state);
     const generalPurposeAgent = useGeneralPurposeAgent(state.modelName, state.modelApiKey).getAgent();
     if (!generalPurposeAgent) {
       return;
     }
     const result = await generalPurposeAgent.invoke(state);
     const lastMessage = result.messages[result.messages.length - 1];
-    console.log("General Purpose Agent - response: ", result);
+    log.debug("General Purpose Agent - response: ", result);
     return {
       messages: [new HumanMessage({ content: lastMessage.content })],
     };
   };
 
   const conclusionsAgentNode = async (state: typeof GraphState.State) => {
-    console.log("Conclusions Agent - called with input: ", state);
+    log.debug("Conclusions Agent - called with input: ", state);
     const conclusionsAgent = useConclusionsAgent(state.modelName, state.modelApiKey).getAgent();
     if (!conclusionsAgent) {
       return;
     }
     const result = await conclusionsAgent.invoke(state);
     const lastMessage = result.messages[result.messages.length - 1];
-    console.log("Conclusions Agent - conclusions: ", result);
+    log.debug("Conclusions Agent - conclusions: ", result);
     return {
       messages: [new HumanMessage({ content: lastMessage.content })],
     };
