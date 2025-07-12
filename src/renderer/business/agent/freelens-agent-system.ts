@@ -28,10 +28,7 @@ export const useFreeLensAgentSystem = () => {
 
   const supervisorAgentNode = async (state: typeof GraphState.State) => {
     log.debug("Supervisor agent - calling agent supervisor with input: ", state);
-    const agentSupervisor = await useAgentSupervisor(state.modelName, state.modelApiKey).getAgent(
-      subAgents,
-      subAgentResponsibilities,
-    );
+    const agentSupervisor = await useAgentSupervisor().getAgent(subAgents, subAgentResponsibilities);
     if (!agentSupervisor) {
       return;
     }
@@ -47,7 +44,7 @@ export const useFreeLensAgentSystem = () => {
 
   const agentAnalyzerNode = async (state: typeof GraphState.State) => {
     log.debug("Analyzer Agent - calling agent analyzer with input: ", state);
-    const agentAnalyzer = useAgentAnalyzer(state.modelName, state.modelApiKey).getAgent();
+    const agentAnalyzer = useAgentAnalyzer().getAgent();
     if (!agentAnalyzer) {
       return;
     }
@@ -61,7 +58,7 @@ export const useFreeLensAgentSystem = () => {
 
   const kubernetesOperatorNode = async (state: typeof GraphState.State) => {
     log.debug("Kubernetes Operator Agent - called with input: ", state);
-    const agentKubernetesOperator = useAgentKubernetesOperator(state.modelName, state.modelApiKey).getAgent();
+    const agentKubernetesOperator = useAgentKubernetesOperator().getAgent();
     if (!agentKubernetesOperator) {
       return;
     }
@@ -75,7 +72,7 @@ export const useFreeLensAgentSystem = () => {
 
   const generalPurposeAgentNode = async (state: typeof GraphState.State) => {
     log.debug("General Purpose Agent - called with input: ", state);
-    const generalPurposeAgent = useGeneralPurposeAgent(state.modelName, state.modelApiKey).getAgent();
+    const generalPurposeAgent = useGeneralPurposeAgent().getAgent();
     if (!generalPurposeAgent) {
       return;
     }
@@ -89,7 +86,7 @@ export const useFreeLensAgentSystem = () => {
 
   const conclusionsAgentNode = async (state: typeof GraphState.State) => {
     log.debug("Conclusions Agent - called with input: ", state);
-    const conclusionsAgent = useConclusionsAgent(state.modelName, state.modelApiKey).getAgent();
+    const conclusionsAgent = useConclusionsAgent().getAgent();
     if (!conclusionsAgent) {
       return;
     }

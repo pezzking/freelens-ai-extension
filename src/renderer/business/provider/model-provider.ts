@@ -1,26 +1,21 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { ChatOllama } from "@langchain/ollama";
+// import { ChatOllama } from "@langchain/ollama";
 import { ChatOpenAI } from "@langchain/openai";
 import { PreferencesStore } from "../../../common/store";
 import { AIModelsEnum } from "./ai-models";
-
-type ModelStrategy = {
-  modelName: AIModelsEnum;
-  apiKey: string;
-};
 
 export const useModelProvider = () => {
   // @ts-ignore
   const preferencesStore = PreferencesStore.getInstanceOrCreate<PreferencesStore>();
 
-  const getModel = ({ modelName, apiKey }: ModelStrategy) => {
-    switch (modelName) {
+  const getModel = () => {
+    switch (preferencesStore.selectedModel) {
       case AIModelsEnum.GPT_3_5_TURBO:
       case AIModelsEnum.O3_MINI:
       case AIModelsEnum.GPT_4_1:
       case AIModelsEnum.GPT_4_O:
-        const openAiApiKey = process.env.OPENAI_API_KEY || apiKey;
-        return new ChatOpenAI({ model: modelName, apiKey: openAiApiKey });
+        const openAiApiKey = process.env.OPENAI_API_KEY || preferencesStore.openAIKey;
+        return new ChatOpenAI({ model: preferencesStore.selectedModel, apiKey: openAiApiKey });
       // case AIModelsEnum.DEEP_SEEK_R1:
       //   return null;
       // case AIModelsEnum.OLLAMA_LLAMA32_1B:
@@ -36,15 +31,15 @@ export const useModelProvider = () => {
       //     baseUrl: `${ollamaHost}:${ollamaPort}`,
       //   });
       case AIModelsEnum.GEMINI_2_FLASH:
-        const googleApiKey = process.env.GOOGLE_API_KEY || apiKey;
+        const googleApiKey = process.env.GOOGLE_API_KEY || preferencesStore.googleAIKey;
         return new ChatGoogleGenerativeAI({
-          model: modelName,
+          model: preferencesStore.selectedModel,
           temperature: 0,
           apiKey: googleApiKey,
           streamUsage: false,
         });
       default:
-        throw new Error(`Unsupported model: ${modelName}`);
+        throw new Error(`Unsupported model: ${preferencesStore.selectedModel}`);
     }
   };
 

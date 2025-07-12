@@ -88,10 +88,7 @@ export const useMcpAgent = () => {
 
     const callModel = async (state: typeof GraphState.State) => {
       log.debug("MCP Agent - called with input: ", state);
-      const model = useModelProvider().getModel({
-        modelName: state.modelName,
-        apiKey: state.modelApiKey,
-      });
+      const model = useModelProvider().getModel();
       if (!model) {
         return;
       }

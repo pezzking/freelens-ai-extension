@@ -1,11 +1,10 @@
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { z } from "zod";
-import { AIModelsEnum } from "../provider/ai-models";
 import { useModelProvider } from "../provider/model-provider";
 import { SUPERVISOR_PROMPT_TEMPLATE } from "../provider/prompt-template-provider";
 
-export const useAgentSupervisor = (modelName: AIModelsEnum, modelApiKey: string) => {
-  const model = useModelProvider().getModel({ modelName: modelName, apiKey: modelApiKey });
+export const useAgentSupervisor = () => {
+  const model = useModelProvider().getModel();
 
   const getAgent = async (subAgents: string[], subAgentResponsibilities: string[]) => {
     if (!model) {

@@ -4,7 +4,8 @@ import { MessageObject } from "../../renderer/business/objects/message-object";
 import { AIModelsEnum } from "../../renderer/business/provider/ai-models";
 
 export interface PreferencesModel {
-  apiKey: string;
+  openAIKey: string;
+  googleAIKey: string;
   selectedModel: AIModelsEnum;
   mcpEnabled: boolean;
   mcpConfiguration: string;
@@ -14,7 +15,8 @@ export interface PreferencesModel {
 
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
   // Persistent
-  @observable accessor apiKey: string = "";
+  @observable accessor openAIKey: string = "";
+  @observable accessor googleAIKey: string = "";
   @observable accessor selectedModel: AIModelsEnum = AIModelsEnum.GPT_3_5_TURBO;
   @observable accessor mcpEnabled: boolean = false;
   @observable accessor mcpConfiguration: string = "";
@@ -28,7 +30,8 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     super({
       configName: "freelens-ai-preferences-store",
       defaults: {
-        apiKey: "",
+        openAIKey: "",
+        googleAIKey: "",
         selectedModel: AIModelsEnum.GPT_3_5_TURBO,
         mcpEnabled: false,
         mcpConfiguration: "",
@@ -44,7 +47,8 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   };
 
   fromStore = (preferencesModel: PreferencesModel): void => {
-    this.apiKey = preferencesModel.apiKey;
+    this.openAIKey = preferencesModel.openAIKey;
+    this.googleAIKey = preferencesModel.googleAIKey;
     this.selectedModel = preferencesModel.selectedModel;
     this.mcpEnabled = preferencesModel.mcpEnabled;
     this.mcpConfiguration = preferencesModel.mcpConfiguration;
@@ -54,7 +58,8 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
 
   toJSON = (): PreferencesModel => {
     const value: PreferencesModel = {
-      apiKey: this.apiKey,
+      openAIKey: this.openAIKey,
+      googleAIKey: this.googleAIKey,
       selectedModel: this.selectedModel,
       mcpEnabled: this.mcpEnabled,
       mcpConfiguration: this.mcpConfiguration,

@@ -1,8 +1,7 @@
-import { AIMessage, AIMessageChunk } from "@langchain/core/messages";
+import { AIMessage } from "@langchain/core/messages";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { MessagesAnnotation, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
-import { AIModelsEnum } from "../provider/ai-models";
 import { useModelProvider } from "../provider/model-provider";
 import { KUBERNETES_OPERATOR_PROMPT_TEMPLATE } from "../provider/prompt-template-provider";
 import {
@@ -17,8 +16,8 @@ import {
   getServices,
 } from "./tools/tools";
 
-export const useAgentKubernetesOperator = (modelName: AIModelsEnum, modelApiKey: string) => {
-  const model = useModelProvider().getModel({ modelName: modelName, apiKey: modelApiKey });
+export const useAgentKubernetesOperator = () => {
+  const model = useModelProvider().getModel();
 
   const getAgent = () => {
     if (!model) {

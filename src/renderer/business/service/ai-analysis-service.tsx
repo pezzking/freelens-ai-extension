@@ -22,10 +22,7 @@ export const useAiAnalysisService = (applicationStatusStore: AppContextType): Ai
       throw new Error("API key is required. Use the settings to register it.");
     }
 
-    const model = useModelProvider().getModel({
-      modelName: applicationStatusStore.selectedModel,
-      apiKey: applicationStatusStore.apiKey,
-    });
+    const model = useModelProvider().getModel();
     if (!model) {
       return;
     }

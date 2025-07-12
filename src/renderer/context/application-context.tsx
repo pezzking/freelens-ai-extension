@@ -272,7 +272,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   return (
     <AppContext.Provider
       value={{
-        apiKey: preferencesStore.apiKey,
+        apiKey: preferencesStore.openAIKey,
         selectedModel: preferencesStore.selectedModel,
         mcpEnabled: preferencesStore.mcpEnabled,
         mcpConfiguration: preferencesStore.mcpConfiguration,

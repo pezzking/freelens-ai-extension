@@ -11,30 +11,36 @@ export const PreferencesPage = observer(() => {
 
   return (
     <>
-      <div style={{ marginTop: 8, fontWeight: "bold" }}>API Key</div>
+      <div style={{ marginTop: 8, fontWeight: "bold" }}>OpenAI Key</div>
       <Input
-        placeholder="Set here your API key"
-        value={preferencesStore.apiKey}
-        onChange={(value: string) => (preferencesStore.apiKey = value)}
+        placeholder="Put here your OpenAI API key"
+        value={preferencesStore.openAIKey}
+        onChange={(value: string) => (preferencesStore.openAIKey = value)}
       />
-      <HorizontalLine />
-      <div>
-        <SubTitle title="Ollama settings" />
-        If you're using Ollama, there's no need for an API key.
-        <div style={{ marginTop: 8, fontWeight: "bold" }}>Ollama host</div>
-        <Input
-          style={{ marginBottom: 8 }}
-          placeholder="Set here your ollama host"
-          value={preferencesStore.ollamaHost}
-          onChange={(value: string) => (preferencesStore.ollamaHost = value)}
-        />
-        <div style={{ marginTop: 8, fontWeight: "bold" }}>Ollama port</div>
-        <Input
-          placeholder="Set here your ollama port"
-          value={preferencesStore.ollamaPort}
-          onChange={(value: string) => (preferencesStore.ollamaPort = value)}
-        />
-      </div>
+      <div style={{ marginTop: 8, fontWeight: "bold" }}>GoogleAI Key</div>
+      <Input
+        placeholder="Put here your GoogleAI API key"
+        value={preferencesStore.googleAIKey}
+        onChange={(value: string) => (preferencesStore.googleAIKey = value)}
+      />
+      {/*<HorizontalLine />*/}
+      {/*<div>*/}
+      {/*  <SubTitle title="Ollama settings" />*/}
+      {/*  If you're using Ollama, there's no need for an API key.*/}
+      {/*  <div style={{ marginTop: 8, fontWeight: "bold" }}>Ollama host</div>*/}
+      {/*  <Input*/}
+      {/*    style={{ marginBottom: 8 }}*/}
+      {/*    placeholder="Set here your ollama host"*/}
+      {/*    value={preferencesStore.ollamaHost}*/}
+      {/*    onChange={(value: string) => (preferencesStore.ollamaHost = value)}*/}
+      {/*  />*/}
+      {/*  <div style={{ marginTop: 8, fontWeight: "bold" }}>Ollama port</div>*/}
+      {/*  <Input*/}
+      {/*    placeholder="Set here your ollama port"*/}
+      {/*    value={preferencesStore.ollamaPort}*/}
+      {/*    onChange={(value: string) => (preferencesStore.ollamaPort = value)}*/}
+      {/*  />*/}
+      {/*</div>*/}
       <HorizontalLine />
       <div>
         <div style={{ fontWeight: "bold" }}>Enable MCP</div>
@@ -44,12 +50,13 @@ export const PreferencesPage = observer(() => {
           checked={preferencesStore.mcpEnabled}
           onChange={(checked: boolean) => (preferencesStore.mcpEnabled = checked)}
         />
+        Please note that MCP servers currently do not work with Gemini 2.0 Flash
         <div>
           <div style={{ marginBottom: 8, fontWeight: "bold" }}>MCP JSON Configuration</div>
           <textarea
             style={{
               width: "100%",
-              minHeight: 100,
+              minHeight: 200,
               fontFamily: "monospace",
               fontSize: 14,
               padding: 8,
