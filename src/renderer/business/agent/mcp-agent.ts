@@ -2,6 +2,7 @@ import { AIMessage, ToolMessage } from "@langchain/core/messages";
 import { Command, interrupt, MemorySaver, StateGraph } from "@langchain/langgraph";
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { MultiServerMCPClient } from "@langchain/mcp-adapters";
+import useLog from "../../../common/utils/logger/logger-service";
 import { useModelProvider } from "../provider/model-provider";
 import { teardownNode } from "./nodes/teardown";
 import { GraphState } from "./state/graph-state";
@@ -9,6 +10,8 @@ import { GraphState } from "./state/graph-state";
 export type MPCAgent = Awaited<ReturnType<ReturnType<typeof useMcpAgent>["buildAgentSystem"]>>;
 
 export const useMcpAgent = () => {
+  const { log } = useLog("useMcpAgent");
+
   const parseMcpConfiguration = (mcpConfiguration: string) => {
     try {
       if ("" === mcpConfiguration) {
@@ -40,7 +43,7 @@ export const useMcpAgent = () => {
 
     const mcpTools = await client.getTools();
     mcpTools.forEach((tool) => {
-      console.log("Loading MCP tool with name: %s, description: %s", tool.name, tool.description);
+      log.debug("Loading MCP tool with name: %s, description: %s", tool.name, tool.description);
     });
     return mcpTools;
   };
@@ -52,7 +55,7 @@ export const useMcpAgent = () => {
     const shouldContinue = (state: typeof GraphState.State) => {
       const lastMessage = state.messages[state.messages.length - 1] as AIMessage;
       if (lastMessage.tool_calls?.length) {
-        console.log("MCP Agent - tool calls detected: ", lastMessage.tool_calls);
+        log.debug("MCP Agent - tool calls detected: ", lastMessage.tool_calls);
         const toolNames = lastMessage.tool_calls.map((toolCall) => toolCall.name);
         const interruptRequest = {
           question: "The agent has requested to use a tool",
@@ -61,9 +64,9 @@ export const useMcpAgent = () => {
           requestString: "The agent wants to use this tool: " + toolNames,
         };
         const review = interrupt(interruptRequest);
-        console.log("Tool call review: ", review);
+        log.debug("Tool call review: ", review);
         if (review !== "yes") {
-          console.log("[Tool invocation] - action not approved");
+          log.debug("[Tool invocation] - action not approved");
           const toolMessages: ToolMessage[] = [];
           lastMessage.tool_calls.forEach((toolCall) => {
             if (toolCall.id) {
@@ -75,7 +78,7 @@ export const useMcpAgent = () => {
               toolMessages.push(toolMessage);
             }
           });
-          console.log("ToolMessages output: ", toolMessages);
+          log.debug("ToolMessages output: ", toolMessages);
           return new Command({ goto: "agent", update: { messages: toolMessages } });
         }
         return new Command({ goto: "tools" });
@@ -84,7 +87,7 @@ export const useMcpAgent = () => {
     };
 
     const callModel = async (state: typeof GraphState.State) => {
-      console.log("MCP Agent - called with input: ", state);
+      log.debug("MCP Agent - called with input: ", state);
       const model = useModelProvider().getModel({
         modelName: state.modelName,
         apiKey: state.modelApiKey,
@@ -94,7 +97,7 @@ export const useMcpAgent = () => {
       }
       const boundModel = model.bindTools(mcpTools);
       const response = await boundModel.invoke(state.messages);
-      console.log("MCP Agent - response: ", response);
+      log.debug("MCP Agent - response: ", response);
       return { messages: [response] };
     };
 

@@ -1,5 +1,5 @@
 import { Renderer } from "@freelensapp/extensions";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { atomOneDark, atomOneLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 const {
@@ -17,10 +17,6 @@ export const useCodeBlockHook = ({ children }: useCodeBlockHookProps) => {
   const text = String(children).replace(/\n$/, "");
   const hasMultipleLines = text.split("\n").length > 1;
   const shellId = "FreeLensAI-tabid";
-
-  useEffect(() => {
-    console.log(Theme.activeTheme.get());
-  }, [Theme.activeTheme.get()]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(text).then(() => {
