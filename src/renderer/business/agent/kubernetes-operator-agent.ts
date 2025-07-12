@@ -14,7 +14,7 @@ import {
   deleteService,
   getDeployments,
   getPods,
-  getServices
+  getServices,
 } from "./tools/tools";
 
 export const useAgentKubernetesOperator = (modelName: AIModelsEnum, modelApiKey: string) => {
@@ -34,7 +34,7 @@ export const useAgentKubernetesOperator = (modelName: AIModelsEnum, modelApiKey:
       deleteService,
       getPods,
       getDeployments,
-      getServices
+      getServices,
     ];
     const toolNode = new ToolNode(tools);
     const boundModel = model.bindTools(tools);

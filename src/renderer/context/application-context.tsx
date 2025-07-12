@@ -1,6 +1,6 @@
 import { RemoveMessage } from "@langchain/core/messages";
 import { observer } from "mobx-react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { PreferencesStore } from "../../common/store";
 import { AgentsStore } from "../../common/store/agents-store";
 import useLog from "../../common/utils/logger/logger-service";
@@ -51,6 +51,8 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   const [freeLensAgent, _setFreeLensAgent] = useState<FreeLensAgent | null>(agentsStore.freeLensAgent);
   const [mcpAgent, _setMcpAgent] = useState<MPCAgent | null>(agentsStore.mcpAgent);
 
+  const prevMcpConfiguration = useRef(preferencesStore.mcpConfiguration);
+
   const mcpAgentSystem = useMcpAgent();
   const freeLensAgentSystem = useFreeLensAgentSystem();
 
@@ -58,22 +60,28 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
   useEffect(() => {
     _setLoading(window.sessionStorage.getItem("isLoading") === "true");
     _setConversationInterrupted(window.sessionStorage.getItem("isConversationInterrupted") === "true");
-    getConversationId();
+    _getConversationId();
     _loadChatMessages();
-    initFreeLensAgent();
+    _initFreeLensAgent();
   }, []);
 
   // Recreate MCP server when MCP configuration change
   useEffect(() => {
-    updateMcpConfiguration().then();
-  }, [preferencesStore.mcpConfiguration]);
+    const forceMcpInitialization = preferencesStore.mcpConfiguration !== prevMcpConfiguration.current;
+    _initMcpAgent(forceMcpInitialization).then();
+    prevMcpConfiguration.current = preferencesStore.mcpConfiguration;
+  }, [preferencesStore.mcpConfiguration, preferencesStore.mcpEnabled, preferencesStore.selectedModel]);
+
+  function _isMcpServerCompatible() {
+    return AIModelsEnum.GEMINI_2_FLASH !== preferencesStore.selectedModel;
+  }
 
   useEffect(() => {
-    log.debug("MCP Agent initialized: ", mcpAgent);
+    log.debug("MCP Agent: ", mcpAgent);
   }, [mcpAgent]);
 
   useEffect(() => {
-    log.debug("Freelens Agent initialized: ", freeLensAgent);
+    log.debug("Freelens Agent: ", freeLensAgent);
   }, [freeLensAgent]);
 
   const _loadChatMessages = () => {
@@ -81,7 +89,7 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     stringMessages ? _setChatMessages(JSON.parse(stringMessages)) : _setChatMessages([]);
   };
 
-  const getConversationId = () => {
+  const _getConversationId = () => {
     const storedConversationId = window.sessionStorage.getItem("conversationId");
     if (storedConversationId) {
       _setConversationId(storedConversationId);
@@ -188,15 +196,35 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
     _setMcpAgent(mcpAgent);
   };
 
-  const initMcpAgent = async (forceInitialization: boolean = false) => {
+  const _initMcpAgent = async (forceInitialization: boolean = false) => {
+    if (!preferencesStore.mcpEnabled) {
+      if (mcpAgent) {
+        log.debug("The MCP Agent is disabled but it is already initialized");
+      } else {
+        log.debug("The MCP Agent is disabled and will not be initialized");
+        return;
+      }
+    }
+
+    if (!_isMcpServerCompatible()) {
+      if (mcpAgent) {
+        log.debug("The MCP Agent is not compatible with Gemini but it is already initialized");
+      } else {
+        log.debug("The MCP Agent is not compatible with Gemini and will not be initialized");
+        return;
+      }
+    }
+
     if (mcpAgent === null || forceInitialization) {
+      log.debug("initializing MCP agent with configuration", preferencesStore.mcpConfiguration);
       setMcpAgent(await mcpAgentSystem.buildAgentSystem(preferencesStore.mcpConfiguration));
+      log.debug("MCP agent initialized!");
     } else {
-      log.debug("MCP Agent was already initialized: ", mcpAgent);
+      log.debug("The MCP Agent was already initialized: ", mcpAgent);
     }
   };
 
-  const initFreeLensAgent = () => {
+  const _initFreeLensAgent = () => {
     if (freeLensAgent === null) {
       setFreeLensAgent(freeLensAgentSystem.buildAgentSystem());
     } else {
@@ -206,22 +234,25 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
 
   const getActiveAgent = async () => {
     if (preferencesStore.mcpEnabled) {
-      if (mcpAgent == null) {
-        setMcpAgent(await mcpAgentSystem.buildAgentSystem(preferencesStore.mcpConfiguration));
+      if (!_isMcpServerCompatible()) {
+        log.debug("The MCP Agent is not compatible with Gemini and will not be used");
+      } else {
+        if (mcpAgent === null) {
+          const _mcpAgent = await mcpAgentSystem.buildAgentSystem(preferencesStore.mcpConfiguration);
+          setMcpAgent(_mcpAgent);
+          return _mcpAgent;
+        }
+        return mcpAgent;
       }
-      return mcpAgent;
     }
 
-    if (freeLensAgent == null) {
-      setFreeLensAgent(freeLensAgentSystem.buildAgentSystem());
+    if (freeLensAgent === null) {
+      const _freeLensAgent = freeLensAgentSystem.buildAgentSystem();
+      setFreeLensAgent(_freeLensAgent);
       log.debug("Freelens Agent initialized: ", freeLensAgent);
+      return _freeLensAgent;
     }
     return freeLensAgent;
-  };
-
-  const updateMcpConfiguration = async () => {
-    await initMcpAgent(true);
-    log.debug("MCP Agent configuration updated: ", preferencesStore.mcpConfiguration);
   };
 
   const setSelectedModel = (selectedModel: AIModelsEnum) => {

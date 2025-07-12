@@ -99,31 +99,33 @@ export const createPod = tool(
   {
     name: "createPod",
     description: "Creates a pod in the Kubernetes cluster",
-    schema: z.object({
-      namespace: z.string(),
-      name: z.string(),
-      data: z.object({
-        apiVersion: z.string(),
-        kind: z.string(),
-        metadata: z.object({
-          name: z.string(),
-          namespace: z.string(),
+    schema: z
+      .object({
+        namespace: z.string(),
+        name: z.string(),
+        data: z.object({
+          apiVersion: z.string(),
+          kind: z.string(),
+          metadata: z.object({
+            name: z.string(),
+            namespace: z.string(),
+          }),
+          spec: z.object({
+            containers: z.array(
+              z.object({
+                name: z.string(),
+                image: z.string(),
+                ports: z.array(
+                  z.object({
+                    containerPort: z.number(),
+                  }),
+                ),
+              }),
+            ),
+          }),
         }),
-        spec: z.object({
-          containers: z.array(
-            z.object({
-              name: z.string(),
-              image: z.string(),
-              ports: z.array(
-                z.object({
-                  containerPort: z.number(),
-                }),
-              ),
-            }),
-          ),
-        }),
-      }),
-    }).describe("Pod K8S manifest to create"),
+      })
+      .describe("Pod K8S manifest to create"),
   },
 );
 
@@ -175,42 +177,44 @@ export const createDeployment = tool(
   {
     name: "createDeployment",
     description: "Creates a deployment in the Kubernetes cluster",
-    schema: z.object({
-      namespace: z.string(),
-      name: z.string(),
-      data: z.object({
-        apiVersion: z.string(),
-        kind: z.string(),
-        metadata: z.object({
-          name: z.string(),
-          namespace: z.string(),
-        }),
-        spec: z.object({
-          replicas: z.number(),
-          selector: z.object({
-            matchLabels: z.record(z.string()),
+    schema: z
+      .object({
+        namespace: z.string(),
+        name: z.string(),
+        data: z.object({
+          apiVersion: z.string(),
+          kind: z.string(),
+          metadata: z.object({
+            name: z.string(),
+            namespace: z.string(),
           }),
-          template: z.object({
-            metadata: z.object({
-              labels: z.record(z.string()),
+          spec: z.object({
+            replicas: z.number(),
+            selector: z.object({
+              matchLabels: z.record(z.string()),
             }),
-            spec: z.object({
-              containers: z.array(
-                z.object({
-                  name: z.string(),
-                  image: z.string(),
-                  ports: z.array(
-                    z.object({
-                      containerPort: z.number(),
-                    }),
-                  ),
-                }),
-              ),
+            template: z.object({
+              metadata: z.object({
+                labels: z.record(z.string()),
+              }),
+              spec: z.object({
+                containers: z.array(
+                  z.object({
+                    name: z.string(),
+                    image: z.string(),
+                    ports: z.array(
+                      z.object({
+                        containerPort: z.number(),
+                      }),
+                    ),
+                  }),
+                ),
+              }),
             }),
           }),
         }),
-      }),
-    }).describe("Deployment K8S manifest to create"),
+      })
+      .describe("Deployment K8S manifest to create"),
   },
 );
 
@@ -308,7 +312,6 @@ export const deleteDeployment = tool(
   },
 );
 
-
 export const createService = tool(
   async ({ data }: { data: Main.K8sApi.Service }): Promise<string> => {
     /**
@@ -321,9 +324,7 @@ export const createService = tool(
       options: ["yes", "no"],
       actionToApprove: { action: "CREATE SERVICE", data },
       requestString:
-        "Approve this action: " +
-        JSON.stringify({ action: "CREATE SERVICE", data }) +
-        "\n\n\n options: [yes/no]",
+        "Approve this action: " + JSON.stringify({ action: "CREATE SERVICE", data }) + "\n\n\n options: [yes/no]",
     };
     const review = interrupt(interruptRequest);
     console.log("Tool call review: ", review);
@@ -337,10 +338,13 @@ export const createService = tool(
       if (!servicesStore) {
         return "The object that can create a service does not exist";
       }
-      const createServiceResult: Renderer.K8sApi.Service = await servicesStore.create({
-        name: data.metadata.name,
-        namespace: data.metadata.namespace
-      }, data);
+      const createServiceResult: Renderer.K8sApi.Service = await servicesStore.create(
+        {
+          name: data.metadata.name,
+          namespace: data.metadata.namespace,
+        },
+        data,
+      );
       console.log("[Tool invocation result: createService] - ", createServiceResult);
       return "Service manifest applied successfully";
     } catch (error) {
@@ -351,40 +355,38 @@ export const createService = tool(
   {
     name: "createService",
     description: "Creates a service in the Kubernetes cluster",
-    schema: z.object({
-      apiVersion: z.literal("v1"),
-      kind: z.literal("Service"),
-      metadata: z.object({
-        name: z.string(),
-        namespace: z.string().optional(),
-        labels: z.record(z.string()).optional(),
-        annotations: z.record(z.string()).optional(),
-      }),
-      spec: z.object({
-        type: z.enum(["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]).optional(),
-        selector: z.record(z.string()).optional(),
-        ports: z.array(
-          z.object({
-            name: z.string().optional(),
-            protocol: z.enum(["TCP", "UDP", "SCTP"]).optional().default("TCP"),
-            port: z.number().int().min(1).max(65535),
-            targetPort: z.union([
-              z.number().int().min(1).max(65535),
-              z.string(),
-            ]),
-            nodePort: z.number().int().min(30000).max(32767).optional(),
-          })
-        ),
-        clusterIP: z.string().optional(),
-        externalName: z.string().optional(),
-        sessionAffinity: z.enum(["None", "ClientIP"]).optional(),
-        ipFamilyPolicy: z.enum(["SingleStack", "PreferDualStack", "RequireDualStack"]).optional(),
-        ipFamilies: z.array(z.string()).optional(),
-      }),
-    }).describe("Service K8S manifest to create"),
+    schema: z
+      .object({
+        apiVersion: z.literal("v1"),
+        kind: z.literal("Service"),
+        metadata: z.object({
+          name: z.string(),
+          namespace: z.string().optional(),
+          labels: z.record(z.string()).optional(),
+          annotations: z.record(z.string()).optional(),
+        }),
+        spec: z.object({
+          type: z.enum(["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]).optional(),
+          selector: z.record(z.string()).optional(),
+          ports: z.array(
+            z.object({
+              name: z.string().optional(),
+              protocol: z.enum(["TCP", "UDP", "SCTP"]).optional().default("TCP"),
+              port: z.number().int().min(1).max(65535),
+              targetPort: z.union([z.number().int().min(1).max(65535), z.string()]),
+              nodePort: z.number().int().min(30000).max(32767).optional(),
+            }),
+          ),
+          clusterIP: z.string().optional(),
+          externalName: z.string().optional(),
+          sessionAffinity: z.enum(["None", "ClientIP"]).optional(),
+          ipFamilyPolicy: z.enum(["SingleStack", "PreferDualStack", "RequireDualStack"]).optional(),
+          ipFamilies: z.array(z.string()).optional(),
+        }),
+      })
+      .describe("Service K8S manifest to create"),
   },
 );
-
 
 export const deleteService = tool(
   async ({ name, namespace }: { name: string; namespace: string }): Promise<string> => {
@@ -433,7 +435,6 @@ export const deleteService = tool(
   },
 );
 
-
 export const getPods = tool(
   ({ namespace }: { namespace: string }): string => {
     /**
@@ -465,7 +466,6 @@ export const getPods = tool(
     }),
   },
 );
-
 
 export const getDeployments = tool(
   ({ namespace }: { namespace: string }): string => {
