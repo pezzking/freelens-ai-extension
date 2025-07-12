@@ -26,10 +26,10 @@ const useLog = (scope = "default") => {
 
   const logger: Logger = useMemo(
     () => ({
-      debug: (msg: string) => _logger.debug(`[${scope}] ${msg}`),
-      info: (msg: string) => _logger.info(`[${scope}] ${msg}`),
-      warn: (msg: string) => _logger.warn(`[${scope}] ${msg}`),
-      error: (msg: string) => _logger.error(`[${scope}] ${msg}`),
+      debug: (msg: string, ...meta: any[]) => _logger.debug(`[${scope}] ${msg}`, ...meta),
+      info: (msg: string, ...meta: any[]) => _logger.info(`[${scope}] ${msg}`, ...meta),
+      warn: (msg: string, ...meta: any[]) => _logger.warn(`[${scope}] ${msg}`, ...meta),
+      error: (msg: string, ...meta: any[]) => _logger.error(`[${scope}] ${msg}`, ...meta),
     }),
     [scope],
   );
