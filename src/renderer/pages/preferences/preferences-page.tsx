@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { PreferencesStore } from "../../../common/store";
 
 const {
-  Component: { Input, Switch, SubTitle, HorizontalLine },
+  Component: { Input, Switch, HorizontalLine },
 } = Renderer;
 
 export const PreferencesPage = observer(() => {
