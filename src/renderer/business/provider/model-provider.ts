@@ -23,24 +23,25 @@ export const useModelProvider = () => {
         return new ChatOpenAI({ model: modelName, apiKey: openAiApiKey });
       // case AIModelsEnum.DEEP_SEEK_R1:
       //   return null;
-      case AIModelsEnum.OLLAMA_LLAMA32_1B:
-      case AIModelsEnum.OLLAMA_MISTRAL_7B:
-        const ollamaHost = process.env.FREELENS_OLLAMA_HOST || preferencesStore.ollamaHost;
-        const ollamaPort = process.env.FREELENS_OLLAMA_PORT || preferencesStore.ollamaPort;
-        let headers = new Headers();
-        headers.set("Origin", ollamaHost);
-        return new ChatOllama({
-          model: modelName,
-          temperature: 0,
-          headers: headers,
-          baseUrl: `${ollamaHost}:${ollamaPort}`,
-        });
+      // case AIModelsEnum.OLLAMA_LLAMA32_1B:
+      // case AIModelsEnum.OLLAMA_MISTRAL_7B:
+      //   const ollamaHost = process.env.FREELENS_OLLAMA_HOST || preferencesStore.ollamaHost;
+      //   const ollamaPort = process.env.FREELENS_OLLAMA_PORT || preferencesStore.ollamaPort;
+      //   let headers = new Headers();
+      //   headers.set("Origin", ollamaHost);
+      //   return new ChatOllama({
+      //     model: modelName,
+      //     temperature: 0,
+      //     headers: headers,
+      //     baseUrl: `${ollamaHost}:${ollamaPort}`,
+      //   });
       case AIModelsEnum.GEMINI_2_FLASH:
         const googleApiKey = process.env.GOOGLE_API_KEY || apiKey;
         return new ChatGoogleGenerativeAI({
           model: modelName,
           temperature: 0,
           apiKey: googleApiKey,
+          streamUsage: false,
         });
       default:
         throw new Error(`Unsupported model: ${modelName}`);

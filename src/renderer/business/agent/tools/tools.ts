@@ -317,14 +317,19 @@ export const createService = tool(
     /**
      * Creates a service in the Kubernetes cluster
      */
-    console.log("[Tool invocation: createService]");
+
+    if (data) {
+      if (data.metadata) {
+        data.metadata.apiVersion = "v1";
+        data.metadata.kind = "Service";
+      }
+    }
 
     const interruptRequest = {
       question: "Approve this action...",
       options: ["yes", "no"],
       actionToApprove: { action: "CREATE SERVICE", data },
-      requestString:
-        "Approve this action: " + JSON.stringify({ action: "CREATE SERVICE", data }) + "\n\n\n options: [yes/no]",
+      requestString: "```json\n" + JSON.stringify({ action: "CREATE SERVICE", data }, null, 2) + "\n```",
     };
     const review = interrupt(interruptRequest);
     console.log("Tool call review: ", review);
@@ -357,8 +362,8 @@ export const createService = tool(
     description: "Creates a service in the Kubernetes cluster",
     schema: z
       .object({
-        apiVersion: z.literal("v1"),
-        kind: z.literal("Service"),
+        apiVersion: z.string(),
+        kind: z.string(),
         metadata: z.object({
           name: z.string(),
           namespace: z.string().optional(),
@@ -399,7 +404,7 @@ export const deleteService = tool(
       question: "Approve this action...",
       options: ["yes", "no"],
       actionToApprove: { action: "DELETE SERVICE", name, namespace },
-      requestString: "Approve this action: " + JSON.stringify({ action: "DELETE SERVICE", name, namespace }),
+      requestString: "```json\n" + JSON.stringify({ action: "DELETE SERVICE", name, namespace }, null, 2) + "\n```",
     };
     const review = interrupt(interruptRequest);
     console.log("Tool call review: ", review);
