@@ -6,6 +6,7 @@ This guide will walk you through setting up an MCP (Model Control Protocol) agen
 
 - You have Freelens-AI installed.
 - You have Node.js and npx available in your system.
+- You have an OpenAI API Key, at the moment it only works with its models
 
 ## Configuration
 
@@ -52,5 +53,3 @@ For a robust setup, especially in Kubernetes environments, we recommend:
 - When you set up MCP Agent, the first message in chat it handles can be slow
   because it need to be initialized (our client should connect to the MCP
   Server you specified), so just wait for it to be fully initialized
-- Google Gemini models seems to have issued in MCP tool calling, thus the MCP
-  Agent may have problems
