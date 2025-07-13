@@ -18,7 +18,6 @@ automate complex tasks and enhance productivity.
 
 **Quick Links:**
 
-- [Ollama Setup & Model Image Guide](./docs/OLLAMA.md)
 - [How to obtain a Google API Key](./docs/GOOGLE_API_KEY.md)
 - [Build & Run Guide](./docs/BUILD.md)
 
@@ -33,7 +32,6 @@ automate complex tasks and enhance productivity.
     - [Key Features](#key-features)
     - [Base Agent](#base-agent)
     - [MCP Agent](#mcp-agent)
-      - [Additional Resources](#additional-resources)
 
 ---
 
@@ -44,9 +42,6 @@ freelens-ai-extension currently supports integration with the following AI model
 - ***o3-mini***
 - ***gpt-4.1***
 - ***gpt-4o***
-- ***deep-seek-r1***
-- ***ollama llama3.2:1b***
-- ***ollama mistral:7b***
 - ***gemini 2.0 flash***
 
 Each model offers different capabilities and performance characteristics.
