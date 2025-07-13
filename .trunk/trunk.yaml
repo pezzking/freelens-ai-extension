@@ -51,8 +51,8 @@ lint:
           name: fmt
           run: biome check --fix "${target}"
           run_from: ${parent}
-    # Prettier checks only *.scss files
     - name: prettier
+      # Prettier checks only *.scss files
       files:
         - sass
   enabled:
