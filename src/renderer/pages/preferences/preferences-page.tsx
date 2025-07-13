@@ -56,7 +56,7 @@ export const PreferencesPage = observer(() => {
           <textarea
             style={{
               width: "100%",
-              minHeight: 200,
+              minHeight: 250,
               fontFamily: "monospace",
               fontSize: 14,
               padding: 8,
