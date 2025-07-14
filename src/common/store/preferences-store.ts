@@ -34,14 +34,18 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
         googleAIKey: "",
         selectedModel: AIModelsEnum.GPT_3_5_TURBO,
         mcpEnabled: false,
-        mcpConfiguration: JSON.stringify({
-          mcpServers: {
-            kubernetes: {
-              command: "npx",
-              args: ["mcp-server-kubernetes"],
+        mcpConfiguration: JSON.stringify(
+          {
+            mcpServers: {
+              kubernetes: {
+                command: "npx",
+                args: ["mcp-server-kubernetes"],
+              },
             },
           },
-        }, null, 2),
+          null,
+          2,
+        ),
         ollamaHost: "http://127.0.0.1",
         ollamaPort: "9898",
       },
