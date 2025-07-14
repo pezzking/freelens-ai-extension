@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import useChatService from "../../../common/service/chat-service";
 import { MessageObject } from "../../business/objects/message-object";
 import { getTextMessage } from "../../business/objects/message-object-provider";
@@ -13,6 +14,35 @@ export interface MessageProps {
 export const Message = ({ message }: MessageProps) => {
   const sentMessageClassName = message.sent ? "message-bubble sent" : "message-bubble";
   const chatService = useChatService();
+
+  const [visibleText, setVisibleText] = useState("");
+  const lastTextRef = useRef(message.text);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setVisibleText(message.text);
+  }, []);
+
+  useEffect(() => {
+    if (lastTextRef.current === message.text) return;
+    lastTextRef.current = message.text;
+
+    const updateText = () => {
+      setVisibleText((prev) => {
+        const current = lastTextRef.current;
+        if (prev === current) return prev;
+        return current.slice(0, prev.length + 3);
+      });
+
+      rafRef.current = requestAnimationFrame(updateText);
+    };
+
+    rafRef.current = requestAnimationFrame(updateText);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current!);
+    };
+  }, [message.text]);
 
   if (message.sent) {
     return (
@@ -47,7 +77,7 @@ export const Message = ({ message }: MessageProps) => {
       return (
         <div>
           <style>{styleInline}</style>
-          <MarkdownViewer content={message.text} />
+          <MarkdownViewer content={visibleText} />
         </div>
       );
     }
