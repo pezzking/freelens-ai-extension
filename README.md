@@ -16,7 +16,7 @@ automate complex tasks and enhance productivity.
 
 ## Video Demo
 
-https://raw.githubusercontent.com/wiki/freelensapp/freelens-ai-extension/freelens_teaser_v0_1_0.mp4
+https://github.com/user-attachments/assets/3463a056-ff83-4705-aa9a-cae3a5f63feb
 
 ---
 
