@@ -18,6 +18,7 @@ automate complex tasks and enhance productivity.
 
 **Quick Links:**
 
+- [Install](#install)
 - [How to obtain a Google API Key](./docs/GOOGLE_API_KEY.md)
 - [Build & Run Guide](./docs/BUILD.md)
 
