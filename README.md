@@ -34,6 +34,8 @@ automate complex tasks and enhance productivity.
     - [MCP Agent](#mcp-agent)
 
 ---
+# Install
+Open freelens > file > extensions and add the folowing string to the textbox: **@freelensapp/ai-extension**
 
 ## Available Models
 freelens-ai-extension currently supports integration with the following AI models:
