@@ -14,6 +14,10 @@ AI capabilities directly into your workflow.
 With Freelens AI, you can harness the power of artificial intelligence to
 automate complex tasks and enhance productivity.
 
+## Video Demo
+
+[![Watch the demo video on the Freelens YouTube!](https://img.youtube.com/vi/RLPgmT41TLU/hqdefault.jpg)](https://www.youtube.com/watch?v=RLPgmT41TLU)
+
 ---
 
 **Quick Links:**
