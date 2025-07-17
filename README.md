@@ -37,6 +37,11 @@ automate complex tasks and enhance productivity.
 # Install
 Open freelens > file > extensions and add the folowing string to the textbox: **@freelensapp/ai-extension**
 
+or:
+
+Use a following URL in the browser:
+[freelens://app/extensions/install/%40freelensapp%2Fai-extension](freelens://app/extensions/install/%40freelensapp%2Fai-extension)
+
 ## Available Models
 freelens-ai-extension currently supports integration with the following AI models:
 
