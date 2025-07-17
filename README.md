@@ -16,7 +16,7 @@ automate complex tasks and enhance productivity.
 
 ## Video Demo
 
-[![Watch the demo video on the Freelens YouTube!](https://img.youtube.com/vi/RLPgmT41TLU/hqdefault.jpg)](https://www.youtube.com/watch?v=RLPgmT41TLU)
+https://raw.githubusercontent.com/wiki/freelensapp/freelens-ai-extension/freelens_teaser_v0_1_0.mp4
 
 ---
 
