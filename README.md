@@ -89,6 +89,12 @@ our [MCP Agent documentation](docs/MCP_AGENT.md).
 
 ---
 
+### GPT 5 Setup
+
+[GPT 5 Setup documentation](docs/GPT_5_SETUP.md).
+
+---
+
 #### Additional Resources
 
 - [***Contribute***](CONTRIBUTING.md)
