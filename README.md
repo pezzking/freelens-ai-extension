@@ -16,7 +16,7 @@ automate complex tasks and enhance productivity.
 
 ## Video Demo
 
-https://github.com/user-attachments/assets/3463a056-ff83-4705-aa9a-cae3a5f63feb
+[Video Demo](https://github.com/user-attachments/assets/3463a056-ff83-4705-aa9a-cae3a5f63feb)
 
 ---
 
@@ -39,7 +39,7 @@ https://github.com/user-attachments/assets/3463a056-ff83-4705-aa9a-cae3a5f63feb
     - [MCP Agent](#mcp-agent)
 
 ---
-# Install
+## Install
 Open freelens > file > extensions and add the folowing string to the textbox: **@freelensapp/ai-extension**
 
 or:
