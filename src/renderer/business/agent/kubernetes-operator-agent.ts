@@ -49,7 +49,10 @@ export const useAgentKubernetesOperator = () => {
 
     const finish = async (state: { messages: AIMessage[] }) => {
       const prompt = ChatPromptTemplate.fromMessages([
-        ["system", "Finish the interaction. If the user asked 2 things in the same message, remember the user that the agent can handle one task at time. Be professional."],
+        [
+          "system",
+          "Finish the interaction. If the user asked 2 things in the same message, remember the user that the agent can handle one task at time. Be professional.",
+        ],
         new MessagesPlaceholder("messages"),
       ]);
       const response = await prompt.pipe(model).invoke({ messages: state.messages });
