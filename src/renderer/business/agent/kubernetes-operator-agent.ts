@@ -36,15 +36,7 @@ export const useAgentKubernetesOperator = () => {
       getServices,
     ];
     const toolNode = new ToolNode(tools);
-    const boundModel = model.bindTools(tools);
-
-    const shouldContinue = ({ messages }: { messages: AIMessage[] }) => {
-      const lastMessage = messages[messages.length - 1];
-      if (lastMessage.tool_calls?.length) {
-        return "tools";
-      }
-      return "__end__";
-    };
+    const boundModel = model.bindTools(tools, { parallel_tool_calls: false });
 
     const callModel = async (state: { messages: AIMessage[] }) => {
       const prompt = ChatPromptTemplate.fromMessages([
@@ -55,12 +47,22 @@ export const useAgentKubernetesOperator = () => {
       return { messages: [response] };
     };
 
+    const finish = async (state: { messages: AIMessage[] }) => {
+      const prompt = ChatPromptTemplate.fromMessages([
+        ["system", "Finish the interaction. If the user asked 2 things in the same message, remember the user that the agent can handle one task at time. Be professional."],
+        new MessagesPlaceholder("messages"),
+      ]);
+      const response = await prompt.pipe(model).invoke({ messages: state.messages });
+      return { messages: [response] };
+    };
+
     return new StateGraph(MessagesAnnotation)
       .addNode("agent", callModel)
-      .addEdge("__start__", "agent")
       .addNode("tools", toolNode)
-      .addEdge("tools", "agent")
-      .addConditionalEdges("agent", shouldContinue)
+      .addNode("finish", finish)
+      .addEdge("__start__", "agent")
+      .addEdge("agent", "tools")
+      .addEdge("tools", "finish")
       .compile();
   };
 
