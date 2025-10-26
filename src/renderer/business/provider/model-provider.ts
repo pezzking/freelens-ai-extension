@@ -3,6 +3,38 @@ import { ChatOpenAI } from "@langchain/openai";
 import { PreferencesStore } from "../../../common/store";
 import { AIModelsEnum } from "./ai-models";
 
+/**
+ * Normalizes a base URL to ensure it ends with /v1
+ * This ensures consistency between model fetching and actual usage
+ */
+const normalizeBaseUrl = (baseUrl: string): string => {
+  if (!baseUrl) return baseUrl;
+
+  // Remove trailing slash if present
+  const trimmed = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+
+  // Add /v1 if not already present
+  return trimmed.endsWith("/v1") ? trimmed : `${trimmed}/v1`;
+};
+
+/**
+ * LocalChatOpenAI extends ChatOpenAI to provide a consistent interface for local models
+ * (LM Studio, Ollama, Custom OpenAI endpoints)
+ */
+class LocalChatOpenAI extends ChatOpenAI {
+  constructor(config: { baseURL: string; apiKey: string; model: string }) {
+    super({
+      model: config.model,
+      apiKey: config.apiKey,
+      configuration: {
+        baseURL: config.baseURL,
+      },
+      streamUsage: false,
+      maxRetries: 0,
+    });
+  }
+}
+
 export const useModelProvider = () => {
   // @ts-ignore
   const preferencesStore = PreferencesStore.getInstanceOrCreate<PreferencesStore>();
@@ -26,12 +58,10 @@ export const useModelProvider = () => {
           throw new Error("Custom OpenAI base URL is required. Please configure it in settings.");
         }
 
-        return new ChatOpenAI({
-          model: customOpenAIModelName,
+        return new LocalChatOpenAI({
+          baseURL: normalizeBaseUrl(customOpenAIBaseUrl),
           apiKey: customOpenAIKey || "not-needed-for-some-endpoints",
-          configuration: {
-            baseURL: customOpenAIBaseUrl,
-          },
+          model: customOpenAIModelName,
         });
 
       case AIModelsEnum.LMSTUDIO:
@@ -42,12 +72,10 @@ export const useModelProvider = () => {
           throw new Error("LM Studio base URL is required. Please configure it in settings.");
         }
 
-        return new ChatOpenAI({
-          model: lmStudioModelName,
+        return new LocalChatOpenAI({
+          baseURL: normalizeBaseUrl(lmStudioBaseUrl),
           apiKey: "lm-studio",
-          configuration: {
-            baseURL: lmStudioBaseUrl,
-          },
+          model: lmStudioModelName,
         });
 
       case AIModelsEnum.OLLAMA:
@@ -58,12 +86,10 @@ export const useModelProvider = () => {
           throw new Error("Ollama base URL is required. Please configure it in settings.");
         }
 
-        return new ChatOpenAI({
-          model: ollamaModelName,
+        return new LocalChatOpenAI({
+          baseURL: normalizeBaseUrl(ollamaBaseUrl),
           apiKey: "ollama",
-          configuration: {
-            baseURL: `${ollamaBaseUrl}/v1`,
-          },
+          model: ollamaModelName,
         });
 
       case AIModelsEnum.GEMINI_2_FLASH:

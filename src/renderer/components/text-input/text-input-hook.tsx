@@ -1,6 +1,7 @@
 import { Renderer } from "@freelensapp/extensions";
 import React, { useEffect, useRef, useState } from "react";
-import { AIModelInfos, AIModelsEnum, toAIModelEnum } from "../../business/provider/ai-models";
+import { PreferencesStore } from "../../../common/store";
+import { AIModelInfos, AIModelsEnum, AIProviders, toAIModelEnum } from "../../business/provider/ai-models";
 import { useApplicationStatusStore } from "../../context/application-context";
 
 import type { SingleValue } from "react-select";
@@ -14,10 +15,38 @@ const MAX_ROWS = 5;
 export const useTextInput = ({ onSend }: TextInputHookProps) => {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const modelSelections = Object.entries(AIModelInfos).map(([value, aiModelInfo]) => {
-    return { value, label: aiModelInfo.description };
-  });
   const applicationStatusStore = useApplicationStatusStore();
+  const preferencesStore = PreferencesStore.getInstanceOrCreate<PreferencesStore>();
+
+  // Filter model selections based on enabled providers
+  const modelSelections = Object.entries(AIModelInfos)
+    .filter(([_, aiModelInfo]) => {
+      // Show OpenAI models only if enabled
+      if (aiModelInfo.provider === AIProviders.OPEN_AI) {
+        return preferencesStore.openAIEnabled;
+      }
+
+      // Show Google AI models only if enabled
+      if (aiModelInfo.provider === AIProviders.GOOGLE) {
+        return preferencesStore.googleAIEnabled;
+      }
+
+      // Only show custom providers if they are enabled
+      if (aiModelInfo.provider === AIProviders.CUSTOM_OPENAI) {
+        return preferencesStore.customOpenAIEnabled;
+      }
+      if (aiModelInfo.provider === AIProviders.LMSTUDIO) {
+        return preferencesStore.lmStudioEnabled;
+      }
+      if (aiModelInfo.provider === AIProviders.OLLAMA) {
+        return preferencesStore.ollamaEnabled;
+      }
+
+      return false;
+    })
+    .map(([value, aiModelInfo]) => {
+      return { value, label: aiModelInfo.description };
+    });
 
   const adaptTextareaHeight = () => {
     const textarea = textareaRef.current;

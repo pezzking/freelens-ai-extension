@@ -1,5 +1,6 @@
 import { Renderer } from "@freelensapp/extensions";
 import { Eraser, SendHorizonal } from "lucide-react";
+import { observer } from "mobx-react";
 import * as React from "react";
 import { AIModelsEnum } from "../../business/provider/ai-models";
 import { useApplicationStatusStore } from "../../context/application-context";
@@ -17,7 +18,7 @@ type TextInputProps = {
   onSend: (message: string) => void;
 };
 
-export const TextInput = ({ onSend }: TextInputProps) => {
+export const TextInput = observer(({ onSend }: TextInputProps) => {
   const applicationStatusStore = useApplicationStatusStore();
   const textInputHook = useTextInput({ onSend });
   const textInputOptions = textInputHook.modelSelections as TextInputOption[];
@@ -103,4 +104,4 @@ export const TextInput = ({ onSend }: TextInputProps) => {
       </div>
     </>
   );
-};
+});

@@ -17,8 +17,6 @@ export interface AppContextType {
   mcpEnabled: boolean;
   mcpConfiguration: string;
   explainEvent: MessageObject;
-  ollamaHost: string;
-  ollamaPort: string;
   conversationId: string;
   isLoading: boolean;
   isConversationInterrupted: boolean;
@@ -285,8 +283,6 @@ export const ApplicationContextProvider = observer(({ children }: { children: Re
         mcpEnabled: preferencesStore.mcpEnabled,
         mcpConfiguration: preferencesStore.mcpConfiguration,
         explainEvent: preferencesStore.explainEvent,
-        ollamaHost: preferencesStore.ollamaHost,
-        ollamaPort: preferencesStore.ollamaPort,
         conversationId,
         isLoading,
         isConversationInterrupted,
