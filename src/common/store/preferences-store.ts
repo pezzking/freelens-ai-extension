@@ -9,8 +9,13 @@ export interface PreferencesModel {
   selectedModel: AIModelsEnum;
   mcpEnabled: boolean;
   mcpConfiguration: string;
-  ollamaHost: string;
-  ollamaPort: string;
+  customOpenAIBaseUrl: string;
+  customOpenAIKey: string;
+  customOpenAIModelName: string;
+  lmStudioBaseUrl: string;
+  lmStudioModelName: string;
+  ollamaBaseUrl: string;
+  ollamaModelName: string;
 }
 
 export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesModel> {
@@ -20,8 +25,13 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
   @observable accessor selectedModel: AIModelsEnum = AIModelsEnum.GPT_3_5_TURBO;
   @observable accessor mcpEnabled: boolean = false;
   @observable accessor mcpConfiguration: string = "";
-  @observable accessor ollamaHost: string = "";
-  @observable accessor ollamaPort: string = "";
+  @observable accessor customOpenAIBaseUrl: string = "";
+  @observable accessor customOpenAIKey: string = "";
+  @observable accessor customOpenAIModelName: string = "";
+  @observable accessor lmStudioBaseUrl: string = "";
+  @observable accessor lmStudioModelName: string = "";
+  @observable accessor ollamaBaseUrl: string = "";
+  @observable accessor ollamaModelName: string = "";
 
   // Not persistent
   @observable accessor explainEvent: MessageObject = {} as MessageObject;
@@ -46,8 +56,13 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
           null,
           2,
         ),
-        ollamaHost: "http://127.0.0.1",
-        ollamaPort: "9898",
+        customOpenAIBaseUrl: "",
+        customOpenAIKey: "",
+        customOpenAIModelName: "gpt-4o",
+        lmStudioBaseUrl: "http://127.0.0.1:1234/v1",
+        lmStudioModelName: "local-model",
+        ollamaBaseUrl: "http://127.0.0.1:11434",
+        ollamaModelName: "llama3.2",
       },
     });
     makeObservable(this);
@@ -63,8 +78,13 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
     this.selectedModel = preferencesModel.selectedModel;
     this.mcpEnabled = preferencesModel.mcpEnabled;
     this.mcpConfiguration = preferencesModel.mcpConfiguration;
-    this.ollamaHost = preferencesModel.ollamaHost;
-    this.ollamaPort = preferencesModel.ollamaPort;
+    this.customOpenAIBaseUrl = preferencesModel.customOpenAIBaseUrl;
+    this.customOpenAIKey = preferencesModel.customOpenAIKey;
+    this.customOpenAIModelName = preferencesModel.customOpenAIModelName;
+    this.lmStudioBaseUrl = preferencesModel.lmStudioBaseUrl;
+    this.lmStudioModelName = preferencesModel.lmStudioModelName;
+    this.ollamaBaseUrl = preferencesModel.ollamaBaseUrl;
+    this.ollamaModelName = preferencesModel.ollamaModelName;
   };
 
   toJSON = (): PreferencesModel => {
@@ -74,8 +94,13 @@ export class PreferencesStore extends Common.Store.ExtensionStore<PreferencesMod
       selectedModel: this.selectedModel,
       mcpEnabled: this.mcpEnabled,
       mcpConfiguration: this.mcpConfiguration,
-      ollamaHost: this.ollamaHost,
-      ollamaPort: this.ollamaPort,
+      customOpenAIBaseUrl: this.customOpenAIBaseUrl,
+      customOpenAIKey: this.customOpenAIKey,
+      customOpenAIModelName: this.customOpenAIModelName,
+      lmStudioBaseUrl: this.lmStudioBaseUrl,
+      lmStudioModelName: this.lmStudioModelName,
+      ollamaBaseUrl: this.ollamaBaseUrl,
+      ollamaModelName: this.ollamaModelName,
     };
     return toJS(value);
   };

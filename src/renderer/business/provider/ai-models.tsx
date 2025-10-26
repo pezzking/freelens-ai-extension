@@ -1,6 +1,7 @@
 export interface AIModelInfo {
   description: string;
   provider: string;
+  requiresBaseUrl?: boolean;
 }
 
 export enum AIModelsEnum {
@@ -9,10 +10,10 @@ export enum AIModelsEnum {
   GPT_4_1 = "gpt-4.1",
   GPT_4_O = "gpt-4o",
   GPT_5 = "gpt-5",
-  // DEEP_SEEK_R1 = "deep-seek-r1",
-  // OLLAMA_LLAMA32_1B = "llama3.2:1b",
-  // OLLAMA_MISTRAL_7B = "mistral:7b",
   GEMINI_2_FLASH = "gemini-2.0-flash",
+  CUSTOM_OPENAI = "custom-openai",
+  LMSTUDIO = "lmstudio",
+  OLLAMA = "ollama",
 }
 
 export const toAIModelEnum = (value: AIModelsEnum) => {
@@ -21,19 +22,20 @@ export const toAIModelEnum = (value: AIModelsEnum) => {
 
 export enum AIProviders {
   OPEN_AI = "open-ai",
-  // DEEP_SEEK = "deep-seek",
-  // OLLAMA = "ollama",
   GOOGLE = "google",
+  CUSTOM_OPENAI = "custom-openai",
+  LMSTUDIO = "lmstudio",
+  OLLAMA = "ollama",
 }
 
 export const AIModelInfos: Record<string, AIModelInfo> = {
-  [AIModelsEnum.GPT_3_5_TURBO]: { description: "gpt 3.5 turbo", provider: AIProviders.OPEN_AI },
-  [AIModelsEnum.O3_MINI]: { description: "o3 mini", provider: AIProviders.OPEN_AI },
-  [AIModelsEnum.GPT_4_1]: { description: "gpt 4.1", provider: AIProviders.OPEN_AI },
-  [AIModelsEnum.GPT_4_O]: { description: "gpt 4o", provider: AIProviders.OPEN_AI },
-  [AIModelsEnum.GPT_5]: { description: "gpt 5", provider: AIProviders.OPEN_AI },
-  // [AIModelsEnum.DEEP_SEEK_R1]: { description: "deep seek r1", provider: AIProviders.DEEP_SEEK },
-  // [AIModelsEnum.OLLAMA_LLAMA32_1B]: { description: "ollama-llama3.2 1b", provider: AIProviders.OLLAMA },
-  // [AIModelsEnum.OLLAMA_MISTRAL_7B]: { description: "ollama mistral:7b", provider: AIProviders.OLLAMA },
-  [AIModelsEnum.GEMINI_2_FLASH]: { description: "gemini 2.0 flash", provider: AIProviders.GOOGLE },
+  [AIModelsEnum.GPT_3_5_TURBO]: { description: "GPT 3.5 Turbo", provider: AIProviders.OPEN_AI },
+  [AIModelsEnum.O3_MINI]: { description: "O3 Mini", provider: AIProviders.OPEN_AI },
+  [AIModelsEnum.GPT_4_1]: { description: "GPT 4.1", provider: AIProviders.OPEN_AI },
+  [AIModelsEnum.GPT_4_O]: { description: "GPT 4o", provider: AIProviders.OPEN_AI },
+  [AIModelsEnum.GPT_5]: { description: "GPT 5", provider: AIProviders.OPEN_AI },
+  [AIModelsEnum.GEMINI_2_FLASH]: { description: "Gemini 2.0 Flash", provider: AIProviders.GOOGLE },
+  [AIModelsEnum.CUSTOM_OPENAI]: { description: "Custom OpenAI Endpoint", provider: AIProviders.CUSTOM_OPENAI, requiresBaseUrl: true },
+  [AIModelsEnum.LMSTUDIO]: { description: "LM Studio", provider: AIProviders.LMSTUDIO, requiresBaseUrl: true },
+  [AIModelsEnum.OLLAMA]: { description: "Ollama", provider: AIProviders.OLLAMA, requiresBaseUrl: true },
 };
